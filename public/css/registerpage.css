@@ -1,0 +1,146 @@
+/* ==========================================================
+   DOC-MON – Registration form (register.blade.php)
+   Loaded AFTER signuppage.css, which provides the shared layout
+   (icons panel, nav, title, tagline, credits). This file only adds
+   the form, plus the transition names unique to this page.
+   Sizes follow the Figma frame "Student Officer Sign-Up".
+   ========================================================== */
+
+/* Unique names so the sign-up choices page's tagline and buttons
+   animate out, and this page's tagline and form animate in */
+.tagline {
+  view-transition-name: register-tagline;
+}
+
+/* ---------- Form card ---------- */
+.register-card {
+  view-transition-name: register-form;
+  margin-top: clamp(16px, 3vh, 28px);
+  width: min(644px, 100%);
+  background: #fff;
+  color: #1e1e1e;
+  border-radius: 6px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 2 columns x 3 rows of fields */
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;   /* lets long placeholders shrink instead of widening the grid */
+}
+
+.field label,
+.field-label {
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.field input[type="password"] {
+  height: 40px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 16px;
+  color: #1e1e1e;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+}
+.field input::placeholder {
+  color: #b3b3b3;
+}
+.field input:focus-visible {
+  outline: 2px solid #2c2c2c;
+  outline-offset: 1px;
+}
+
+/* ---------- School ID upload ---------- */
+/* The real <input type="file"> is visually hidden (but still usable by
+   keyboard and screen readers); the styled box is its <label>. */
+.upload-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.upload {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  height: 64px;
+  padding: 0 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #1e1e1e;
+}
+.upload:hover {
+  background: #f5f5f5;
+}
+/* keyboard focus is on the hidden input, so draw the ring on the box before it */
+.upload:has(+ .upload-input:focus-visible) {
+  outline: 2px solid #2c2c2c;
+  outline-offset: 1px;
+}
+.upload-icon {
+  flex: none;
+}
+.upload-text {
+  font-size: 16px;
+  color: #757575;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.upload-text.has-file {
+  color: #1e1e1e;
+}
+.field-note {
+  font-size: 16px;
+  line-height: 22px;
+  color: #757575;
+}
+
+/* ---------- Submit button ---------- */
+.submit-btn {
+  height: 40px;
+  font: inherit;
+  font-size: 16px;
+  color: #f5f5f5;
+  background: #2c2c2c;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.submit-btn:hover {
+  background: #000;
+}
+.submit-btn:focus-visible {
+  outline: 2px solid #2c2c2c;
+  outline-offset: 2px;
+}
+
+/* ---------- Small screens: one column ---------- */
+@media (max-width: 600px) {
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+  .register-card {
+    padding: 20px;
+  }
+}

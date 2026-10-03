@@ -1,0 +1,80 @@
+/* DOC-MON – log-in form card (studentofficer-login / signatory-login).
+   Loaded AFTER loginpage.css, which provides the shared layout. */
+
+/* Unique name so the log-in choices page's tagline and buttons animate out,
+   and this page's tagline and form animate in */
+.tagline {
+  view-transition-name: loginform-tagline;
+}
+
+.login-card {
+  view-transition-name: login-form;
+  margin-top: clamp(16px, 3vh, 28px);
+  width: min(408px, 100%);
+  background: #fff;
+  color: #1e1e1e;
+  border-radius: 6px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.field label {
+  font-size: 16px;
+  line-height: 22px;
+}
+.field input[type="text"],
+.field input[type="password"] {
+  height: 40px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 16px;
+  color: #1e1e1e;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+}
+.field input::placeholder { color: #b3b3b3; }
+.field input:focus-visible {
+  outline: 2px solid #2c2c2c;
+  outline-offset: 1px;
+}
+
+.submit-btn {
+  height: 40px;
+  font: inherit;
+  font-size: 16px;
+  color: #f5f5f5;
+  background: #2c2c2c;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.submit-btn:hover { background: #000; }
+.submit-btn:focus-visible {
+  outline: 2px solid #2c2c2c;
+  outline-offset: 2px;
+}
+
+.forgot-link {
+  align-self: flex-start;
+  color: #1e1e1e;
+  font-size: 16px;
+  text-decoration: underline;
+}
+.forgot-link:focus-visible {
+  outline: 2px solid #2c2c2c;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .login-card { padding: 20px; }
+}

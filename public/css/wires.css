@@ -1,0 +1,63 @@
+/* ==========================================================
+   DOC-MON – circuit wires behind the dark panel (every page)
+   Markup: resources/views/partials/wires.blade.php
+   ========================================================== */
+
+/* The wires sit behind everything in the dark panel */
+.right {
+  position: relative;
+}
+.right > :not(.wires) {
+  position: relative;
+  z-index: 1;
+}
+
+.wires {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.wires svg {
+  display: block;
+}
+
+/* Dark glow on top: fades the wires out toward the edges, so they're
+   strongest in the middle, from the title down to below the logo/form */
+.wires::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 75% at 50% 48%, transparent 0%, #1a1a1a 100%);
+}
+
+.wires .wire use { stroke: #fff; stroke-opacity: 0.09; stroke-width: 1.5; }
+.wires .pad      { fill: #1a1a1a; stroke: #fff; stroke-opacity: 0.09; stroke-width: 1.5; }
+
+/* Pulses. The start time combines:
+     --seg          this wire's own start, so pulses don't march in step
+     --dur * --lf   pushes shorter tail layers ahead so their fronts line up
+     --wires-offset the shared clock from icon-scroll.js, so pulses keep
+                    flowing across page switches instead of restarting */
+.wires .pulse use {
+  stroke: #fff;
+  stroke-opacity: 0.18;          /* per layer; 5 overlapping ≈ 0.63 at the head */
+  stroke-width: 2;
+  animation: wire-flow var(--dur) linear infinite;
+  animation-delay: calc(var(--seg) - var(--dur) * var(--lf) + var(--wires-offset, 0s));
+}
+.wires .t1 { stroke-dasharray: 40 440; --lf: 0;         }
+.wires .t2 { stroke-dasharray: 30 450; --lf: 0.0208333; }
+.wires .t3 { stroke-dasharray: 20 460; --lf: 0.0416667; }
+.wires .t4 { stroke-dasharray: 10 470; --lf: 0.0625;    }
+.wires .t5 { stroke-dasharray: 4 476;  --lf: 0.075;     }
+
+@keyframes wire-flow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -480; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wires .pulse { display: none; }
+}

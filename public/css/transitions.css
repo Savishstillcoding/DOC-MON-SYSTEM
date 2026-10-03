@@ -1,0 +1,137 @@
+/* ==========================================================
+   DOC-MON – page-to-page animations (shared by every page)
+   Uses the browser's View Transitions. Browsers that don't support
+   them just switch pages normally, so nothing breaks.
+
+   Each page marks the parts that should animate with a
+   view-transition-name (see landingpage.css / signuppage.css):
+     landing-tagline / signup-tagline  -> text under the title
+     logo                              -> DOC-MON logo circle (landing)
+     login-tagline                     -> text under the title (login)
+     choices                           -> role buttons (signup AND login)
+     register-tagline                  -> text under the title (registration form)
+     register-form                     -> the registration form card
+     loginform-tagline                 -> text under the title (log-in form)
+     login-form                        -> the log-in form card
+     credits                           -> "made by" note (every page)
+   ========================================================== */
+
+/* Turn on animations when moving between our pages */
+@view-transition { navigation: auto; }
+
+/* Everything without a name (title, nav, icons...) is identical on
+   both pages, so swap it instantly instead of cross-fading.
+   The browser normally blends the old and new page by adding their
+   colors together, which only looks right while they fade. Without the
+   fade the page turns bright, so hide the old page and draw the new one
+   normally. */
+::view-transition-old(root) {
+  animation: none;
+  display: none;
+}
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ---------- Falling icons panel: no white flash ----------
+   The new page's icon images can take a moment to be ready, which showed
+   the white panel behind them. So the old page's icons stay on top until
+   icon-scroll.js marks the new ones ready (adds .icons-ready), then vanish.
+   The 1s "hold" is a safety limit in case the images never load. */
+::view-transition-group(icons) {
+  animation: none;
+}
+::view-transition-new(icons) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(icons) {
+  animation: icons-hold 1s both;
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+:root.icons-ready::view-transition-old(icons) {
+  display: none;
+}
+
+@keyframes icons-hold {
+  from, to { opacity: 1; }
+}
+
+/* ---------- Text under the title: old slides out left, new slides in from the right ---------- */
+::view-transition-old(landing-tagline),
+::view-transition-old(signup-tagline),
+::view-transition-old(login-tagline),
+::view-transition-old(register-tagline),
+::view-transition-old(loginform-tagline) {
+  animation: tagline-out 300ms ease-in both;
+}
+::view-transition-new(landing-tagline),
+::view-transition-new(signup-tagline),
+::view-transition-new(login-tagline),
+::view-transition-new(register-tagline),
+::view-transition-new(loginform-tagline) {
+  animation: tagline-in 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 150ms both;
+}
+
+@keyframes tagline-out {
+  to { transform: translateX(-60px); opacity: 0; }
+}
+@keyframes tagline-in {
+  from { transform: translateX(60px); opacity: 0; }
+}
+
+/* ---------- Logo / choices: the old one drops down, the new one rises in ---------- */
+::view-transition-old(logo),
+::view-transition-old(choices),
+::view-transition-old(register-form),
+::view-transition-old(login-form) {
+  animation: drop-out 400ms ease-in both;
+}
+::view-transition-new(logo),
+::view-transition-new(choices),
+::view-transition-new(register-form),
+::view-transition-new(login-form) {
+  animation: rise-in 550ms cubic-bezier(0.2, 0.8, 0.2, 1) 250ms both;
+}
+
+@keyframes drop-out {
+  to { transform: translateY(100vh); opacity: 0; }
+}
+@keyframes rise-in {
+  from { transform: translateY(40vh); opacity: 0; }
+}
+
+/* ---------- Signup <-> login: the role buttons stay still ----------
+   Both pages have the same buttons, so instead of dropping and rising,
+   show the new page's buttons in place. js/page-transitions.js adds
+   .keep-choices only when moving between those two pages. */
+:root.keep-choices::view-transition-old(choices) {
+  display: none;
+}
+:root.keep-choices::view-transition-new(choices) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root.keep-choices::view-transition-group(choices) {
+  animation: none;
+}
+
+/* ---------- "made by" note: slides to its new spot ----------
+   It has the same name on every page, so the browser moves it from where
+   it was to where it is on the new page. On a longer page (a sign-up
+   form) that spot is further down, so it slides down and out of view. */
+::view-transition-group(credits) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* People who turn on "reduce motion" get an instant switch */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
