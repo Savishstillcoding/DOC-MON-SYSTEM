@@ -1,5 +1,5 @@
 # DOC-MON – PHP 8.3 image for Laravel (development)
-FROM php:8.4d-cli
+FROM php:8.4-cli
 
 # System packages + the PHP extensions Laravel needs for MySQL
 RUN apt-get update && apt-get install -y --no-install-recommends \

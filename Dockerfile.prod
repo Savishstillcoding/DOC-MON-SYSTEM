@@ -1,5 +1,15 @@
 # DOC-MON – PRODUCTION image (used by Render).
 # Your existing "Dockerfile" stays for local development.
+
+# ---- NEW: Stage 1 – build the frontend (Vite/Tailwind) ----
+FROM node:22 AS assets
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci                      # exact versions from package-lock.json
+COPY . .
+RUN npm run build               # outputs to /app/public/build
+
+# ---- Stage 2 – the PHP app (your existing file) ----
 FROM php:8.4-apache
 
 # PHP extensions Laravel needs + Apache rewrite (for pretty URLs)
@@ -27,6 +37,10 @@ RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-a
 
 # Copy your code INTO the image (no live folder link in production)
 COPY . .
+
+# ---- NEW: bring in the built CSS/JS from stage 1 ----
+COPY --from=assets /app/public/build /var/www/html/public/build
+
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # Laravel needs these folders to exist and be writable
