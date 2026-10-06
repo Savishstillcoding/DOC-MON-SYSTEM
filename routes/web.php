@@ -10,29 +10,13 @@ Route::get('/signup', function () {
     return view('signup');
 });
 
-Route::get('/register/officer', function () {
-    return view('studentofficer-signup');
-});
+Route::get('/register/officer', function () { return view('auth.studentofficer-signup'); });
+Route::get('/register/signatory', function () { return view('auth.signatory-signup'); });
 
-Route::get('/register/signatory', function () {
-    return view('signatory-signup');
-});
-
-Route::get('/login', function() {
-    return view('login');
-});
-
-Route::get('/login/officer', function () {
-    return view('studentofficer-login');
-});
-
-Route::get('/login/signatory', function () {
-    return view('signatory-login');
-});
-
-Route::get('/login/admin', function () {
-    return view('admin-login');
-});
+Route::get('/login', function() { return view('login'); });
+Route::get('/login/officer', function () { return view('auth.studentofficer-login'); });
+Route::get('/login/signatory', function () { return view('auth.signatory-login'); });
+Route::get('/login/admin', function () { return view('auth.admin-login'); });
 
 // Registration forms. Officers and signatories share one form (same fields in
 // the Figma design), so one view is used with a different title and tagline.

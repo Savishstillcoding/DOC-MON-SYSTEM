@@ -1,0 +1,56 @@
+# DOC-MON – run with:  docker compose up --build
+# Site:   http://localhost:8000
+services:
+    app:
+        build: .
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/var/www/html # your code (edits show up instantly)
+            - vendor:/var/www/html/vendor # keeps PHP packages inside Docker (faster)
+        environment:
+            # These override the values in .env while running in Docker
+            DB_CONNECTION: mysql
+            DB_HOST: db
+            DB_PORT: 3306
+            DB_DATABASE: docmon
+            DB_USERNAME: docmon
+            DB_PASSWORD: secret
+        depends_on:
+            db:
+                condition: service_healthy
+        command: >
+            sh -c "composer install --no-interaction &&
+                   php artisan migrate --force &&
+                   php artisan serve --host=0.0.0.0 --port=8000"
+
+    db:
+        image: mysql:8.4
+        environment:
+            MYSQL_DATABASE: docmon
+            MYSQL_USER: docmon
+            MYSQL_PASSWORD: secret
+            MYSQL_ROOT_PASSWORD: rootsecret
+        ports:
+            - "3307:3306" # 3307 on your PC so it doesn't clash with Laragon's MySQL
+        volumes:
+            - dbdata:/var/lib/mysql
+        healthcheck:
+            test:
+                ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootsecret"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+
+    phpmyadmin:
+        image: phpmyadmin:5
+        ports:
+            - "8080:80"
+        environment:
+            PMA_HOST: db
+        depends_on:
+            - db
+
+volumes:
+    dbdata:
+    vendor:

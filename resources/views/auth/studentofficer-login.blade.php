@@ -1,8 +1,7 @@
-{{-- Student Officer log-in form (from Figma: "Student Officer Log-In").
-     PROTOTYPE: nothing is checked yet. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
@@ -11,12 +10,12 @@
   <title>Student Officer Log In – DOC-MON</title>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
   <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  {{-- same layout as the log-in choices page + the form's own styles --}}
   <link rel="stylesheet" href="{{ asset('css/loginpage.css') }}">
   <link rel="stylesheet" href="{{ asset('css/loginform.css') }}">
   <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
   <link rel="stylesheet" href="{{ asset('css/transitions.css') }}">
   <script src="{{ asset('js/icon-scroll.js') }}"></script>
+
 </head>
 <body>
   <main class="landing">
