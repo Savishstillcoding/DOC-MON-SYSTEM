@@ -15,13 +15,10 @@ body {
     min-height: 100vh;
 }
 
-/* ---------- LEFT: icon grid ---------- */
 .left {
     view-transition-name: icons;
     flex: 0 0 51.85%;
     background: #fff;
-    /* "two-way elevator": the icons panel stays on screen (one screen tall)
-       while a long right side (e.g. a sign-up form) scrolls past it */
     position: sticky;
     top: 0;
     height: 100vh;
@@ -29,19 +26,16 @@ body {
     overflow: hidden;
 }
 
-/* 4 identical copies stacked; sliding by exactly one copy (25%) loops seamlessly */
 .icon-track {
     position: absolute;
     inset: 0 0 auto 0;
     animation: icons-scroll-down 20s linear infinite;
-    /* start point set by js/icon-scroll.js so pages stay in sync */
     animation-delay: var(--icons-delay, 0s);
 }
 .icon-track img {
     display: block;
     width: 100%;
     height: auto;
-    /* evens out the gap between copies to match the gap between icon rows */
     margin-bottom: 4.5%;
 }
 
@@ -60,9 +54,7 @@ body {
     }
 }
 
-/* ---------- RIGHT: dark panel ---------- */
 .right {
-    /* lets .title size itself to this panel's width (cqi units) */
     container-type: inline-size;
     flex: 1;
     background: #1a1a1a;
@@ -77,8 +69,6 @@ body {
     gap: 40px;
     padding: clamp(20px, 6.8vh, 66px) 49px 0 0;
 }
-/* Every link gets the same fixed-width slot, so swapping "Sign-Up" for the
-   shorter "Back" doesn't shift the other links */
 .nav a {
     width: 80px;
     text-align: center;
@@ -91,8 +81,6 @@ body {
     text-decoration: underline;
 }
 
-/* Title is pinned the same distance from the top as on the sign-up page,
-   so it doesn't jump when switching pages (keep both files in sync) */
 .content {
     flex: 1;
     display: flex;
@@ -102,11 +90,9 @@ body {
 }
 
 .title {
-    /* height-based size, but never wider than the panel allows
-       (17cqi = 17% of the dark panel's width) so it fits on phones */
     font-size: min(clamp(40px, 8.4vh, 82px), 17cqi);
     text-align: center;
-    white-space: nowrap;   /* never split into "DOC-" / "MON" */
+    white-space: nowrap;
     font-weight: 700;
     letter-spacing: -0.5px;
     line-height: 1.1;
@@ -138,15 +124,12 @@ body {
 }
 
 .credits {
-    /* same name on every page: when the page gets longer (a form), the note
-       slides down to its new spot at the end instead of just jumping */
     view-transition-name: credits;
     padding: 0 0 20px 21px;
     font-size: 16px;
     color: #e5e5e5;
 }
 
-/* ---------- Small screens: hide the icon grid ---------- */
 @media (max-width: 800px) {
     .left {
         display: none;
@@ -161,18 +144,10 @@ body {
     }
 }
 
-/* ---------- TRY-OUT #10: no layout shift from the scrollbar ----------
-   Always reserves the scrollbar's space, so pages that scroll and pages
-   that don't line up exactly. To revert: delete this block. */
 html {
   scrollbar-gutter: stable;
 }
 
-/* ---------- TRY-OUT #11: accessibility ----------
-   .sr-only hides text visually but screen readers still read it (used to
-   say which page this is inside the DOC-MON heading). The focus ring shows
-   keyboard users which link/button is selected. To revert: delete this
-   block and the matching TRY-OUT #11 bits in the .blade.php file. */
 .sr-only {
   position: absolute;
   width: 1px;

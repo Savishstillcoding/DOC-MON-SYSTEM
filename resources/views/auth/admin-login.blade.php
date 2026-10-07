@@ -1,5 +1,3 @@
-{{-- Admin log-in form.
-     PROTOTYPE: nothing is checked yet. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>

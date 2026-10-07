@@ -1,5 +1,3 @@
-{{-- Signatory log-in form.
-     PROTOTYPE: nothing is checked yet. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +9,6 @@
   <title>Signatory Log In – DOC-MON</title>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
   <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  {{-- same layout as the log-in choices page + the form's own styles --}}
   <link rel="stylesheet" href="{{ asset('css/loginpage.css') }}">
   <link rel="stylesheet" href="{{ asset('css/loginform.css') }}">
   <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
