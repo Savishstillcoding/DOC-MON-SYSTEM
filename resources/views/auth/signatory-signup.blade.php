@@ -1,20 +1,14 @@
-{{-- Registration form for Student Officers and Signatories (from Figma:
-     "Student Officer Sign-Up" / "Signatory Sign-Up"). One view for both roles;
-     routes/web.php passes $roleLabel and $tagline. PROTOTYPE: nothing is saved yet. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  {{-- Paint the page dark right away so switching pages never flashes white --}}
   <style>html { background: #1a1a1a; }</style>
   <link rel="preload" as="image" href="{{ asset('images/icon-grid.png') }}">
   <title>Signatory Sign Up – DOC-MON</title>
-  {{-- Inter font, served from public/fonts (no Google Fonts request) --}}
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
   <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  {{-- shared page layout (same as the sign-up choices page) + the form's own styles --}}
   <link rel="stylesheet" href="{{ asset('css/signuppage.css') }}">
   <link rel="stylesheet" href="{{ asset('css/registerpage.css') }}">
   <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
@@ -34,17 +28,16 @@
     <section class="right">
       @include('partials.wires')
 
-      <nav class="nav" aria-label="Main">{{-- TRY-OUT #11: names the menu for screen readers --}}
+      <nav class="nav" aria-label="Main">
         <a href="{{ url('/login') }}">Log-In</a>
         <a href="{{ url('/signup') }}">Back</a>
       </nav>
 
       <div class="content">
-        <h1 class="title">DOC-MON<span class="sr-only"> – Signatory sign up</span></h1>{{-- TRY-OUT #11: screen readers hear which page this is --}}
+        <h1 class="title">DOC-MON<span class="sr-only"> – Signatory sign up</span></h1>
 
         <p class="tagline">New Signatory? Welcome Sir/Ma'am :D</p>
 
-        {{-- enctype is needed so the School ID file is actually sent --}}
         <form class="register-card" method="POST" action="{{ url()->current() }}" enctype="multipart/form-data">
           @csrf
 
@@ -75,7 +68,7 @@
                 <label for="phone">Phone Number</label>
                 <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="e.x. 09123456789" autocomplete="tel" value="{{ old('phone') }}" required>
             </div>
-            
+
             <div class="field">
               <label for="position">Position</label>
               <input id="position" name="position" type="text" placeholder="e.x. Department Head" autocomplete="organization-title" value="{{ old('position') }}" required>
@@ -88,7 +81,6 @@
 
           <div class="field">
             <span class="field-label" id="school_id_label">Employee ID</span>
-            {{-- The real file input is hidden; the whole box is its label, so clicking anywhere opens the file picker --}}
             <label class="upload" for="school_id">
               <svg class="upload-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>

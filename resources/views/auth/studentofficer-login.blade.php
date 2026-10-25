@@ -46,11 +46,13 @@
           <div class="field">
             <label for="student_id">Student ID</label>
             <input id="student_id" name="student_id" type="text" inputmode="numeric" placeholder="ex. 1234567" autocomplete="username" value="{{ old('student_id') }}" required>
+            @error('student_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="password">Password</label>
             <input id="password" name="password" type="password" placeholder="ex. Testpassword#1" autocomplete="current-password" required>
+            @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <button class="submit-btn" type="submit">Sign In</button>
