@@ -30,7 +30,7 @@
     <section class="right">
       @include('partials.wires')
 
-      <nav class="nav" aria-label="Main">{{-- TRY-OUT #11: names the menu for screen readers --}}
+      <nav class="nav" aria-label="Main">
         <a href="{{ url('/login') }}">Log-In</a>
         <a href="{{ url('/') }}">Back</a>
       </nav>
@@ -39,7 +39,6 @@
         <h1 class="title">DOC-MON<span class="sr-only"> – Sign up</span></h1>
         <p class="tagline">Greetings! Ready to handle the documents?</p>
 
-        <!-- Pick which kind of account to create -->
         <div class="role-card">
           <a class="role-btn" href="{{ url('/register/officer') }}">Student Officer</a>
           <a class="role-btn" href="{{ url('/register/signatory') }}">Signatory</a>

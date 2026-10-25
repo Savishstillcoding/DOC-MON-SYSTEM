@@ -1,5 +1,3 @@
-{{-- Signatory log-in form.
-     PROTOTYPE: nothing is checked yet. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +9,6 @@
   <title>Signatory Log In – DOC-MON</title>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
   <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  {{-- same layout as the log-in choices page + the form's own styles --}}
   <link rel="stylesheet" href="{{ asset('css/loginpage.css') }}">
   <link rel="stylesheet" href="{{ asset('css/loginform.css') }}">
   <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
@@ -47,11 +44,13 @@
           <div class="field">
             <label for="employee_id">Employee ID</label>
             <input id="employee_id" name="employee_id" type="text" inputmode="numeric" placeholder="ex. 1234567" autocomplete="username" value="{{ old('employee_id') }}" required>
+            @error('employee_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="password">Password</label>
             <input id="password" name="password" type="password" placeholder="ex. Testpassword#1" autocomplete="current-password" required>
+            @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <button class="submit-btn" type="submit">Sign In</button>
