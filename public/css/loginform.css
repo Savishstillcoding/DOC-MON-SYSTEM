@@ -75,6 +75,13 @@
   outline-offset: 2px;
 }
 
+/* "Wrong ID or password." etc., shown under the field by @error */
+.form-error {
+  font-size: 14px;
+  line-height: 20px;
+  color: #b42318;
+}
+
 @media (max-width: 600px) {
   .login-card { padding: 20px; }
 }

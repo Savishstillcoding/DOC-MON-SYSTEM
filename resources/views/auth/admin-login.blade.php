@@ -45,11 +45,13 @@
           <div class="field">
             <label for="username">Username</label>
             <input id="username" name="username" type="text" placeholder="ex. admin" autocomplete="username" value="{{ old('username') }}" required>
+            @error('username')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="password">Password</label>
             <input id="password" name="password" type="password" placeholder="ex. Testpassword#1" autocomplete="current-password" required>
+            @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <button class="submit-btn" type="submit">Sign In</button>

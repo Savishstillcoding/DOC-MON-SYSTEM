@@ -1,0 +1,891 @@
+/* ==========================================================
+   DOC-MON · Dashboard styles
+   Shared by: student-officer/*, signatory/*, admin/*, docmon-dev/components-preview
+   Prefixes:  dm-  shared parts      so- student officer pages
+              nt-  new ticket page   sg- signatory page   cp- components preview
+              pf-  profile page      sl- signatories (approval route) page
+   ========================================================== */
+
+:root {
+  --dm-sidebar: #1e1e1e;
+  --dm-sidebar-card: #2b2b2b;
+  --dm-sidebar-active: #393939;
+  --dm-accent-bar: #8b74ff;
+  --dm-bg: #f5f5f5;
+  --dm-card: #ffffff;
+  --dm-border: #e6e6e6;
+  --dm-text: #1a1a1a;
+  --dm-muted: #5f5f5f;
+  --dm-faint: #9a9a9a;
+  --dm-purple: #5b3fd9;
+  --dm-purple-dark: #4a31bf;
+  --dm-green: #1e7b3a;
+  --dm-green-bg: #e3f3e7;
+  --dm-amber: #e0a100;
+  --dm-amber-text: #8a5a00;
+  --dm-amber-bg: #fdf1d2;
+  --dm-red: #b42318;
+  --dm-red-bg: #fde2e2;
+  --dm-blue: #1d4ed8;
+  --dm-blue-bg: #e4eeff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "Inter", Arial, sans-serif;
+  color: var(--dm-text);
+  background: var(--dm-bg);
+  font-size: 14px;
+}
+
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+.dm-icon { flex-shrink: 0; }
+
+/* ---------------- Page shell ---------------- */
+.dm-body {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dm-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 264px;
+  flex-shrink: 0;
+  background: var(--dm-sidebar);
+  color: #fff;
+  padding: 26px 16px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dm-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+}
+.dm-brand-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+}
+.dm-brand-logo img { width: 58%; height: auto; }
+.dm-brand-name { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
+
+.dm-user-card {
+  margin-top: 26px;
+  background: var(--dm-sidebar-card);
+  border-radius: 10px;
+  padding: 11px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dm-user-name { font-size: 14px; font-weight: 600; }
+.dm-user-sub { font-size: 12px; color: #bdbdbd; margin-top: 2px; }
+
+.dm-menu-label {
+  margin: 30px 0 10px 16px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--dm-faint);
+}
+
+.dm-menu { display: flex; flex-direction: column; gap: 6px; }
+
+.dm-menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 8px;
+  color: #d6d6d6;
+  font-size: 15px;
+  transition: background 0.15s, color 0.15s;
+}
+.dm-menu-item:hover { background: #2a2a2a; color: #fff; }
+.dm-menu-item.is-active {
+  background: var(--dm-sidebar-active);
+  color: #fff;
+  font-weight: 600;
+}
+/* purple bar on the active item. A real <span> (not ::before) so the page
+   transition can slide it from the old menu item to the new one. */
+.dm-menu-bar {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--dm-accent-bar);
+}
+
+.dm-logout { margin-top: auto; }
+/* the Log out button looks exactly like a menu link */
+.dm-logout-btn { width: 100%; border: 0; background: none; font-family: inherit; text-align: left; cursor: pointer; }
+
+.dm-main {
+  flex: 1;
+  min-width: 0;
+  padding: 28px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------------- Page header ---------------- */
+.dm-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.dm-page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
+.dm-page-sub { margin-top: 4px; font-size: 15px; color: var(--dm-muted); }
+
+.dm-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.dm-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 260px;
+  height: 40px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  color: #8a8a8a;
+}
+.dm-search input { border: 0; outline: 0; width: 100%; background: transparent; color: var(--dm-text); }
+.dm-search:focus-within { border-color: var(--dm-purple); }
+
+.dm-icon-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.dm-icon-btn:hover { background: #fafafa; }
+
+/* ---------------- Buttons ---------------- */
+.dm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+.dm-btn-primary { background: var(--dm-purple); color: #fff; }
+.dm-btn-primary:hover { background: var(--dm-purple-dark); }
+.dm-btn-outline { background: #fff; border-color: #d4d4d4; color: var(--dm-text); }
+.dm-btn-outline:hover { background: #f7f7f7; }
+.dm-btn-danger { background: #fff; border-color: #f2b8b5; color: var(--dm-red); }
+.dm-btn-danger:hover { background: #fff5f5; }
+.dm-btn-success { background: var(--dm-green); color: #fff; }
+.dm-btn-success:hover { background: #18672f; }
+
+.dm-btn-sm { height: 30px; padding: 0 12px; font-size: 13px; font-weight: 500; }
+.dm-btn-xs { height: 28px; padding: 0 10px; font-size: 13px; font-weight: 500; border-radius: 6px; }
+.dm-btn-block { width: 100%; height: 44px; }
+
+.dm-actions { display: flex; gap: 6px; }
+
+/* ---------------- Cards & layout ---------------- */
+.dm-card {
+  background: var(--dm-card);
+  border: 1px solid var(--dm-border);
+  border-radius: 12px;
+}
+
+.dm-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+.dm-side { display: flex; flex-direction: column; gap: 24px; }
+
+.dm-panel { padding: 24px; }
+.dm-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.dm-panel-title { font-size: 18px; font-weight: 700; }
+.dm-panel-sub { margin-top: 2px; font-size: 13px; color: var(--dm-muted); }
+
+/* ---------------- Stat cards ---------------- */
+.dm-stat-grid { display: grid; gap: 16px; }
+.dm-stat-grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.dm-stat-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.dm-stat-card { padding: 20px; }
+.dm-stat-label { font-size: 14px; color: var(--dm-muted); }
+.dm-stat-value { margin-top: 6px; font-size: 32px; font-weight: 700; line-height: 1.1; }
+.dm-stat-note { margin-top: 10px; font-size: 12px; color: var(--dm-faint); }
+
+/* ---------------- Tabs ---------------- */
+.dm-tabs {
+  display: flex;
+  gap: 24px;
+  margin: 18px 0 16px;
+  border-bottom: 1px solid var(--dm-border);
+  overflow-x: auto;
+}
+.dm-tab {
+  padding-bottom: 12px;
+  font-size: 15px;
+  color: #8a8a8a;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.dm-tab:hover { color: var(--dm-text); }
+.dm-tab.is-active { color: var(--dm-text); font-weight: 600; border-bottom-color: var(--dm-text); }
+
+/* ---------------- Status badges ---------------- */
+.dm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dm-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.dm-badge-pending  { background: var(--dm-amber-bg); color: var(--dm-amber-text); }
+.dm-badge-approved { background: var(--dm-green-bg); color: var(--dm-green); }
+.dm-badge-rejected { background: var(--dm-red-bg);   color: var(--dm-red); }
+.dm-badge-revision { background: var(--dm-blue-bg);  color: var(--dm-blue); }
+.dm-badge-review   { background: #eeeeee;            color: #2c2c2c; }
+
+/* ---------------- Availability (dot + text) ---------------- */
+.dm-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--dm-text);
+  white-space: nowrap;
+}
+.dm-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.dm-availability-available .dm-dot { background: var(--dm-green); }
+.dm-availability-busy .dm-dot      { background: var(--dm-amber); }
+.dm-availability-away .dm-dot      { background: var(--dm-red); }
+/* "colored" = whole text takes the status color (used on ticket cards) */
+.dm-availability.is-colored.dm-availability-available { color: var(--dm-green); }
+.dm-availability.is-colored.dm-availability-busy      { color: var(--dm-amber-text); }
+.dm-availability.is-colored.dm-availability-away      { color: var(--dm-red); }
+
+/* ---------------- Avatars & signatory rows ---------------- */
+.dm-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--dm-sidebar);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.dm-avatar-light { width: 40px; height: 40px; background: #fff; color: var(--dm-text); font-size: 14px; }
+
+.dm-route { margin-top: 18px; display: flex; flex-direction: column; gap: 38px; }
+.dm-route-plain { gap: 40px; }
+
+.dm-signatory-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 12px;
+}
+.dm-signatory-info { flex: 1; min-width: 0; }
+.dm-signatory-name { font-size: 15px; font-weight: 600; }
+.dm-signatory-role { font-size: 13px; color: #777; margin-top: 2px; }
+
+/* connector line between steps (availability timeline only) */
+.dm-route:not(.dm-route-plain) .dm-signatory-row:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 30px;
+  top: 46px;
+  height: 18px;
+  width: 1px;
+  background: #cfcfcf;
+}
+
+/* ---------------- Activity lists ---------------- */
+.dm-activity { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 16px; }
+.dm-activity li { position: relative; padding-left: 18px; }
+.dm-activity li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1e1e1e;
+}
+.dm-activity p { font-size: 14px; font-weight: 500; }
+.dm-activity span { display: block; margin-top: 2px; font-size: 12px; color: var(--dm-faint); }
+.dm-activity-green::before { background: var(--dm-green) !important; }
+.dm-activity-blue::before  { background: var(--dm-blue) !important; }
+.dm-activity-red::before   { background: var(--dm-red) !important; }
+
+/* ---------------- Tables ---------------- */
+.dm-table-wrap { overflow-x: auto; }
+.dm-table { width: 100%; border-collapse: collapse; }
+.dm-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #555;
+  background: #f4f4f4;
+  padding: 11px 12px;
+  white-space: nowrap;
+}
+.dm-table th:first-child { border-radius: 8px 0 0 8px; }
+.dm-table th:last-child  { border-radius: 0 8px 8px 0; }
+.dm-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #ececec;
+  font-size: 14px;
+  vertical-align: middle;
+}
+.dm-strong { font-weight: 600; white-space: nowrap; }
+.dm-cell-main { font-weight: 600; }
+.dm-cell-regular { font-weight: 500; }
+.dm-cell-sub { margin-top: 2px; font-size: 13px; color: #6f6f6f; }
+
+.dm-table-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--dm-muted);
+}
+.dm-pager { display: flex; gap: 8px; }
+
+/* ---------------- Form fields ---------------- */
+.dm-field { margin-top: 18px; }
+.dm-field label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+.dm-field input,
+.dm-field textarea,
+.dm-select,
+.nt-doc-row input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  outline: none;
+}
+.dm-field textarea { height: auto; padding: 10px 12px; resize: vertical; }
+.dm-field input[readonly] { background: #efefef; }
+.dm-field input:focus,
+.dm-field textarea:focus,
+.dm-select:focus,
+.nt-doc-row input:focus { border-color: var(--dm-purple); }
+::placeholder { color: #9a9a9a; }
+
+.dm-select { cursor: pointer; }
+.dm-select-sm { width: auto; height: 34px; }
+
+/* ---------------- Student officer: dashboard ---------------- */
+.so-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 40px 22px 32px;
+  min-height: 160px;
+}
+.so-hero-date { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--dm-purple); }
+.so-hero-title { margin-top: 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
+.so-hero-text { margin-top: 8px; font-size: 15px; color: var(--dm-muted); }
+.so-hero-icons { width: 290px; height: auto; flex-shrink: 0; }
+
+.so-ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.dm-ticket-card {
+  border: 1px solid var(--dm-border);
+  border-radius: 10px;
+  padding: 18px 20px 14px;
+}
+.dm-ticket-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.dm-ticket-code { font-size: 16px; font-weight: 600; }
+.dm-ticket-ref { margin-top: 2px; font-size: 13px; color: #666; }
+.dm-ticket-section { border-top: 1px solid #ececec; margin-top: 12px; padding-top: 14px; }
+.dm-ticket-title { font-size: 16px; font-weight: 600; }
+.dm-ticket-type { margin-top: 4px; font-size: 14px; color: #666; }
+.dm-ticket-people p { font-size: 14px; margin-bottom: 8px; color: #333; }
+.dm-ticket-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #ececec;
+  font-size: 12px;
+  color: var(--dm-faint);
+}
+
+/* ---------------- Student officer: new ticket ---------------- */
+.nt-form { display: flex; flex-direction: column; gap: 24px; }
+.nt-two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.nt-count {
+  background: var(--dm-sidebar);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.nt-doc-labels,
+.nt-doc-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) minmax(0, 1fr) 150px 40px;   /* #, type, title, ref no., remove */
+  gap: 12px;
+  align-items: center;
+}
+.nt-doc-labels { margin-top: 20px; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+.nt-doc-row { margin-bottom: 16px; }
+.nt-doc-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #d4d4d4;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nt-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: -4px; }
+.nt-note { margin-top: 16px; font-size: 14px; line-height: 1.6; color: var(--dm-muted); }
+
+/* ---------------- Signatory: dashboard ---------------- */
+.sg-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--dm-green-bg);
+  color: var(--dm-green);
+  font-weight: 600;
+}
+.sg-status-pill .dm-dot { background: var(--dm-green); }
+
+.sg-availability-form { margin-top: 18px; }
+.sg-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 38px;
+  padding: 0 14px;
+  margin-bottom: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.sg-option input { accent-color: var(--dm-text); width: 16px; height: 16px; }
+.sg-option:has(input:checked) { border: 2px solid var(--dm-text); font-weight: 600; }
+.sg-availability-form .dm-field { margin-top: 4px; }
+.sg-time {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  color: #8a8a8a;
+  margin-bottom: 16px;
+}
+.sg-time input { border: 0 !important; height: auto !important; padding: 0 !important; }
+
+/* ---------------- Label / value list (profile card, signatory cards) ---------------- */
+.dm-facts {
+  margin-top: 20px;
+  padding-top: 8px;
+  border-top: 1px solid #ececec;
+  text-align: left;
+}
+.dm-facts div { display: flex; justify-content: space-between; gap: 12px; padding-top: 12px; font-size: 14px; }
+.dm-facts dt { color: var(--dm-muted); }
+.dm-facts dd { font-weight: 600; }
+
+/* ---------------- Student officer: profile ---------------- */
+.pf-columns {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.pf-stack { display: flex; flex-direction: column; gap: 24px; }
+
+.pf-card { padding: 32px 24px 24px; text-align: center; }
+.pf-avatar { width: 88px; height: 88px; margin: 0 auto; font-size: 30px; }
+.pf-name { margin-top: 16px; font-size: 20px; font-weight: 700; }
+.pf-sub { margin: 6px 0 12px; font-size: 14px; color: var(--dm-muted); }
+
+.pf-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; }
+.pf-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.pf-submit { margin-top: 18px; }
+
+.pf-notify { margin-top: 8px; }
+.pf-notify-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #ececec;
+}
+.pf-notify-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.pf-notify-label { font-size: 14px; font-weight: 600; }
+.pf-notify-note { margin-top: 2px; font-size: 13px; color: var(--dm-muted); }
+
+/* toggle switch: a real checkbox (keyboard + form friendly) drawn as a pill */
+.pf-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.pf-switch input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+.pf-switch span {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #e2e2e2;
+  transition: background 0.15s;
+}
+.pf-switch span::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s;
+}
+.pf-switch input:checked + span { background: var(--dm-text); }
+.pf-switch input:checked + span::after { transform: translateX(20px); }
+.pf-switch input:focus-visible + span { outline: 2px solid var(--dm-purple); outline-offset: 2px; }
+.pf-switch input:disabled { cursor: not-allowed; }
+.pf-switch input:disabled + span { background: #efefef; }
+
+/* ---------------- Student officer: signatories ---------------- */
+.sl-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: var(--dm-sidebar);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.sl-arrow { vertical-align: -3px; }
+
+.sl-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.sl-card { padding: 20px; }
+.sl-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.sl-step {
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: #f0f0f0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.sl-avatar { width: 54px; height: 54px; margin-top: 16px; font-size: 18px; }
+.sl-name { margin-top: 14px; font-size: 18px; font-weight: 700; }
+.sl-role { margin-top: 2px; font-size: 14px; color: var(--dm-muted); }
+
+.sl-table { margin-top: 16px; }
+.sl-num { width: 140px; }
+
+/* ---------------- Components preview page ---------------- */
+.cp-body { padding: 48px; display: flex; flex-direction: column; gap: 48px; }
+.cp-row { display: flex; gap: 48px; align-items: flex-start; flex-wrap: wrap; }
+.cp-icons {
+  display: flex;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--dm-sidebar);
+  color: #fff;
+  border-radius: 10px;
+}
+.cp-menu {
+  width: 264px;
+  padding: 16px;
+  background: var(--dm-sidebar);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cp-stack { padding: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.cp-fixed { width: 220px; }
+.cp-ticket { width: 320px; }
+.cp-fixed-wide { width: 320px; }
+
+/* ---------------- Effects ----------------
+   Page transitions: same browser feature as the auth pages (transitions.css).
+   The sidebar stays perfectly still, the purple active-menu bar slides to
+   the new item, and only the main content fades/rises in.
+   Browsers without View Transitions just switch pages normally.
+   Everything here is skipped when the user's system asks for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+
+  .dm-sidebar  { view-transition-name: dm-sidebar; }
+  .dm-main     { view-transition-name: dm-main; }
+  .dm-menu-bar { view-transition-name: dm-menu-bar; }
+
+  /* page background + sidebar: swap instantly (they look the same on every page) */
+  ::view-transition-old(root),
+  ::view-transition-old(dm-sidebar) { display: none; }
+  ::view-transition-new(root),
+  ::view-transition-new(dm-sidebar) { animation: none; }
+  ::view-transition-group(dm-sidebar) { animation: none; }
+
+  /* main content: old page fades out quickly, new page rises in */
+  ::view-transition-group(dm-main) { animation: none; }
+  ::view-transition-old(dm-main) { animation: dm-fade-out 120ms ease-in both; }
+  ::view-transition-new(dm-main) { animation: dm-rise-in 280ms ease-out 60ms both; }
+
+  /* active-menu bar: the browser slides it from the old item to the new one */
+  ::view-transition-group(dm-menu-bar) { animation-duration: 300ms; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+  /* live details: "Available" dots pulse gently */
+  .dm-availability.is-live .dm-dot { animation: dm-pulse 2s ease-out infinite; }
+}
+
+@keyframes dm-fade-out { to { opacity: 0; } }
+@keyframes dm-rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes dm-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(30, 123, 58, 0.45); }
+  70%  { box-shadow: 0 0 0 6px rgba(30, 123, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(30, 123, 58, 0); }
+}
+
+/* ---------------- Polish (modern look + smoother motion) ----------------
+   Self-contained: deleting this whole block restores the previous look.
+   Part 1 is static styling (depth, gradients, focus glows) and always applies.
+   Part 2 is motion and only runs when the system allows animations. */
+
+:root {
+  --dm-ease: cubic-bezier(0.2, 0.8, 0.2, 1);   /* fast start, soft landing */
+  --dm-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --dm-shadow-lg: 0 14px 28px -8px rgba(16, 24, 40, 0.14), 0 4px 10px -4px rgba(16, 24, 40, 0.06);
+  --dm-glow: 0 8px 20px -6px rgba(91, 63, 217, 0.55);
+}
+
+/* Part 1: static styling */
+.dm-card,
+.dm-ticket-card { box-shadow: var(--dm-shadow-sm); }
+
+.dm-btn-primary { background: linear-gradient(180deg, #6c52ef, var(--dm-purple)); }
+.dm-btn-primary:hover { background: linear-gradient(180deg, #5e44e3, var(--dm-purple-dark)); box-shadow: var(--dm-glow); }
+.dm-btn-success:hover { box-shadow: 0 8px 20px -6px rgba(30, 123, 58, 0.5); }
+
+/* active menu item: soft purple wash that fades into the highlight */
+.dm-menu-item.is-active {
+  background: linear-gradient(90deg, rgba(139, 116, 255, 0.22), var(--dm-sidebar-active) 65%);
+}
+
+/* officer welcome card: faint purple glow behind the illustration */
+.so-hero { background: radial-gradient(circle at 85% 50%, #f1edff, #fff 45%); }
+
+/* inputs: soft purple ring on focus instead of only a border change */
+.dm-field input,
+.dm-field textarea,
+.dm-select,
+.nt-doc-row input,
+.dm-search { transition: border-color 0.2s, box-shadow 0.2s; }
+.dm-field input:focus,
+.dm-field textarea:focus,
+.dm-select:focus,
+.nt-doc-row input:focus,
+.dm-search:focus-within { box-shadow: 0 0 0 4px rgba(91, 63, 217, 0.14); }
+
+/* keyboard users get a clear outline on links and buttons */
+.dm-body a:focus-visible,
+.dm-body button:focus-visible { outline: 2px solid var(--dm-purple); outline-offset: 2px; }
+
+/* table rows highlight under the mouse */
+.dm-table tbody tr { transition: background 0.2s; }
+.dm-table tbody tr:hover { background: #fafafc; }
+
+/* tabs: underline that grows from the middle on hover */
+.dm-tab { position: relative; transition: color 0.2s; }
+.dm-tab:not(.is-active)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;   /* same spot as the active tab's 2px border */
+  height: 2px;
+  border-radius: 2px;
+  background: #c9c9d6;
+  transform: scaleX(0);
+  transition: transform 0.3s var(--dm-ease);
+}
+.dm-tab:hover::after { transform: scaleX(1); }
+
+/* Part 2: motion */
+@media (prefers-reduced-motion: no-preference) {
+  /* Entrance: page sections fade in and rise one after another.
+     Uses "translate" (not "transform") so it never blocks the hover lifts below. */
+  .dm-main > * { animation: dm-enter 0.55s var(--dm-ease) both; animation-delay: var(--dm-delay, 0ms); }
+  .dm-main > :nth-child(2) { --dm-delay: 70ms; }
+  .dm-main > :nth-child(3) { --dm-delay: 140ms; }
+  .dm-main > :nth-child(4) { --dm-delay: 210ms; }
+  .dm-main > :nth-child(5) { --dm-delay: 280ms; }
+
+  /* cards inside a section cascade in after their section starts */
+  .dm-stat-grid > *,
+  .so-ticket-grid > *,
+  .sl-grid > *,
+  .dm-side > * { animation: dm-enter 0.55s var(--dm-ease) both; }
+  .dm-stat-grid > :nth-child(1), .so-ticket-grid > :nth-child(1), .sl-grid > :nth-child(1), .dm-side > :nth-child(1) { animation-delay: calc(var(--dm-delay, 0ms) + 60ms); }
+  .dm-stat-grid > :nth-child(2), .so-ticket-grid > :nth-child(2), .sl-grid > :nth-child(2), .dm-side > :nth-child(2) { animation-delay: calc(var(--dm-delay, 0ms) + 120ms); }
+  .dm-stat-grid > :nth-child(3), .so-ticket-grid > :nth-child(3), .sl-grid > :nth-child(3) { animation-delay: calc(var(--dm-delay, 0ms) + 180ms); }
+  .dm-stat-grid > :nth-child(4), .so-ticket-grid > :nth-child(4), .sl-grid > :nth-child(4) { animation-delay: calc(var(--dm-delay, 0ms) + 240ms); }
+  .dm-stat-grid > :nth-child(5) { animation-delay: calc(var(--dm-delay, 0ms) + 300ms); }
+
+  /* the page transition now only fades: the entrance above does the rising */
+  ::view-transition-new(dm-main) { animation: dm-fade-in 0.2s ease-out both; }
+
+  /* Hover lift: small cards float up with a deeper shadow */
+  .dm-ticket-card,
+  .dm-stat-card,
+  .sl-card {
+    transition: transform 0.3s var(--dm-ease), box-shadow 0.3s var(--dm-ease), border-color 0.3s;
+  }
+  .dm-ticket-card:hover,
+  .dm-stat-card:hover,
+  .sl-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--dm-shadow-lg);
+    border-color: #dcdce4;
+  }
+
+  /* Buttons: lift on hover, press down on click */
+  .dm-btn,
+  .dm-icon-btn { transition: background 0.2s, border-color 0.2s, box-shadow 0.25s var(--dm-ease), transform 0.2s var(--dm-ease); }
+  .dm-btn:hover,
+  .dm-icon-btn:hover { transform: translateY(-1px); }
+  .dm-btn:active,
+  .dm-icon-btn:active { transform: translateY(0) scale(0.97); }
+
+  /* Sidebar: icon nudges right on hover */
+  .dm-menu-item .dm-icon { transition: transform 0.25s var(--dm-ease); }
+  .dm-menu-item:hover .dm-icon { transform: translateX(3px); }
+
+  /* Signatory availability options react to the mouse */
+  .sg-option { transition: border-color 0.2s, background 0.2s; }
+  .sg-option:hover { background: #fafafa; border-color: #bdbdbd; }
+
+  /* Welcome card illustration floats gently */
+  .so-hero-icons { animation: dm-float 6s ease-in-out infinite; }
+}
+
+@keyframes dm-enter {
+  from { opacity: 0; translate: 0 14px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+@keyframes dm-fade-in { from { opacity: 0; } }
+@keyframes dm-float {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -8px; }
+}
+
+/* ---------------- Smaller screens ---------------- */
+@media (max-width: 1200px) {
+  .dm-columns { grid-template-columns: 1fr; }
+  .dm-stat-grid-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .so-hero-icons { width: 220px; }
+  .pf-columns { grid-template-columns: 1fr; }
+  .sl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  .dm-body { flex-direction: column; }
+  .dm-sidebar { position: static; width: 100%; height: auto; }
+  .dm-logout { margin-top: 12px; }
+  .dm-main { padding: 20px 16px; }
+  .dm-stat-grid-5,
+  .dm-stat-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .so-ticket-grid,
+  .nt-two-cols,
+  .pf-grid,
+  .sl-grid { grid-template-columns: 1fr; }
+  .so-hero { flex-direction: column; align-items: flex-start; padding: 20px; }
+  .dm-search { width: 100%; }
+  .dm-header-actions { flex-wrap: wrap; width: 100%; }
+}
