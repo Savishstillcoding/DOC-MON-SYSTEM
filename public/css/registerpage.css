@@ -144,3 +144,10 @@
     padding: 20px;
   }
 }
+
+/* Upload error (AUD-040), same red as the log-in errors */
+.form-error {
+  font-size: 14px;
+  line-height: 20px;
+  color: #b42318;
+}

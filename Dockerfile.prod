@@ -13,6 +13,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
+# Upload limits, written down on purpose (AUD-040): ID uploads are max 2 MB.
+# These match PHP's defaults; change them together with public/js/register.js.
+RUN printf 'upload_max_filesize=2M\npost_max_size=8M\n' > /usr/local/etc/php/conf.d/uploads.ini
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
