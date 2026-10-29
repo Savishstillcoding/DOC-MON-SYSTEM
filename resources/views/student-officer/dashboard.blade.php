@@ -3,8 +3,6 @@
     Static placeholder data for now (not connected to the database yet).
 --}}
 @php
-    $user = ['name' => 'Labastida, MJ Bryan', 'initials' => 'MJ', 'subtitle' => 'Secretary · DIGITS'];
-
     $menu = [
         ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
         ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
@@ -60,7 +58,7 @@
     $tabs = ['All', 'Pending', 'Approved', 'Needs Revision', 'Rejected'];
 @endphp
 
-<x-docmon.dashboard-layout title="Dashboard" :user="$user" :menu="$menu" active="Dashboard">
+<x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard">
 
     <header class="dm-page-header">
         <div>

@@ -158,6 +158,23 @@ class AuthTest extends TestCase
         $this->get('/officer/dashboard')->assertRedirect('/login');
     }
 
+    // ---------- Public pages ----------
+
+    public function test_sign_up_offers_no_admin_option(): void
+    {
+        $this->get('/signup')
+            ->assertOk()
+            ->assertDontSee('/register/admin');
+
+        $this->get('/register/admin')->assertNotFound();
+    }
+
+    public function test_the_developer_components_page_is_hidden_outside_local(): void
+    {
+        // Tests run with APP_ENV=testing, like the live site runs with production
+        $this->get('/dev/components')->assertNotFound();
+    }
+
     // ---------- Demo data ----------
 
     public function test_the_seeded_demo_accounts_can_log_in(): void

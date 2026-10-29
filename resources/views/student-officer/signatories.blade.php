@@ -5,8 +5,6 @@
     and how many of this officer's tickets are with each one.
 --}}
 @php
-    $user = ['name' => 'Labastida, MJ Bryan', 'initials' => 'MJ', 'subtitle' => 'Secretary · DIGITS'];
-
     $menu = [
         ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
         ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
@@ -24,7 +22,7 @@
     ];
 @endphp
 
-<x-docmon.dashboard-layout title="Signatories" :user="$user" :menu="$menu" active="Signatories">
+<x-docmon.dashboard-layout title="Signatories" :menu="$menu" active="Signatories">
 
     <header class="dm-page-header">
         <div>

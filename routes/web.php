@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Officer\ProfileController;
+use App\Http\Controllers\Officer\TicketController;
+use App\Http\Controllers\Signatory\AvailabilityController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -61,17 +64,22 @@ Route::post('/register/{role}', function () {
 
 // ---------- Dashboards: logged in AND the right role ----------
 // 'auth' sends guests to /login; 'role:x' answers 403 to other roles.
-// PROTOTYPE: the pages still show placeholder data (not the logged-in user's).
+// PROTOTYPE: the dashboards and Signatories page still show placeholder data.
 Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function () {
     Route::get('/dashboard', function () { return view('student-officer.dashboard'); });
-    Route::get('/tickets', function () { return view('student-officer.my-tickets'); });
-    Route::get('/tickets/new', function () { return view('student-officer.new-ticket'); });
+    Route::get('/tickets', [TicketController::class, 'index']);
+    Route::get('/tickets/new', [TicketController::class, 'create']);
+    Route::post('/tickets', [TicketController::class, 'store']);
     Route::get('/signatories', function () { return view('student-officer.signatories'); });
-    Route::get('/profile', function () { return view('student-officer.profile'); });
+    Route::get('/profile', [ProfileController::class, 'edit']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    // Throttled like log-in: this form also checks a password, so it must not allow guessing
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:5,1');
 });
 
 Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(function () {
     Route::get('/dashboard', function () { return view('signatory.dashboard'); });
+    Route::put('/availability', [AvailabilityController::class, 'update']);
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
@@ -79,4 +87,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 });
 
 // Dev-only reference page showing every dashboard component.
-Route::get('/dev/components', function () { return view('docmon-dev.components-preview'); });
+// Registered only on a developer's laptop (APP_ENV=local), so the live site answers 404.
+if (app()->environment('local')) {
+    Route::get('/dev/components', function () { return view('docmon-dev.components-preview'); });
+}

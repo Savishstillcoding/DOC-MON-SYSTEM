@@ -3,14 +3,23 @@
     Every dashboard page wraps its content in this layout.
 
     Usage:
-    <x-docmon.dashboard-layout title="Dashboard" :user="$user" :menu="$menu" active="Dashboard">
+    <x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard">
         ...page content...
     </x-docmon.dashboard-layout>
 
-    $user = ['name' => 'Labastida, MJ Bryan', 'initials' => 'MJ', 'subtitle' => 'Secretary · DIGITS']
     $menu = [['label' => 'Dashboard', 'icon' => 'house', 'href' => '#'], ...]
+    The sidebar card shows the logged-in user. A page may pass :user to override it:
+    $user = ['name' => 'Labastida, MJ Bryan', 'initials' => 'MJ', 'subtitle' => 'Secretary · DIGITS']
+    session('status') (e.g. "Profile saved.") is shown as a green bar above the content.
 --}}
-@props(['title' => 'DOC-MON', 'user' => [], 'menu' => [], 'active' => ''])
+@props(['title' => 'DOC-MON', 'user' => null, 'menu' => [], 'active' => ''])
+
+@php
+    $account = auth()->user();
+    $user ??= $account
+        ? ['name' => $account->displayName(), 'initials' => $account->initials(), 'subtitle' => $account->subtitle()]
+        : [];
+@endphp
 
 <!DOCTYPE html>
 <html lang="en">
@@ -65,6 +74,10 @@
     </aside>
 
     <main class="dm-main">
+        @if (session('status'))
+            <p class="dm-flash" role="status"><x-docmon.icon name="check" size="18" /> {{ session('status') }}</p>
+        @endif
+
         {{ $slot }}
     </main>
 

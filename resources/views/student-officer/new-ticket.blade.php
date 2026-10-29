@@ -1,13 +1,12 @@
 {{--
     DOC-MON · Student Officer · New Ticket
-    The form is not connected yet: set the form's action to the store route later.
-    Field names are ready for the controller:
-      ref_no, title, organization, date_needed, purpose,
+    Posts to TicketController@store. Fields:
+      ref_no, title, date_needed, purpose,
       documents[0][type], documents[0][title], documents[0][ref_no] (optional), documents[1][type], ...
+    The organization is shown but not sent: the server takes it from the logged-in officer.
+    From the controller: $organization (with its signatories), $documentTypes
 --}}
 @php
-    $user = ['name' => 'Labastida, MJ Bryan', 'initials' => 'MJ', 'subtitle' => 'Secretary · DIGITS'];
-
     $menu = [
         ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
         ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
@@ -16,27 +15,14 @@
         ['label' => 'Profile',     'icon' => 'user',      'href' => url('/officer/profile')],
     ];
 
-    // The documents student organizations submit (confirmed list, 2026-10-22).
-    // "Other (specify)" is the fallback for papers an org has that aren't on
-    // the list: the Document Title then says what the paper is.
-    $documentTypes = ['Resolution', 'Activity Proposal', 'Budgetary', 'Narrative/Accomplishment Report', 'Sem-End Report', 'Year-End Report', 'Other (specify)'];
+    // Document rows: what was typed before a failed submit, or one empty row (Single)
+    $rows = old('documents', [['type' => $documentTypes[0], 'title' => '', 'ref_no' => '']]);
 
-    // Example rows: a resolution with its attached proposal and budgetary
-    $rows = [
-        ['type' => 'Resolution',        'title' => 'Resolution approving DIGITS Week 2026'],
-        ['type' => 'Activity Proposal', 'title' => 'DIGITS Week Activity Proposal'],
-        ['type' => 'Budgetary',         'title' => 'DIGITS Week Budgetary'],
-    ];
-
-    $route = [
-        ['badge' => '1', 'name' => 'Dela Cruz, Ana', 'role' => 'Adviser',       'status' => 'Meeting',       'note' => '2 PM'],
-        ['badge' => '2', 'name' => 'Reyes, Paolo',   'role' => 'SSC President', 'status' => 'Available',     'note' => null],
-        ['badge' => '3', 'name' => 'Garcia, Ramon',  'role' => 'ODSOA',         'status' => 'Out of Office', 'note' => null],
-        ['badge' => '4', 'name' => 'Santos, Liza',   'role' => 'VPSD',          'status' => 'Available',     'note' => null],
-    ];
+    // Error messages about the document rows (documents, documents.0.title, ...)
+    $documentErrors = collect($errors->get('documents'))->merge(collect($errors->get('documents.*'))->flatten());
 @endphp
 
-<x-docmon.dashboard-layout title="New Ticket" :user="$user" :menu="$menu" active="New Ticket">
+<x-docmon.dashboard-layout title="New Ticket" :menu="$menu" active="New Ticket">
 
     <header class="dm-page-header">
         <div>
@@ -49,8 +35,12 @@
     </header>
 
     <div class="dm-columns">
-        <form class="nt-form" method="POST" action="#">
+        <form class="nt-form" method="POST" action="{{ url('/officer/tickets') }}">
             @csrf
+
+            @error('ticket')
+                <p class="dm-form-alert" role="alert">{{ $message }}</p>
+            @enderror
 
             {{-- Ticket Details --}}
             <section class="dm-card dm-panel">
@@ -63,27 +53,31 @@
                     <div class="dm-field">
                         <label for="nt-ref">Ref No. (Resolution No.)</label>
                         <input id="nt-ref" name="ref_no" type="text" maxlength="20" placeholder="e.x. 2026-09-008" value="{{ old('ref_no') }}" required>
+                        @error('ref_no') <p class="dm-field-error">{{ $message }}</p> @enderror
                     </div>
                     <div class="dm-field">
                         <label for="nt-title">Ticket Title</label>
-                        <input id="nt-title" name="title" type="text" placeholder="e.x. DIGITS Week 2026 Requirements">
+                        <input id="nt-title" name="title" type="text" maxlength="255" placeholder="e.x. DIGITS Week 2026 Requirements" value="{{ old('title') }}" required>
+                        @error('title') <p class="dm-field-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 <div class="nt-two-cols">
                     <div class="dm-field">
                         <label for="nt-org">Organization</label>
-                        <input id="nt-org" name="organization" type="text" value="DIGITS" readonly>
+                        <input id="nt-org" type="text" value="{{ $organization?->code }}" readonly>
                     </div>
                     <div class="dm-field">
                         <label for="nt-date">Date Needed</label>
-                        <input id="nt-date" name="date_needed" type="date">
+                        <input id="nt-date" name="date_needed" type="date" min="{{ today()->toDateString() }}" value="{{ old('date_needed') }}">
+                        @error('date_needed') <p class="dm-field-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 <div class="dm-field">
                     <label for="nt-purpose">Purpose / Notes for Signatories</label>
-                    <textarea id="nt-purpose" name="purpose" rows="3" placeholder="e.x. For the approval of the DIGITS Week activities..."></textarea>
+                    <textarea id="nt-purpose" name="purpose" rows="3" maxlength="2000" placeholder="e.x. For the approval of the DIGITS Week activities...">{{ old('purpose') }}</textarea>
+                    @error('purpose') <p class="dm-field-error">{{ $message }}</p> @enderror
                 </div>
             </section>
 
@@ -101,17 +95,25 @@
                     <span></span><span>Document Type</span><span>Document Title</span><span>Ref No. (if any)</span><span></span>
                 </div>
 
+                @if ($documentErrors->isNotEmpty())
+                    <ul class="dm-form-alert" role="alert">
+                        @foreach ($documentErrors as $message)
+                            <li>{{ $message }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+
                 <div id="nt-doc-rows">
-                    @foreach ($rows as $i => $row)
+                    @foreach (array_values($rows) as $i => $row)
                         <div class="nt-doc-row">
                             <span class="nt-doc-num">{{ $i + 1 }}</span>
-                            <select name="documents[{{ $i }}][type]" class="dm-select" data-field="type">
+                            <select name="documents[{{ $i }}][type]" class="dm-select" data-field="type" aria-label="Document type">
                                 @foreach ($documentTypes as $type)
-                                    <option @if ($type === $row['type']) selected @endif>{{ $type }}</option>
+                                    <option @selected($type === ($row['type'] ?? null))>{{ $type }}</option>
                                 @endforeach
                             </select>
-                            <input type="text" name="documents[{{ $i }}][title]" value="{{ $row['title'] }}" placeholder="e.x. Program Flow" data-field="title">
-                            <input type="text" name="documents[{{ $i }}][ref_no]" maxlength="20" placeholder="Optional" aria-label="Document Ref No. (optional)" data-field="ref_no">
+                            <input type="text" name="documents[{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" maxlength="255" placeholder="e.x. Program Flow" aria-label="Document title" data-field="title" required>
+                            <input type="text" name="documents[{{ $i }}][ref_no]" value="{{ $row['ref_no'] ?? '' }}" maxlength="20" placeholder="Optional" aria-label="Document Ref No. (optional)" data-field="ref_no">
                             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
                         </div>
                     @endforeach
@@ -130,11 +132,14 @@
             {{-- Approval Route --}}
             <section class="dm-card dm-panel">
                 <h2 class="dm-panel-title">Approval Route</h2>
-                <p class="dm-panel-sub">DIGITS signatories, in order</p>
+                <p class="dm-panel-sub">{{ $organization?->code }} signatories, in order</p>
                 <div class="dm-route dm-route-plain">
-                    @foreach ($route as $s)
-                        <x-docmon.signatory-row :badge="$s['badge']" :name="$s['name']" :role="$s['role']" :status="$s['status']" :note="$s['note']" />
-                    @endforeach
+                    @forelse ($organization?->signatories ?? [] as $signatory)
+                        <x-docmon.signatory-row :badge="$signatory->pivot->step" :name="$signatory->displayName()" :role="$signatory->pivot->title"
+                            :status="$signatory->availability ?? 'Available'" :note="$signatory->back_at" />
+                    @empty
+                        <p class="nt-note">No signatories yet. Ask the admin to set up your organization's approval route.</p>
+                    @endforelse
                 </div>
             </section>
 
@@ -150,12 +155,12 @@
     <template id="nt-row-template">
         <div class="nt-doc-row">
             <span class="nt-doc-num"></span>
-            <select class="dm-select" data-field="type">
+            <select class="dm-select" data-field="type" aria-label="Document type">
                 @foreach ($documentTypes as $type)
                     <option>{{ $type }}</option>
                 @endforeach
             </select>
-            <input type="text" data-field="title" placeholder="e.x. Program Flow">
+            <input type="text" data-field="title" maxlength="255" placeholder="e.x. Program Flow" aria-label="Document title" required>
             <input type="text" data-field="ref_no" maxlength="20" placeholder="Optional" aria-label="Document Ref No. (optional)">
             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
         </div>
