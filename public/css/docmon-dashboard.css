@@ -532,6 +532,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-weight: 600;
 }
 .sg-status-pill .dm-dot { background: var(--dm-green); }
+/* Same colours as <x-docmon.availability>: amber = busy, red = away */
+.sg-status-pill.is-busy { background: var(--dm-amber-bg); color: var(--dm-amber-text); }
+.sg-status-pill.is-busy .dm-dot { background: var(--dm-amber); }
+.sg-status-pill.is-away { background: var(--dm-red-bg); color: var(--dm-red); }
+.sg-status-pill.is-away .dm-dot { background: var(--dm-red); }
 
 .sg-availability-form { margin-top: 18px; }
 .sg-option {
@@ -889,3 +894,29 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .dm-search { width: 100%; }
   .dm-header-actions { flex-wrap: wrap; width: 100%; }
 }
+
+/* ---------- Form feedback (AUD-018) ---------- */
+/* Green bar after a successful save: session('status') in the layout */
+.dm-flash {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--dm-green-bg);
+  color: var(--dm-green);
+  font-weight: 600;
+}
+/* Red message under a field, and red box for form-wide errors */
+.dm-field-error { margin-top: 6px; font-size: 13px; color: var(--dm-red); }
+.dm-form-alert {
+  margin: 0 0 16px;
+  padding: 12px 16px 12px 32px;
+  border-radius: 10px;
+  background: var(--dm-red-bg);
+  color: var(--dm-red);
+  font-size: 14px;
+  line-height: 1.6;
+}
+p.dm-form-alert { padding-left: 16px; }

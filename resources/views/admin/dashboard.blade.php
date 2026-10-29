@@ -3,8 +3,6 @@
     Static placeholder data for now (not connected to the database yet).
 --}}
 @php
-    $user = ['name' => 'System Admin', 'initials' => 'SA', 'subtitle' => 'Administrator'];
-
     $menu = [
         ['label' => 'Dashboard',         'icon' => 'house',        'href' => url('/admin/dashboard')],
         ['label' => 'User Verification', 'icon' => 'shield-check', 'href' => '#'],
@@ -45,7 +43,7 @@
     ];
 @endphp
 
-<x-docmon.dashboard-layout title="Admin Dashboard" :user="$user" :menu="$menu" active="Dashboard">
+<x-docmon.dashboard-layout title="Admin Dashboard" :menu="$menu" active="Dashboard">
 
     <header class="dm-page-header">
         <div>

@@ -42,7 +42,7 @@
         <div class="role-card">
           <a class="role-btn" href="{{ url('/register/officer') }}">Student Officer</a>
           <a class="role-btn" href="{{ url('/register/signatory') }}">Signatory</a>
-          <a class="role-btn" href="{{ url('/register/admin') }}">Admin</a>
+          {{-- No Admin option: admins are created by hand, never through public sign-up (AUD-002) --}}
         </div>
       </div>
 

@@ -87,8 +87,9 @@
               </svg>
               <span class="upload-text" data-upload-text>Click to upload</span>
             </label>
-            <input class="upload-input" id="school_id" name="school_id" type="file" accept="image/*,.pdf" aria-labelledby="school_id_label" aria-describedby="school_id_note" required>
-            <p class="field-note" id="school_id_note">Note: Upload your school ID for verification</p>
+            <input class="upload-input" id="school_id" name="school_id" type="file" accept="image/*,.pdf" aria-labelledby="school_id_label" aria-describedby="school_id_note school_id_error" required>
+            <p class="field-note" id="school_id_note">Note: Upload your school ID for verification. Photo or PDF, max 2 MB (big photos are shrunk automatically).</p>
+            <p class="form-error" id="school_id_error" role="alert" hidden></p>
           </div>
 
           <button class="submit-btn" type="submit">Sign Up</button>

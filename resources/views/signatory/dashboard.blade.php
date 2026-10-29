@@ -1,11 +1,10 @@
 {{--
     DOC-MON · Signatory · Dashboard
-    Static placeholder data for now (not connected to the database yet).
-    The availability form uses the field names: availability, back_at
+    The stats and review table are still placeholder data.
+    The availability form is real: PUT /signatory/availability (availability, back_at),
+    and shows the logged-in signatory's current status.
 --}}
 @php
-    $user = ['name' => 'Dela Cruz, Ana', 'initials' => 'AD', 'subtitle' => 'Adviser · DIGITS'];
-
     $menu = [
         ['label' => 'Dashboard',    'icon' => 'house', 'href' => url('/signatory/dashboard')],
         ['label' => 'For Review',   'icon' => 'inbox', 'href' => '#'],
@@ -37,7 +36,8 @@
         ['label' => 'In Class',      'variant' => 'busy'],
         ['label' => 'Out of Office', 'variant' => 'away'],
     ];
-    $currentAvailability = 'Available';
+    $account = auth()->user();
+    $currentAvailability = old('availability', $account->availability ?? 'Available');
 
     $recent = [
         ['color' => 'green', 'text' => 'DM-00114 · Resolution – Election Guidelines',        'time' => 'Approved · 2 hours ago'],
@@ -46,16 +46,17 @@
     ];
 @endphp
 
-<x-docmon.dashboard-layout title="Dashboard" :user="$user" :menu="$menu" active="Dashboard">
+<x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard">
 
     <header class="dm-page-header">
         <div>
-            <h1 class="dm-page-title">Good day, Adviser!</h1>
+            <h1 class="dm-page-title">Good day, {{ $account->position ?: $account->first_name }}!</h1>
             <p class="dm-page-sub">You have 5 documents waiting for your signature.</p>
         </div>
         <div class="dm-header-actions">
-            <span class="sg-status-pill">
-                <span class="dm-dot"></span>{{ $currentAvailability }}
+            @php $pillVariant = collect($availabilityOptions)->firstWhere('label', $account->availability ?? 'Available')['variant'] ?? 'available'; @endphp
+            <span class="sg-status-pill is-{{ $pillVariant }}">
+                <span class="dm-dot"></span>{{ $account->availability ?? 'Available' }}@if ($account->back_at) · {{ $account->back_at }}@endif
                 <x-docmon.icon name="chevron-down" size="14" />
             </span>
             <label class="dm-search">
@@ -134,8 +135,9 @@
                 <h2 class="dm-panel-title">My Availability</h2>
                 <p class="dm-panel-sub">Officers see this on their tickets</p>
 
-                <form method="POST" action="#" class="sg-availability-form">
+                <form method="POST" action="{{ url('/signatory/availability') }}" class="sg-availability-form">
                     @csrf
+                    @method('PUT')
                     @foreach ($availabilityOptions as $option)
                         <label class="sg-option">
                             <input type="radio" name="availability" value="{{ $option['label'] }}"
@@ -149,9 +151,11 @@
                         <label for="sg-back-at">Back at (optional)</label>
                         <div class="sg-time">
                             <x-docmon.icon name="clock" size="18" />
-                            <input id="sg-back-at" name="back_at" type="text" placeholder="e.x. 2:00 PM">
+                            <input id="sg-back-at" name="back_at" type="text" maxlength="30" placeholder="e.x. 2:00 PM" value="{{ old('back_at', $account->back_at) }}">
                         </div>
+                        @error('back_at') <p class="dm-field-error">{{ $message }}</p> @enderror
                     </div>
+                    @error('availability') <p class="dm-field-error">{{ $message }}</p> @enderror
 
                     <button type="submit" class="dm-btn dm-btn-primary dm-btn-block">Update Status</button>
                 </form>
