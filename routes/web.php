@@ -1,9 +1,16 @@
 <?php
 
+use App\Http\Controllers\Account\PasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Officer\DocumentController;
 use App\Http\Controllers\Officer\ProfileController;
 use App\Http\Controllers\Officer\TicketController;
 use App\Http\Controllers\Signatory\AvailabilityController;
+use App\Http\Controllers\Signatory\DashboardController;
+use App\Http\Controllers\Signatory\DocumentActionController;
+use App\Http\Controllers\Signatory\HistoryController;
+use App\Http\Controllers\Signatory\ProfileController as SignatoryProfileController;
+use App\Http\Controllers\Signatory\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -70,15 +77,23 @@ Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function (
     Route::get('/tickets', [TicketController::class, 'index']);
     Route::get('/tickets/new', [TicketController::class, 'create']);
     Route::post('/tickets', [TicketController::class, 'store']);
+    Route::post('/documents/{document}/resubmit', [DocumentController::class, 'resubmit']);
     Route::get('/signatories', function () { return view('student-officer.signatories'); });
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::put('/profile', [ProfileController::class, 'update']);
     // Throttled like log-in: this form also checks a password, so it must not allow guessing
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:5,1');
+    Route::put('/profile/password', [PasswordController::class, 'update'])->middleware('throttle:5,1');
 });
 
 Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(function () {
-    Route::get('/dashboard', function () { return view('signatory.dashboard'); });
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/review', [ReviewController::class, 'index']);
+    Route::get('/history', [HistoryController::class, 'index']);
+    Route::post('/documents/{document}/action', [DocumentActionController::class, 'store']);
+    Route::post('/tickets/{ticket}/approve-all', [DocumentActionController::class, 'approveAll']);
+    Route::get('/profile', [SignatoryProfileController::class, 'edit']);
+    Route::put('/profile', [SignatoryProfileController::class, 'update']);
+    Route::put('/profile/password', [PasswordController::class, 'update'])->middleware('throttle:5,1');
     Route::put('/availability', [AvailabilityController::class, 'update']);
 });
 

@@ -7,11 +7,10 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 /**
- * The officer's own profile and password.
+ * The officer's own profile. The password form is Account\PasswordController.
  * Name and Student ID are NOT editable here: the admin verified them against
  * the uploaded ID, so changing them would make that verification meaningless.
  */
@@ -46,22 +45,5 @@ class ProfileController extends Controller
         $user->update($data);
 
         return back()->with('status', 'Profile saved.');
-    }
-
-    public function updatePassword(Request $request): RedirectResponse
-    {
-        // Own error bag ("password"), so these errors show under the Security form only
-        $data = $request->validateWithBag('password', [
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', 'different:current_password', Password::defaults()],
-        ], [
-            'current_password.current_password' => 'Your current password is wrong.',
-            'password.different' => 'The new password must be different from the current one.',
-        ]);
-
-        // The 'hashed' cast on User hashes it before saving
-        $request->user()->update(['password' => $data['password']]);
-
-        return back()->with('status', 'Password updated.');
     }
 }

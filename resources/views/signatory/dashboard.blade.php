@@ -1,35 +1,11 @@
 {{--
-    DOC-MON · Signatory · Dashboard
-    The stats and review table are still placeholder data.
-    The availability form is real: PUT /signatory/availability (availability, back_at),
-    and shows the logged-in signatory's current status.
+    DOC-MON · Signatory · Dashboard (Signatory\DashboardController)
+    From the controller: $documents (waiting for this signatory, oldest first, filtered by $tab),
+    $counts (per tab), $stats, $recent (this signatory's last 5 actions).
+    Each row posts to /signatory/documents/{id}/action; return and reject need remarks.
+    The availability form: PUT /signatory/availability (availability, back_at).
 --}}
 @php
-    $menu = [
-        ['label' => 'Dashboard',    'icon' => 'house', 'href' => url('/signatory/dashboard')],
-        ['label' => 'For Review',   'icon' => 'inbox', 'href' => '#'],
-        ['label' => 'History',      'icon' => 'list',  'href' => '#'],
-        ['label' => 'Availability', 'icon' => 'clock', 'href' => '#'],
-        ['label' => 'Profile',      'icon' => 'user',  'href' => '#'],
-    ];
-
-    $stats = [
-        ['label' => 'For Review',        'value' => 5,  'note' => 'Waiting for your action'],
-        ['label' => 'Signed This Week',  'value' => 12, 'note' => 'Approved documents'],
-        ['label' => 'Returned',          'value' => 2,  'note' => 'Sent back for revision'],
-        ['label' => 'Rejected',          'value' => 1,  'note' => 'This semester'],
-    ];
-
-    $tabs = ['All (5)', 'Single (3)', 'Batch (2)'];
-
-    $reviews = [
-        ['code' => 'DM-2026-00123', 'ref' => '2026-09-008', 'title' => 'Activity Proposal',            'meta' => 'Single · Labastida, MJ',     'date' => 'Sep 27', 'time' => '12:40 PM'],
-        ['code' => 'DM-2026-00125', 'ref' => '2026-09-010', 'title' => 'Resolution + Budgetary – Acquaintance Party', 'meta' => 'Batch (3) · Labastida, MJ',  'date' => 'Sep 28', 'time' => '9:15 AM'],
-        ['code' => 'DM-2026-00126', 'ref' => '2026-09-011', 'title' => 'Resolution – Venue Reservation',    'meta' => 'Single · Labastida, MJ',     'date' => 'Sep 29', 'time' => '2:02 PM'],
-        ['code' => 'DM-2026-00128', 'ref' => '2026-10-001', 'title' => 'Narrative Reports – Sept Activities','meta' => 'Batch (4) · Labastida, MJ', 'date' => 'Oct 1',  'time' => '10:30 AM'],
-        ['code' => 'DM-2026-00130', 'ref' => '2026-10-003', 'title' => 'Sem-End Report – 1st Semester',      'meta' => 'Single · Labastida, MJ',     'date' => 'Oct 2',  'time' => '8:47 AM'],
-    ];
-
     $availabilityOptions = [
         ['label' => 'Available',     'variant' => 'available'],
         ['label' => 'In a Meeting',  'variant' => 'busy'],
@@ -39,19 +15,20 @@
     $account = auth()->user();
     $currentAvailability = old('availability', $account->availability ?? 'Available');
 
-    $recent = [
-        ['color' => 'green', 'text' => 'DM-00114 · Resolution – Election Guidelines',        'time' => 'Approved · 2 hours ago'],
-        ['color' => 'blue',  'text' => 'DM-00119 · Resolution + Budgetary – Tech Summit',     'time' => 'Returned for revision · Yesterday'],
-        ['color' => 'red',   'text' => 'DM-00110 · Activity Proposal – Outreach Program',          'time' => 'Rejected · Sep 12'],
-    ];
 @endphp
 
-<x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard">
+<x-docmon.signatory-layout title="Dashboard" active="Dashboard">
 
     <header class="dm-page-header">
         <div>
             <h1 class="dm-page-title">Good day, {{ $account->position ?: $account->first_name }}!</h1>
-            <p class="dm-page-sub">You have 5 documents waiting for your signature.</p>
+            <p class="dm-page-sub">
+                @if ($stats['waiting'] === 0)
+                    No documents are waiting for your signature.
+                @else
+                    You have {{ $stats['waiting'] }} {{ Str::plural('document', $stats['waiting']) }} waiting for your signature.
+                @endif
+            </p>
         </div>
         <div class="dm-header-actions">
             @php $pillVariant = collect($availabilityOptions)->firstWhere('label', $account->availability ?? 'Available')['variant'] ?? 'available'; @endphp
@@ -68,9 +45,10 @@
     </header>
 
     <section class="dm-stat-grid dm-stat-grid-4">
-        @foreach ($stats as $stat)
-            <x-docmon.stat-card :label="$stat['label']" :value="$stat['value']" :note="$stat['note']" />
-        @endforeach
+        <x-docmon.stat-card label="For Review" :value="$stats['waiting']" note="Waiting for your action" />
+        <x-docmon.stat-card label="Signed This Week" :value="$stats['signedThisWeek']" note="Documents you approved" />
+        <x-docmon.stat-card label="Returned" :value="$stats['withOfficer']" note="With the officer for revision" />
+        <x-docmon.stat-card label="Rejected" :value="$stats['rejected']" note="All time" />
     </section>
 
     <div class="dm-columns">
@@ -81,57 +59,77 @@
                     <h2 class="dm-panel-title">Documents for Review</h2>
                     <p class="dm-panel-sub">Oldest submissions first</p>
                 </div>
-                <a href="#" class="dm-btn dm-btn-outline dm-btn-sm">View history</a>
+                <a href="{{ url('/signatory/review') }}" class="dm-btn dm-btn-outline dm-btn-sm">Open For Review</a>
             </div>
 
+            @error('action') <p class="dm-form-alert" role="alert">{{ $message }}</p> @enderror
+
             <nav class="dm-tabs">
-                @foreach ($tabs as $tab)
-                    <a href="#" class="dm-tab {{ $loop->first ? 'is-active' : '' }}">{{ $tab }}</a>
+                @foreach ($counts as $label => $count)
+                    <a href="{{ url('/signatory/dashboard') . ($label === 'All' ? '' : '?type=' . $label) }}"
+                       class="dm-tab {{ $label === $tab ? 'is-active' : '' }}">{{ $label }} ({{ $count }})</a>
                 @endforeach
             </nav>
 
+            @if ($documents->isEmpty())
+                <p class="nt-note">Nothing to sign right now. New papers appear here when they reach your step.</p>
+            @else
             <div class="dm-table-wrap">
                 <table class="dm-table">
                     <thead>
                         <tr>
                             <th>Ticket</th>
                             <th>Document</th>
-                            <th>Submitted</th>
+                            <th>Waiting Since</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($reviews as $r)
+                        @foreach ($documents as $doc)
+                            @php $isMine = (int) old('document_id') === $doc->id; @endphp
                             <tr>
                                 <td>
-                                    <p class="dm-cell-main">{{ $r['code'] }}</p>
-                                    <p class="dm-cell-sub">{{ $r['ref'] }}</p>
+                                    <p class="dm-cell-main">{{ $doc->ticket->code }}</p>
+                                    <p class="dm-cell-sub">Ref No. {{ $doc->ticket->ref_no }}</p>
                                 </td>
                                 <td>
-                                    <p class="dm-cell-main">{{ $r['title'] }}</p>
-                                    <p class="dm-cell-sub">{{ $r['meta'] }}</p>
+                                    <p class="dm-cell-main">{{ $doc->type }}: {{ $doc->title }}</p>
+                                    <p class="dm-cell-sub">
+                                        {{ $doc->ticket->documents_count > 1 ? 'Batch (' . $doc->ticket->documents_count . ')' : 'Single' }}
+                                        · {{ $doc->ticket->officer->displayName() }}
+                                        @if ($doc->ref_no) · {{ $doc->ref_no }} @endif
+                                    </p>
                                 </td>
                                 <td>
-                                    <p class="dm-cell-main dm-cell-regular">{{ $r['date'] }}</p>
-                                    <p class="dm-cell-sub">{{ $r['time'] }}</p>
+                                    <p class="dm-cell-main dm-cell-regular">{{ $doc->updated_at->format('M j') }}</p>
+                                    <p class="dm-cell-sub">{{ $doc->updated_at->format('g:i A') }}</p>
                                 </td>
                                 <td>
-                                    <div class="dm-actions">
-                                        <button type="button" class="dm-btn dm-btn-success dm-btn-xs">Approve</button>
-                                        <button type="button" class="dm-btn dm-btn-outline dm-btn-xs">Revise</button>
-                                        <button type="button" class="dm-btn dm-btn-danger dm-btn-xs">Reject</button>
-                                    </div>
+                                    <form method="POST" action="{{ url('/signatory/documents/' . $doc->id . '/action') }}" class="sg-review-form">
+                                        @csrf
+                                        <input type="hidden" name="document_id" value="{{ $doc->id }}">
+                                        <input type="text" name="remarks" maxlength="1000" aria-label="Remarks for {{ $doc->title }}"
+                                               placeholder="Remarks (needed to revise or reject)" value="{{ $isMine ? old('remarks') : '' }}">
+                                        @if ($isMine) @error('remarks') <p class="dm-field-error">{{ $message }}</p> @enderror @endif
+                                        <div class="dm-actions">
+                                            <button type="submit" name="action" value="approve" class="dm-btn dm-btn-success dm-btn-xs">Approve</button>
+                                            <button type="submit" name="action" value="return" class="dm-btn dm-btn-outline dm-btn-xs">Revise</button>
+                                            <button type="submit" name="action" value="reject" class="dm-btn dm-btn-danger dm-btn-xs"
+                                                    onclick="return confirm('Reject is final: the officer must file a new ticket. Reject this document?')">Reject</button>
+                                        </div>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+            @endif
         </section>
 
         <div class="dm-side">
-            {{-- My Availability --}}
-            <section class="dm-card dm-panel">
+            {{-- My Availability (the sidebar's "Availability" jumps here) --}}
+            <section class="dm-card dm-panel" id="availability">
                 <h2 class="dm-panel-title">My Availability</h2>
                 <p class="dm-panel-sub">Officers see this on their tickets</p>
 
@@ -164,16 +162,27 @@
             {{-- Recently Signed --}}
             <section class="dm-card dm-panel">
                 <h2 class="dm-panel-title">Recently Signed</h2>
-                <ul class="dm-activity">
-                    @foreach ($recent as $item)
-                        <li class="dm-activity-{{ $item['color'] }}">
-                            <p>{{ $item['text'] }}</p>
-                            <span>{{ $item['time'] }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+                @if ($recent->isEmpty())
+                    <p class="nt-note">Your approvals, returns, and rejections will show here.</p>
+                @else
+                    <ul class="dm-activity">
+                        @foreach ($recent as $item)
+                            @php
+                                [$color, $verb] = [
+                                    'approved' => ['green', 'Approved'],
+                                    'returned' => ['blue', 'Returned for revision'],
+                                    'rejected' => ['red', 'Rejected'],
+                                ][$item->action] ?? ['blue', ucfirst($item->action)];
+                            @endphp
+                            <li class="dm-activity-{{ $color }}">
+                                <p>{{ $item->document->ticket->code }} · {{ $item->document->title }}</p>
+                                <span>{{ $verb }} · {{ $item->created_at->diffForHumans() }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
             </section>
         </div>
     </div>
 
-</x-docmon.dashboard-layout>
+</x-docmon.signatory-layout>
