@@ -920,3 +920,73 @@ button, input, select, textarea { font: inherit; color: inherit; }
   line-height: 1.6;
 }
 p.dm-form-alert { padding-left: 16px; }
+
+/* ---------- Signatory actions and document fold-out (AUD-046) ---------- */
+/* A finished Batch where some papers were approved and some rejected */
+.dm-badge-partial { background: #e6f4f1; color: #0f766e; }
+
+/* Signatory review row: remarks box above the Approve / Revise / Reject buttons */
+.sg-review-form { display: flex; flex-direction: column; gap: 6px; min-width: 230px; }
+.sg-review-form input[type="text"] {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--dm-border, #e2e2e2);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+}
+.sg-review-form .dm-field-error { margin-top: 0; }
+
+/* My Tickets: each ticket's documents, folded under its row */
+.mt-docs-row td { padding-top: 0; border-top: none; }
+.mt-docs summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--dm-muted); }
+.mt-docs ul { list-style: none; margin: 8px 0 4px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mt-docs li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fafafa;
+}
+.mt-doc-side { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.mt-remarks { margin-top: 4px; font-size: 13px; font-style: italic; color: var(--dm-text); }
+@media (max-width: 640px) {
+  .mt-docs li { flex-direction: column; }
+}
+
+/* ---------- Signatory: For Review (rv-) and History pages ---------- */
+.rv-queue { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.rv-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--dm-border);
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+.rv-item:hover { border-color: #bdbdbd; }
+.rv-item.is-selected { border: 2px solid var(--dm-text); padding: 15px 17px; }
+.rv-title { margin-top: 2px; font-size: 15px; }
+.rv-item-side { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+.rv-facts { margin-top: 12px; }
+.rv-purpose { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: #fafafa; font-size: 14px; line-height: 1.5; }
+.rv-docs-title { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--dm-border); font-size: 15px; font-weight: 600; }
+.rv-doc { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; padding: 14px; border: 1px solid var(--dm-border); border-radius: 10px; }
+.rv-label { margin-top: 4px; font-size: 13px; font-weight: 600; }
+.rv-doc textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--dm-border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+.rv-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rv-all { margin-top: 12px; }
+.dm-btn.is-disabled { opacity: 0.45; pointer-events: none; }

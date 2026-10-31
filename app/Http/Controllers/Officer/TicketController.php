@@ -20,14 +20,14 @@ use Illuminate\View\View;
 class TicketController extends Controller
 {
     /** The status tabs on My Tickets, in order. */
-    private const TABS = ['All', 'Pending', 'Approved', 'Needs Revision', 'Rejected'];
+    private const TABS = ['All', 'Pending', 'Needs Revision', 'Approved', 'Partly Approved', 'Rejected'];
 
     public function index(Request $request): View
     {
         // with(): load documents and the approval route in a few queries,
         // instead of one extra query per ticket (the "N+1" problem)
         $all = $request->user()->tickets()
-            ->with(['documents', 'organization.signatories'])
+            ->with(['documents.latestAction', 'organization.signatories'])
             ->latest()
             ->get();
 

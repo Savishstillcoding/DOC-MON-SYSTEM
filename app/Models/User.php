@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -57,6 +58,18 @@ class User extends Authenticatable
         return $this->belongsTo(Organization::class);
     }
 
+    /**
+     * The organizations a signatory signs for, with their step and title in each
+     * route (e.g. DIGITS, step 1, "Adviser"). The same person can be on several routes.
+     */
+    public function signatoryOrganizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class, 'organization_signatory')
+            ->withPivot('step', 'title')
+            ->withTimestamps()
+            ->orderBy('code');
+    }
+
     /** Tickets this officer filed. */
     public function tickets(): HasMany
     {
@@ -74,13 +87,18 @@ class User extends Authenticatable
         return strtoupper(mb_substr($this->first_name ?? '', 0, 1).mb_substr($this->last_name ?? '', 0, 1));
     }
 
-    /** The line under the name in the sidebar, e.g. "Secretary · DIGITS". */
+    /** The line under the name in the sidebar, e.g. "Secretary · DIGITS" or "Adviser · DIGITS". */
     public function subtitle(): string
     {
         if ($this->role === 'admin') {
             return 'Administrator';
         }
 
-        return collect([$this->position, $this->organization?->code])->filter()->implode(' · ');
+        // Officers belong to one organization; signatories can sign for several
+        $organizations = $this->role === 'signatory'
+            ? $this->signatoryOrganizations->pluck('code')->implode(', ')
+            : $this->organization?->code;
+
+        return collect([$this->position, $organizations])->filter()->implode(' · ');
     }
 }

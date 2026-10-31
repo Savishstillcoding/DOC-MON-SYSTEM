@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('ref_no', 20)->nullable();
 
             // Where this paper is right now:
-            //   status       = pending | needs_revision | approved | rejected
+            //   status       = pending | returned | approved | rejected (Document::PENDING, ...)
             //   current_step = which signatory has it (1 = Adviser ... 4 = VPSD).
             // After a revision the step stays the same, so it goes straight back
             // to the signatory who returned it.

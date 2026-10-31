@@ -65,17 +65,20 @@ class Ticket extends Model
 
     /**
      * The ticket's overall status, worked out from its documents.
-     * Uses the labels of <x-docmon.status-badge>.
+     * Uses the labels of <x-docmon.status-badge>. Order matters: anything
+     * still to fix or sign wins over finished documents.
      */
     public function status(): string
     {
         $statuses = $this->documents->pluck('status');
 
         return match (true) {
-            $statuses->contains('returned') => 'Needs Revision',
-            $statuses->every(fn ($s) => $s === 'approved') => 'Approved',
-            $statuses->every(fn ($s) => $s === 'rejected') => 'Rejected',
-            default => 'Pending',
+            $statuses->contains(Document::RETURNED) => 'Needs Revision',
+            $statuses->contains(Document::PENDING) => 'Pending',
+            $statuses->every(fn ($s) => $s === Document::APPROVED) => 'Approved',
+            $statuses->every(fn ($s) => $s === Document::REJECTED) => 'Rejected',
+            // A finished Batch where some papers passed and some were rejected
+            default => 'Partly Approved',
         };
     }
 
@@ -85,7 +88,7 @@ class Ticket extends Model
      */
     public function currentSignatory(): ?User
     {
-        $step = $this->documents->whereIn('status', ['pending', 'returned'])->min('current_step');
+        $step = $this->documents->whereIn('status', [Document::PENDING, Document::RETURNED])->min('current_step');
 
         return $step ? $this->organization->signatories->firstWhere('pivot.step', $step) : null;
     }

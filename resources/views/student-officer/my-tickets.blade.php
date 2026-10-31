@@ -2,6 +2,8 @@
     DOC-MON · Student Officer · My Tickets
     The logged-in officer's real tickets (TicketController@index).
     From the controller: $tickets (filtered by the tab), $counts (per tab), $tab (the active tab)
+    Under each ticket, a fold-out list of its documents: status, where each paper is,
+    the signatory's remarks, and a Resubmit button for returned papers.
 --}}
 @php
     $menu = [
@@ -24,6 +26,8 @@
             <a href="{{ url('/officer/tickets/new') }}" class="dm-btn dm-btn-primary"><x-docmon.icon name="plus" size="16" /> New Ticket</a>
         </div>
     </header>
+
+    @error('resubmit') <p class="dm-form-alert" role="alert">{{ $message }}</p> @enderror
 
     <section class="dm-card dm-panel">
         <div class="dm-panel-head">
@@ -80,6 +84,52 @@
                                 <td>
                                     <p class="dm-cell-main dm-cell-regular">{{ $t->updated_at->format('M j') }}</p>
                                     <p class="dm-cell-sub">{{ $t->updated_at->format('g:i A') }}</p>
+                                </td>
+                            </tr>
+                            <tr class="mt-docs-row">
+                                <td colspan="6">
+                                    @php $route = $t->organization->signatories; @endphp
+                                    <details class="mt-docs" @if ($t->status() === 'Needs Revision') open @endif>
+                                        <summary>{{ Str::plural('Document', $t->documents->count()) }} ({{ $t->documents->count() }})</summary>
+                                        <ul>
+                                            @foreach ($t->documents as $doc)
+                                                @php $holder = $route->firstWhere('pivot.step', $doc->current_step); @endphp
+                                                <li>
+                                                    <div class="mt-doc-main">
+                                                        <p class="dm-cell-main">{{ $doc->type }}: {{ $doc->title }}</p>
+                                                        <p class="dm-cell-sub">
+                                                            @if ($doc->ref_no) Ref No. {{ $doc->ref_no }} · @endif
+                                                            @switch($doc->status)
+                                                                @case(App\Models\Document::PENDING)
+                                                                    With {{ $holder?->displayName() }} ({{ $holder?->pivot->title }}), step {{ $doc->current_step }} of {{ $route->count() }}
+                                                                    @break
+                                                                @case(App\Models\Document::RETURNED)
+                                                                    Returned by {{ $holder?->displayName() }} ({{ $holder?->pivot->title }})
+                                                                    @break
+                                                                @case(App\Models\Document::REJECTED)
+                                                                    Rejected by {{ $holder?->displayName() }} ({{ $holder?->pivot->title }}). File a new ticket for this paper.
+                                                                    @break
+                                                                @default
+                                                                    Fully signed. You can collect the paper.
+                                                            @endswitch
+                                                        </p>
+                                                        @if (in_array($doc->status, [App\Models\Document::RETURNED, App\Models\Document::REJECTED]) && $doc->latestAction?->remarks)
+                                                            <p class="mt-remarks">"{{ $doc->latestAction->remarks }}"</p>
+                                                        @endif
+                                                    </div>
+                                                    <div class="mt-doc-side">
+                                                        <x-docmon.status-badge :status="$doc->statusLabel()" />
+                                                        @if ($doc->status === App\Models\Document::RETURNED)
+                                                            <form method="POST" action="{{ url('/officer/documents/' . $doc->id . '/resubmit') }}">
+                                                                @csrf
+                                                                <button type="submit" class="dm-btn dm-btn-primary dm-btn-xs">Resubmit</button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </details>
                                 </td>
                             </tr>
                         @endforeach
