@@ -138,6 +138,12 @@ class Document extends Model
             'remarks' => $remarks,
         ])->user()->associate($signatory)->save();
 
+        $this->loadMissing('ticket');
+        ActivityLog::record($signatory, 'tickets',
+            ['approve' => $this->status === self::APPROVED ? 'Approved document (final)' : 'Approved document',
+                'return' => 'Returned document', 'reject' => 'Rejected document'][$action],
+            "{$this->ticket->code} · {$this->title} · step {$step}".($remarks ? " · {$remarks}" : ''));
+
         return true;
     }
 

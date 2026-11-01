@@ -26,6 +26,12 @@ class Organization extends Model
             ->orderByPivot('step');
     }
 
+    /** Officers belong to one organization (users.organization_id). */
+    public function officers(): HasMany
+    {
+        return $this->hasMany(User::class)->where('role', 'officer');
+    }
+
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Officer;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Document;
 use App\Models\DocumentAction;
 use Illuminate\Http\RedirectResponse;
@@ -32,6 +33,9 @@ class DocumentController extends Controller
             $document->save();
             $document->actions()->make(['step' => $document->current_step, 'action' => DocumentAction::RESUBMITTED])
                 ->user()->associate($officer)->save();
+
+            ActivityLog::record($officer, 'tickets', 'Resubmitted document',
+                "{$document->ticket->code} · {$document->title} · back to step {$document->current_step}");
 
             return $document;
         });

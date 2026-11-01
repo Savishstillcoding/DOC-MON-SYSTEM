@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Signatory;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,10 +25,17 @@ class AvailabilityController extends Controller
         ]);
 
         $user = $request->user();
+        $before = trim(($user->availability ?? 'Available').($user->back_at ? " (back {$user->back_at})" : ''));
+
         // Not in $fillable, so set directly; "Available" needs no back-at time
         $user->availability = $data['availability'];
         $user->back_at = $data['availability'] === 'Available' ? null : $data['back_at'];
         $user->save();
+
+        $after = $user->availability.($user->back_at ? " (back {$user->back_at})" : '');
+        if ($after !== $before) {
+            ActivityLog::record($user, 'accounts', 'Changed availability', "{$before} → {$after}");
+        }
 
         return back()->with('status', 'Status updated.');
     }
