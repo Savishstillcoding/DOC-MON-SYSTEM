@@ -36,6 +36,7 @@
     <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
     <link rel="stylesheet" href="{{ asset_v('css/fonts.css') }}">
     <link rel="stylesheet" href="{{ asset_v('css/docmon-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset_v('css/password-toggle.css') }}">
     @if ($liveStamp)
         <meta name="docmon-live" content="{{ url('/' . $account->role . '/live') }}" data-stamp="{{ $liveStamp }}">
     @endif
@@ -91,6 +92,8 @@
 
     {{-- Live details (stat count-up). At the end of <body> so it runs before the first paint. --}}
     <script src="{{ asset_v('js/docmon-dashboard.js') }}"></script>
+    {{-- Eye button in password boxes (Profile pages); does nothing on pages without one --}}
+    <script src="{{ asset_v('js/password-toggle.js') }}"></script>
     @if ($liveStamp)
         <script src="{{ asset_v('js/docmon-live.js') }}"></script>
     @endif

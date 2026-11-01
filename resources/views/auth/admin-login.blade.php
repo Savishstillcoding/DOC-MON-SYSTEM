@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="{{ asset_v('css/loginform.css') }}">
   <link rel="stylesheet" href="{{ asset_v('css/wires.css') }}">
   <link rel="stylesheet" href="{{ asset_v('css/transitions.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/password-toggle.css') }}">
   <script src="{{ asset_v('js/icon-scroll.js') }}"></script>
 </head>
 <body>
@@ -63,5 +64,6 @@
       <p class="credits">made by: Labastida, Carusa, Ligutan, Magno</p>
     </section>
   </main>
+  <script src="{{ asset_v('js/password-toggle.js') }}"></script>
 </body>
 </html>
