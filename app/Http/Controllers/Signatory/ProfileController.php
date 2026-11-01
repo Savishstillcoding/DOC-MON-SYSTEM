@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Signatory;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\DocumentAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,7 +42,13 @@ class ProfileController extends Controller
             'phone.regex' => 'Enter an 11-digit number starting with 09.',
         ]);
 
-        $user->update($data);
+        $user->fill($data);
+        $changed = array_keys($user->getDirty());
+        $user->save();
+
+        if ($changed) {
+            ActivityLog::record($user, 'accounts', 'Updated profile', 'Changed '.implode(', ', $changed));
+        }
 
         return back()->with('status', 'Profile saved.');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\IdDocument;
 use App\Models\Organization;
 use App\Models\User;
@@ -102,6 +103,9 @@ class RegisterController extends Controller
                 ]);
                 // Not fillable on purpose: set by the app only, never by the form
                 $user->forceFill(['role' => $role, 'status' => 'pending'])->save();
+
+                ActivityLog::record($user, 'verification', 'Signed up',
+                    collect([$user->organization?->code, $user->position])->filter()->implode(' · ').' · waiting for verification');
 
                 // Same transaction: no account without its ID, and no ID without its account
                 $user->idDocument()->save((new IdDocument)->forceFill([

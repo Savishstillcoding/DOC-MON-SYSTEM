@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -105,6 +106,11 @@ class VerificationController extends Controller
                 'review_note' => $status === 'rejected' ? $data['review_note'] : null,
             ])->save();
             $user->idDocument()->delete();
+
+            ActivityLog::record($request->user(), 'verification',
+                $status === 'verified' ? 'Approved account' : 'Rejected account',
+                $user->displayName().' ('.collect([$user->roleLabel(), $user->organization?->code, $user->position])->filter()->implode(' · ').')'
+                .($status === 'rejected' ? " — {$data['review_note']}" : ''));
 
             return $user;
         });

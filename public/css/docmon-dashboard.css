@@ -1089,3 +1089,25 @@ p.dm-form-alert { padding-left: 16px; }
   .sg-step { grid-template-columns: auto auto 1fr auto; }
   .sg-step .dm-field { grid-column: 1 / -1; }
 }
+
+/* ---------- Admin: Organizations (og-) ---------- */
+.og-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.og-card { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.og-head { display: flex; align-items: center; gap: 14px; }
+.og-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--dm-text); color: #fff; flex-shrink: 0; }
+.og-title { flex: 1; min-width: 0; }
+.og-title h2 { font-size: 18px; font-weight: 700; }
+.og-title p { margin-top: 2px; font-size: 14px; color: var(--dm-muted); }
+.og-pilot { padding: 4px 10px; border-radius: 999px; background: var(--dm-text); color: #fff; font-size: 12px; font-weight: 600; }
+.og-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.og-stats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; padding: 10px 12px; border-radius: 8px; background: #f4f4f4; }
+.og-stats dt { font-size: 12px; color: var(--dm-muted); }
+.og-stats dd { font-size: 20px; font-weight: 700; }
+.og-warn { font-size: 13px; color: var(--dm-red); }
+.og-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.og-actions .dm-btn { justify-content: center; }
+.og-manage { margin-top: 24px; }
+.og-manage .og-actions { margin-top: 16px; max-width: 420px; }
+
+/* Activity Logs: the date range dropdown stays compact, like the design */
+.al-range { width: auto; min-width: 150px; }
