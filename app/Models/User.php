@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -49,6 +50,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'reviewed_at' => 'datetime',
         ];
     }
 
@@ -68,6 +70,18 @@ class User extends Authenticatable
             ->withPivot('step', 'title')
             ->withTimestamps()
             ->orderBy('code');
+    }
+
+    /** The ID photo uploaded at sign-up; gone once the admin has decided. */
+    public function idDocument(): HasOne
+    {
+        return $this->hasOne(IdDocument::class);
+    }
+
+    /** The admin who verified or rejected this account. */
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 
     /** Tickets this officer filed. */

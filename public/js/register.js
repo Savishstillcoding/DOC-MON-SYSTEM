@@ -8,9 +8,9 @@
   var MAX_BYTES = 2 * 1024 * 1024;   // must match the server limit
   var MAX_SIDE = 1600;               // px; still sharp enough to read an ID card
 
-  var input = document.getElementById('school_id');
+  var input = document.getElementById('id_document');
   var text = document.querySelector('[data-upload-text]');
-  var error = document.getElementById('school_id_error');
+  var error = document.getElementById('id_document_error');
   if (!input || !text) return;
 
   function mb(bytes) {

@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\Account\PasswordController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Officer\DashboardController as OfficerDashboardController;
 use App\Http\Controllers\Officer\DocumentController;
+use App\Http\Controllers\Officer\SignatoryController;
 use App\Http\Controllers\Officer\ProfileController;
 use App\Http\Controllers\Officer\TicketController;
 use App\Http\Controllers\Signatory\AvailabilityController;
@@ -23,8 +28,12 @@ Route::middleware('guest')->group(function () {
         return view('signup');
     });
 
-    Route::get('/register/officer', function () { return view('auth.studentofficer-signup'); });
-    Route::get('/register/signatory', function () { return view('auth.signatory-signup'); });
+    // Sign-up (AUD-044): saves a pending account with its ID photo. Throttled because
+    // anyone can post 2 MB files here without logging in: 5 sign-ups per 10 minutes per IP.
+    Route::get('/register/{role}', [RegisterController::class, 'create'])->whereIn('role', ['officer', 'signatory']);
+    Route::post('/register/{role}', [RegisterController::class, 'store'])
+        ->whereIn('role', ['officer', 'signatory'])
+        ->middleware('throttle:5,10');
 
     Route::get('/login', function() { return view('login'); });
     Route::get('/login/officer', function () { return view('auth.studentofficer-login'); });
@@ -58,12 +67,6 @@ Route::get('/register/{role}', function (string $role) use ($registerRoles) {
 })->whereIn('role', array_keys($registerRoles));
 */
 
-// PROTOTYPE: accepts the form but saves nothing, then continues to Log-In.
-// Replace with a real controller (validation, hashing, file storage) later.
-
-Route::post('/register/{role}', function () {
-    return redirect('/login');
-})->whereIn('role', ['officer', 'signatory'])->middleware('guest');
 
 //for future use
 
@@ -71,14 +74,13 @@ Route::post('/register/{role}', function () {
 
 // ---------- Dashboards: logged in AND the right role ----------
 // 'auth' sends guests to /login; 'role:x' answers 403 to other roles.
-// PROTOTYPE: the dashboards and Signatories page still show placeholder data.
 Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function () {
-    Route::get('/dashboard', function () { return view('student-officer.dashboard'); });
+    Route::get('/dashboard', [OfficerDashboardController::class, 'index']);
     Route::get('/tickets', [TicketController::class, 'index']);
     Route::get('/tickets/new', [TicketController::class, 'create']);
     Route::post('/tickets', [TicketController::class, 'store']);
     Route::post('/documents/{document}/resubmit', [DocumentController::class, 'resubmit']);
-    Route::get('/signatories', function () { return view('student-officer.signatories'); });
+    Route::get('/signatories', [SignatoryController::class, 'index']);
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::put('/profile', [ProfileController::class, 'update']);
     // Throttled like log-in: this form also checks a password, so it must not allow guessing
@@ -98,7 +100,10 @@ Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(functi
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () { return view('admin.dashboard'); });
+    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+    Route::get('/users/{user}/id-document', [VerificationController::class, 'showId']);
+    Route::post('/users/{user}/verify', [VerificationController::class, 'verify']);
+    Route::post('/users/{user}/reject', [VerificationController::class, 'reject']);
 });
 
 // Dev-only reference page showing every dashboard component.

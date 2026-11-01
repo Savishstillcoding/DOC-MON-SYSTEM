@@ -29,8 +29,8 @@
     <title>{{ $title }} – DOC-MON</title>
     {{-- Inter font, served from public/fonts like the other pages (no Google Fonts request) --}}
     <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
-    <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/docmon-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset_v('css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ asset_v('css/docmon-dashboard.css') }}">
 </head>
 <body class="dm-body">
     <aside class="dm-sidebar">
@@ -82,6 +82,6 @@
     </main>
 
     {{-- Live details (stat count-up). At the end of <body> so it runs before the first paint. --}}
-    <script src="{{ asset('js/docmon-dashboard.js') }}"></script>
+    <script src="{{ asset_v('js/docmon-dashboard.js') }}"></script>
 </body>
 </html>

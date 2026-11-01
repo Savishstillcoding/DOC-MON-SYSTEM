@@ -9,12 +9,12 @@
   <link rel="preload" as="image" href="{{ asset('images/icon-grid.png') }}">
   <title>Student Officer Log In – DOC-MON</title>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
-  <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/loginpage.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/loginform.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/transitions.css') }}">
-  <script src="{{ asset('js/icon-scroll.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset_v('css/fonts.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/loginpage.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/loginform.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/wires.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/transitions.css') }}">
+  <script src="{{ asset_v('js/icon-scroll.js') }}"></script>
 
 </head>
 <body>
@@ -42,6 +42,7 @@
 
         <form class="login-card" method="POST" action="{{ url()->current() }}">
           @csrf
+          @if (session('status'))<p class="form-status" role="status">{{ session('status') }}</p>@endif
 
           <div class="field">
             <label for="student_id">Student ID</label>
