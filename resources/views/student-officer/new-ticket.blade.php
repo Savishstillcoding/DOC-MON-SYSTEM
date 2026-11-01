@@ -22,7 +22,7 @@
     $documentErrors = collect($errors->get('documents'))->merge(collect($errors->get('documents.*'))->flatten());
 @endphp
 
-<x-docmon.dashboard-layout title="New Ticket" :menu="$menu" active="New Ticket">
+<x-docmon.dashboard-layout title="New Ticket" :menu="$menu" active="New Ticket" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -113,7 +113,7 @@
                                 @endforeach
                             </select>
                             <input type="text" name="documents[{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" maxlength="255" placeholder="e.x. Program Flow" aria-label="Document title" data-field="title" required>
-                            <input type="text" name="documents[{{ $i }}][ref_no]" value="{{ $row['ref_no'] ?? '' }}" maxlength="20" placeholder="Optional" aria-label="Document Ref No. (optional)" data-field="ref_no">
+                            <input type="text" name="documents[{{ $i }}][ref_no]" value="{{ $row['ref_no'] ?? '' }}" maxlength="20" placeholder="Ref No. (optional)" aria-label="Document Ref No. (optional)" data-field="ref_no">
                             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
                         </div>
                     @endforeach
@@ -133,7 +133,7 @@
             <section class="dm-card dm-panel">
                 <h2 class="dm-panel-title">Approval Route</h2>
                 <p class="dm-panel-sub">{{ $organization?->code }} signatories, in order</p>
-                <div class="dm-route dm-route-plain">
+                <div class="dm-route dm-route-plain" data-live="route">
                     @forelse ($organization?->signatories ?? [] as $signatory)
                         <x-docmon.signatory-row :badge="$signatory->pivot->step" :name="$signatory->displayName()" :role="$signatory->pivot->title"
                             :status="$signatory->availability ?? 'Available'" :note="$signatory->back_at" />
@@ -161,7 +161,7 @@
                 @endforeach
             </select>
             <input type="text" data-field="title" maxlength="255" placeholder="e.x. Program Flow" aria-label="Document title" required>
-            <input type="text" data-field="ref_no" maxlength="20" placeholder="Optional" aria-label="Document Ref No. (optional)">
+            <input type="text" data-field="ref_no" maxlength="20" placeholder="Ref No. (optional)" aria-label="Document Ref No. (optional)">
             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
         </div>
     </template>

@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Officer\DashboardController as OfficerDashboardController;
 use App\Http\Controllers\Officer\DocumentController;
+use App\Http\Controllers\Officer\LiveController as OfficerLiveController;
 use App\Http\Controllers\Officer\SignatoryController;
 use App\Http\Controllers\Officer\ProfileController;
 use App\Http\Controllers\Officer\TicketController;
@@ -85,6 +86,7 @@ Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function (
     Route::post('/tickets', [TicketController::class, 'store']);
     Route::post('/documents/{document}/resubmit', [DocumentController::class, 'resubmit']);
     Route::get('/signatories', [SignatoryController::class, 'index']);
+    Route::get('/live', OfficerLiveController::class);
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::put('/profile', [ProfileController::class, 'update']);
     // Throttled like log-in: this form also checks a password, so it must not allow guessing

@@ -15,7 +15,7 @@
     ];
 @endphp
 
-<x-docmon.dashboard-layout title="My Tickets" :menu="$menu" active="My Tickets">
+<x-docmon.dashboard-layout title="My Tickets" :menu="$menu" active="My Tickets" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -29,7 +29,7 @@
 
     @error('resubmit') <p class="dm-form-alert" role="alert">{{ $message }}</p> @enderror
 
-    <section class="dm-card dm-panel">
+    <section class="dm-card dm-panel" data-live="tickets">
         <div class="dm-panel-head">
             <div>
                 <h2 class="dm-panel-title">{{ $tab === 'All' ? 'All Tickets' : $tab }}</h2>
@@ -89,7 +89,7 @@
                             <tr class="mt-docs-row">
                                 <td colspan="6">
                                     @php $route = $t->organization->signatories; @endphp
-                                    <details class="mt-docs" @if ($t->status() === 'Needs Revision') open @endif>
+                                    <details class="mt-docs" data-live-id="{{ $t->id }}" @if ($t->status() === 'Needs Revision') open @endif>
                                         <summary>{{ Str::plural('Document', $t->documents->count()) }} ({{ $t->documents->count() }})</summary>
                                         <ul>
                                             @foreach ($t->documents as $doc)
