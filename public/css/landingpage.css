@@ -80,6 +80,22 @@ body {
 .nav a:hover {
     text-decoration: underline;
 }
+/* Logged in (AUD-045): "Dashboard" is wider than the fixed 80px, and Log out is a
+   form button that should look exactly like the links */
+.nav .nav-auto { width: auto; min-width: 80px; }
+.nav form { display: flex; }
+.nav-link-btn {
+    min-width: 80px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+}
+.nav-link-btn:hover { text-decoration: underline; }
 
 .content {
     flex: 1;
@@ -160,6 +176,7 @@ html {
   border: 0;
 }
 .nav a:focus-visible,
+.nav-link-btn:focus-visible,
 .role-btn:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 3px;

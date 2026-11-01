@@ -158,7 +158,33 @@ class AuthTest extends TestCase
         $this->get('/officer/dashboard')->assertRedirect('/login');
     }
 
-    // ---------- Public pages ----------
+    // ---------- Landing page (AUD-045) ----------
+
+    public function test_the_landing_page_offers_log_in_and_sign_up_to_guests(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('href="'.url('/login').'"', false)
+            ->assertSee('href="'.url('/signup').'"', false)
+            ->assertDontSee('Dashboard')
+            ->assertDontSee('Log out');
+    }
+
+    #[DataProvider('roles')]
+    public function test_the_landing_page_offers_my_dashboard_and_log_out_when_logged_in(string $role, string $idField, string $loginId): void
+    {
+        $this->actingAs($this->makeUser($role, $loginId));
+
+        $html = $this->get('/')->assertOk()
+            ->assertSee('href="'.url("/{$role}/dashboard").'"', false)
+            ->assertDontSee('href="'.url('/login').'"', false)
+            ->assertDontSee('href="'.url('/signup').'"', false)
+            ->getContent();
+
+        // Log out must be a POST form with a CSRF token, never a plain link
+        $this->assertMatchesRegularExpression('#<form method="POST" action="'.preg_quote(url('/logout'), '#').'">\s*<input type="hidden" name="_token"#', $html);
+        $this->assertStringNotContainsString('href="'.url('/logout').'"', $html);
+    }
 
     public function test_sign_up_offers_no_admin_option(): void
     {

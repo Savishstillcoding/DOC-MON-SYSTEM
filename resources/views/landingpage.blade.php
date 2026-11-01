@@ -30,8 +30,20 @@
       @include('partials.wires')
 
       <nav class="nav" aria-label="Main">
-        <a href="{{ url('/login') }}">Log-In</a>
-        <a href="{{ url('/signup') }}">Sign-Up</a>
+        @guest
+          <a href="{{ url('/login') }}">Log-In</a>
+          <a href="{{ url('/signup') }}">Sign-Up</a>
+        @endguest
+        {{-- Already logged in (AUD-045): straight to your dashboard, or log out.
+             Log out is a POST form with a CSRF token, like the sidebar's, so no link
+             or image elsewhere can log someone out without them clicking it --}}
+        @auth
+          <a href="{{ url('/' . auth()->user()->role . '/dashboard') }}" class="nav-auto">Dashboard</a>
+          <form method="POST" action="{{ url('/logout') }}">
+            @csrf
+            <button type="submit" class="nav-link-btn">Log out</button>
+          </form>
+        @endauth
       </nav>
 
       <div class="content">
