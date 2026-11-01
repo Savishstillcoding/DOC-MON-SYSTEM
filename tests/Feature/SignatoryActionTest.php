@@ -216,7 +216,7 @@ class SignatoryActionTest extends TestCase
         }
 
         $this->assertSame('Partly Approved', $this->freshTicket($proposal)->status());
-        $this->assertNull($this->freshTicket($proposal)->currentSignatory());
+        $this->assertTrue($this->freshTicket($proposal)->holders()->isEmpty());   // nobody holds a paper anymore
     }
 
     // ---------- What each side sees ----------

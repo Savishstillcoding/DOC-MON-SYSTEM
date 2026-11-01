@@ -54,7 +54,7 @@
                     </thead>
                     <tbody>
                         @foreach ($tickets as $t)
-                            @php $signatory = $t->currentSignatory(); @endphp
+                            @php $holders = $t->holders(); @endphp
                             <tr>
                                 <td class="dm-strong">{{ $t->code }}</td>
                                 <td>
@@ -63,11 +63,26 @@
                                 </td>
                                 <td>{{ $t->typeLabel() }}</td>
                                 <td>
-                                    @if ($signatory)
-                                        <p class="dm-cell-main">{{ $signatory->displayName() }}</p>
-                                        <p class="dm-cell-sub">{{ $signatory->pivot->title }}</p>
-                                    @else
+                                    @if ($holders->isEmpty())
                                         <p class="dm-cell-sub">Done</p>
+                                    @elseif ($holders->count() === 1)
+                                        {{-- All unfinished papers in one place: same as always --}}
+                                        <p class="dm-cell-main">{{ $holders[0]['signatory']?->displayName() }}</p>
+                                        <p class="dm-cell-sub">{{ $holders[0]['signatory']?->pivot->title }}</p>
+                                    @else
+                                        {{-- A split Batch (AUD-049): every place a paper is, with how many --}}
+                                        <div class="mt-holders">
+                                            @foreach ($holders as $h)
+                                                @php $papers = $h['papers'] . ' ' . Str::plural('paper', $h['papers']); @endphp
+                                                @if ($h['with_officer'])
+                                                    <p class="dm-cell-main">Back with you</p>
+                                                    <p class="dm-cell-sub">{{ $papers }} to revise, then to {{ $h['signatory']?->pivot->title }}</p>
+                                                @else
+                                                    <p class="dm-cell-main">{{ $h['signatory']?->displayName() }}</p>
+                                                    <p class="dm-cell-sub">{{ $h['signatory']?->pivot->title }} · {{ $papers }}</p>
+                                                @endif
+                                            @endforeach
+                                        </div>
                                     @endif
                                 </td>
                                 <td><x-docmon.status-badge :status="$t->status()" /></td>
