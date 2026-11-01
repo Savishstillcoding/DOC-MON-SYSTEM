@@ -1,10 +1,5 @@
-FROM node:22 AS assets
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci                      # exact versions from package-lock.json
-COPY . .
-RUN npm run build               # outputs to /app/public/build
-
+# No Node/npm build step: every page uses the plain CSS and JS in public/css and public/js
+# (the unused Tailwind/Vite setup was removed, AUD-026)
 FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -32,8 +27,6 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-autoloader
 
 COPY . .
-
-COPY --from=assets /app/public/build /var/www/html/public/build
 
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
