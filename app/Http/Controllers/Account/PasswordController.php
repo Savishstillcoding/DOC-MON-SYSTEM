@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
@@ -26,6 +27,7 @@ class PasswordController extends Controller
 
         // The 'hashed' cast on User hashes it before saving
         $request->user()->update(['password' => $data['password']]);
+        ActivityLog::record($request->user(), 'accounts', 'Changed password', 'From the Profile page');
 
         return back()->with('status', 'Password updated.');
     }

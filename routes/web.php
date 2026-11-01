@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Account\PasswordController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\SignatoryListController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VerificationController;
@@ -111,6 +113,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::post('/users/{user}/deactivate', [UserController::class, 'deactivate']);
     Route::post('/users/{user}/reactivate', [UserController::class, 'reactivate']);
+    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
+    Route::get('/organizations', [OrganizationController::class, 'index']);
+    Route::get('/organizations/new', [OrganizationController::class, 'create']);
+    Route::post('/organizations', [OrganizationController::class, 'store']);
+    Route::get('/organizations/{organization}/edit', [OrganizationController::class, 'edit']);
+    Route::put('/organizations/{organization}', [OrganizationController::class, 'update']);
+    Route::delete('/organizations/{organization}', [OrganizationController::class, 'destroy']);
     Route::get('/signatory-lists', [SignatoryListController::class, 'index']);
     Route::put('/signatory-lists/{organization}', [SignatoryListController::class, 'update']);
 });

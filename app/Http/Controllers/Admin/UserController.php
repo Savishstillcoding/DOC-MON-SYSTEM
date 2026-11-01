@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -91,7 +92,14 @@ class UserController extends Controller
             'phone.regex' => 'Enter an 11-digit number starting with 09.',
         ]);
 
-        $user->update($data);
+        $user->fill($data);
+        $changed = array_keys($user->getDirty());
+        $user->save();
+
+        if ($changed) {
+            ActivityLog::record($request->user(), 'accounts', 'Edited account',
+                "{$user->displayName()} · changed ".implode(', ', $changed));
+        }
 
         return redirect('/admin/users')->with('status', "Saved {$user->displayName()}.");
     }
@@ -113,8 +121,9 @@ class UserController extends Controller
             return back()->withErrors(['user' => $problem]);
         }
 
-        DB::transaction(function () use ($user) {
+        DB::transaction(function () use ($user, $request) {
             $user->forceFill(['status' => 'deactivated'])->save();
+            ActivityLog::record($request->user(), 'accounts', 'Deactivated account', "{$user->displayName()} ({$user->roleLabel()})");
             // Signed out everywhere right away, not only at their next log-in
             DB::table('sessions')->where('user_id', $user->id)->delete();
         });
@@ -122,13 +131,14 @@ class UserController extends Controller
         return back()->with('status', "Deactivated {$user->displayName()}. They can no longer log in.");
     }
 
-    public function reactivate(User $user): RedirectResponse
+    public function reactivate(Request $request, User $user): RedirectResponse
     {
         if ($user->status !== 'deactivated') {
             return back()->withErrors(['user' => 'Only deactivated accounts can be reactivated.']);
         }
 
         $user->forceFill(['status' => 'verified'])->save();
+        ActivityLog::record($request->user(), 'accounts', 'Reactivated account', "{$user->displayName()} ({$user->roleLabel()})");
 
         return back()->with('status', "Reactivated {$user->displayName()}. They can log in again.");
     }

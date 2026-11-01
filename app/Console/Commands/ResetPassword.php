@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -60,6 +61,7 @@ class ResetPassword extends Command
         }
 
         $user->update(['password' => $new]);   // hashed by the User model's cast
+        ActivityLog::record(null, 'accounts', 'Password reset', "{$user->displayName()} ({$user->login_id}) · by a developer with php artisan docmon:reset-password");
 
         // Sign the account out everywhere, in case someone else knew the old password
         if (config('session.driver') === 'database' && Schema::hasTable('sessions')) {

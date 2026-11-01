@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Officer;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Document;
 use App\Models\Ticket;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -106,6 +107,10 @@ class TicketController extends Controller
 
                 // Same transaction: the ticket and its documents are saved together or not at all
                 $ticket->documents()->createMany($data['documents']);
+
+                $count = count($data['documents']);
+                ActivityLog::record($officer, 'tickets', 'Submitted ticket',
+                    "{$ticket->code} · {$ticket->title} · ".($count > 1 ? "Batch ({$count})" : 'Single'));
 
                 return $ticket;
             }), 0, fn ($e) => $e instanceof UniqueConstraintViolationException

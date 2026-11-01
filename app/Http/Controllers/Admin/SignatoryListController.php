@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Document;
 use App\Models\Organization;
 use App\Models\User;
@@ -59,7 +60,7 @@ class SignatoryListController extends Controller
             'step' => $i + 1, 'user_id' => (int) $s['user_id'], 'title' => trim($s['title']),
         ]);
 
-        $result = DB::transaction(function () use ($organization, $new) {
+        $result = DB::transaction(function () use ($organization, $new, $request) {
             // Locked so a ticket action can't run halfway through a route change
             $old = DB::table('organization_signatory')->where('organization_id', $organization->id)
                 ->orderBy('step')->lockForUpdate()->get(['step', 'user_id', 'title']);
@@ -74,6 +75,9 @@ class SignatoryListController extends Controller
             DB::table('organization_signatory')->insert($new->map(fn ($s) => $s + [
                 'organization_id' => $organization->id, 'created_at' => now(), 'updated_at' => now(),
             ])->all());
+
+            ActivityLog::record($request->user(), 'signatory_lists', 'Edited signatory list',
+                "{$organization->code} · ".$this->describeChange($old, $new));
 
             return ['moved' => $this->movedPapers($organization, $old, $new)];
         });
@@ -120,6 +124,42 @@ class SignatoryListController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * A short, readable summary for the Activity Logs, e.g.
+     * "step 1: Dela Cruz, Ana → Cruz, Nora" or "new route: Adviser (Dela Cruz, Ana) → VPSD (Santos, Liza)".
+     */
+    private function describeChange($old, $new): string
+    {
+        $names = User::whereIn('id', $old->pluck('user_id')->merge($new->pluck('user_id')))->get()->keyBy('id');
+        $who = fn ($id) => $names[$id]?->displayName() ?? 'Unknown';
+
+        // Same number of steps: list what changed at each step
+        if ($old->count() === $new->count()) {
+            $changes = $new->map(function ($step, $i) use ($old, $who) {
+                $before = $old[$i];
+                $parts = [];
+                if ((int) $before->user_id !== $step['user_id']) {
+                    $parts[] = $who((int) $before->user_id).' → '.$who($step['user_id']);
+                }
+                if ($before->title !== $step['title']) {
+                    $parts[] = "title \"{$before->title}\" → \"{$step['title']}\"";
+                }
+
+                return $parts ? "step {$step['step']}: ".implode(', ', $parts) : null;
+            })->filter();
+
+            if ($changes->isNotEmpty()) {
+                return $changes->implode('; ');
+            }
+            if ($old->isNotEmpty()) {
+                return 'no changes';
+            }
+        }
+
+        // Steps added, removed or reordered: show the whole new route
+        return 'new route: '.$new->map(fn ($s) => "{$s['title']} (".$who($s['user_id']).')')->implode(' → ');
     }
 
     /** [step => number of waiting papers that now go to a different person]. */
