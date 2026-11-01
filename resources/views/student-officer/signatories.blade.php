@@ -14,7 +14,7 @@
     ];
 @endphp
 
-<x-docmon.dashboard-layout title="Signatories" :menu="$menu" active="Signatories">
+<x-docmon.dashboard-layout title="Signatories" :menu="$menu" active="Signatories" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -26,6 +26,8 @@
         </div>
     </header>
 
+    {{-- One live box for the whole route: it keeps the page's spacing (dm-stack) --}}
+    <div class="dm-stack" data-live="signatories">
     @if ($signatories->isEmpty())
         <p class="nt-note">Your organization has no approval route yet. Ask the admin to add its signatories.</p>
     @else
@@ -92,5 +94,6 @@
         </div>
     </section>
     @endif
+    </div>
 
 </x-docmon.dashboard-layout>

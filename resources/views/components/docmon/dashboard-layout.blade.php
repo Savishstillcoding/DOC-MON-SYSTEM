@@ -11,14 +11,19 @@
     The sidebar card shows the logged-in user. A page may pass :user to override it:
     $user = ['name' => 'Labastida, MJ Bryan', 'initials' => 'MJ', 'subtitle' => 'Secretary · DIGITS']
     session('status') (e.g. "Profile saved.") is shown as a green bar above the content.
+
+    Live updates (AUD-050): pass :live="true" and mark boxes with data-live="name".
+    docmon-live.js then refreshes those boxes when the data behind them changes.
 --}}
-@props(['title' => 'DOC-MON', 'user' => null, 'menu' => [], 'active' => ''])
+@props(['title' => 'DOC-MON', 'user' => null, 'menu' => [], 'active' => '', 'live' => false])
 
 @php
     $account = auth()->user();
     $user ??= $account
         ? ['name' => $account->displayName(), 'initials' => $account->initials(), 'subtitle' => $account->subtitle()]
         : [];
+    // The fingerprint this page was drawn with (null = this role has no live pages)
+    $liveStamp = $live ? \App\Support\LiveStamp::for($account) : null;
 @endphp
 
 <!DOCTYPE html>
@@ -31,6 +36,9 @@
     <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
     <link rel="stylesheet" href="{{ asset_v('css/fonts.css') }}">
     <link rel="stylesheet" href="{{ asset_v('css/docmon-dashboard.css') }}">
+    @if ($liveStamp)
+        <meta name="docmon-live" content="{{ url('/' . $account->role . '/live') }}" data-stamp="{{ $liveStamp }}">
+    @endif
 </head>
 <body class="dm-body">
     <aside class="dm-sidebar">
@@ -83,5 +91,8 @@
 
     {{-- Live details (stat count-up). At the end of <body> so it runs before the first paint. --}}
     <script src="{{ asset_v('js/docmon-dashboard.js') }}"></script>
+    @if ($liveStamp)
+        <script src="{{ asset_v('js/docmon-live.js') }}"></script>
+    @endif
 </body>
 </html>
