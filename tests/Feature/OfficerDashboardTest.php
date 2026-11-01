@@ -139,6 +139,48 @@ class OfficerDashboardTest extends TestCase
 
     // ---------- Helpers ----------
 
+    // ---------- A split Batch (AUD-049) ----------
+
+    public function test_a_split_batch_shows_every_place_its_papers_are(): void
+    {
+        // The bug: the Adviser returned paper A (back with the officer) and approved paper B
+        // (now with the VPSD), yet "Current Signatory" said "Adviser"
+        $ticket = $this->ticket('REF-1');
+        [$a, $b] = [$ticket->documents[0], $ticket->documents()->create(['type' => 'Budget', 'title' => 'Paper B'])];
+        $this->actingAs($this->adviser)->post("/signatory/documents/{$a->id}/action", ['action' => 'return', 'remarks' => 'Fix the date']);
+        $this->actingAs($this->adviser)->post("/signatory/documents/{$b->id}/action", ['action' => 'approve']);
+
+        $holders = $ticket->fresh(['documents', 'organization.signatories'])->holders();
+        $this->assertSame([[2, 1, false], [1, 1, true]],
+            $holders->map(fn ($h) => [$h['step'], $h['papers'], $h['with_officer']])->all());   // VPSD first, then "back with you"
+        $this->assertTrue($holders[0]['signatory']->is($this->vpsd));
+
+        $this->vpsd->forceFill(['availability' => 'In Class', 'back_at' => '3:00 PM'])->save();
+
+        $this->actingAs($this->officer)->get('/officer/tickets')
+            ->assertSeeInOrder(['Santos, Liza', 'VPSD · 1 paper', 'Back with you', '1 paper to revise, then to Adviser']);
+
+        $this->actingAs($this->officer)->get('/officer/dashboard')
+            ->assertSeeInOrder(['With Santos, Liza (VPSD): 1 paper', 'In Class · Back at 3:00 PM', 'Back with you: 1 paper to revise, then to Adviser'])
+            ->assertDontSee('Signatory: Dela Cruz, Ana');   // the old, wrong answer
+    }
+
+    public function test_tickets_in_one_place_look_the_same_as_before(): void
+    {
+        // Both papers at the Adviser: one holder, shown as always
+        $ticket = $this->ticket('REF-1');
+        $ticket->documents()->create(['type' => 'Budget', 'title' => 'Paper B']);
+
+        $this->actingAs($this->officer)->get('/officer/tickets')
+            ->assertSeeInOrder(['Dela Cruz, Ana', 'Adviser'])
+            ->assertDontSee('Back with you')
+            ->assertDontSee('mt-holders', false);
+
+        $this->actingAs($this->officer)->get('/officer/dashboard')
+            ->assertSee('Signatory: Dela Cruz, Ana (Adviser)')
+            ->assertDontSee('dm-ticket-holder', false);
+    }
+
     private function ticket(string $refNo, ?User $officer = null): Ticket
     {
         $ticket = new Ticket(['ref_no' => $refNo, 'title' => "Ticket {$refNo}"]);

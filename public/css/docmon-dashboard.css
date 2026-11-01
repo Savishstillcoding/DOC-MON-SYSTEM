@@ -471,6 +471,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-ticket-title { font-size: 16px; font-weight: 600; }
 .dm-ticket-type { margin-top: 4px; font-size: 14px; color: #666; }
 .dm-ticket-people p { font-size: 14px; margin-bottom: 8px; color: #333; }
+/* split Batch (AUD-049): a little air before the next holder's line */
+.dm-ticket-people .dm-availability + .dm-ticket-holder { margin-top: 12px; }
 .dm-ticket-foot {
   display: flex;
   justify-content: space-between;
@@ -976,6 +978,8 @@ p.dm-form-alert { padding-left: 16px; }
 }
 .mt-doc-side { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .mt-remarks { margin-top: 4px; font-size: 13px; font-style: italic; color: var(--dm-text); }
+/* My Tickets, split Batch (AUD-049): one name + detail pair per place */
+.mt-holders .dm-cell-sub + .dm-cell-main { margin-top: 8px; }
 @media (max-width: 640px) {
   .mt-docs li { flex-direction: column; }
 }

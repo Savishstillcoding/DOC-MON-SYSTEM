@@ -54,7 +54,9 @@ class DashboardController extends Controller
     /** The array <x-docmon.ticket-card> expects, built from a real ticket. */
     private function card(Ticket $ticket, string $officerName): array
     {
-        $signatory = $ticket->currentSignatory();
+        $holders = $ticket->holders();
+        // All unfinished papers in one place: the card looks like always (one signatory + their dot)
+        $signatory = $holders->count() === 1 ? $holders[0]['signatory'] : null;
         $count = $ticket->documents->count();
 
         return [
@@ -68,9 +70,23 @@ class DashboardController extends Controller
             // Live availability of whoever holds the papers now (none when the ticket is finished)
             'availability' => $signatory ? ($signatory->availability ?? 'Available') : null,
             'availability_note' => $signatory?->back_at ? "Back at {$signatory->back_at}" : null,
+            // A split Batch (AUD-049): one line per place, each signatory with their own dot
+            'holders' => $holders->count() > 1 ? $holders->map(fn (array $h) => $this->holderLine($h))->all() : [],
             'submitted' => $ticket->created_at->format('M j, Y'),
             'updated' => $ticket->updated_at->format('M j, g:i A'),
         ];
+    }
+
+    /** One line of a split Batch's card: who has how many papers, and their availability. */
+    private function holderLine(array $holder): array
+    {
+        $s = $holder['signatory'];
+        $papers = $holder['papers'].' '.str('paper')->plural($holder['papers']);
+
+        return $holder['with_officer']
+            ? ['text' => "Back with you: {$papers} to revise, then to {$s?->pivot->title}", 'availability' => null, 'note' => null]
+            : ['text' => "With {$s?->displayName()} ({$s?->pivot->title}): {$papers}",
+                'availability' => $s?->availability ?? 'Available', 'note' => $s?->back_at ? "Back at {$s->back_at}" : null];
     }
 
     /**
