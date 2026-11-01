@@ -54,29 +54,6 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 
-// Registration forms. Officers and signatories share one form (same fields in
-// the Figma design), so one view is used with a different title and tagline.
-// Admin is intentionally not here: admin accounts shouldn't be self-registered.
-
-/*
-$registerRoles = [
-    'officer' => ['label' => 'Student Officer', 'tagline' => 'New Secretary? Welcome aboard :D'],
-    'signatory' => ['label' => 'Signatory', 'tagline' => 'New Signatory? Welcome aboard :D'],
-];
-
-Route::get('/register/{role}', function (string $role) use ($registerRoles) {
-    return view('register', [
-        'roleLabel' => $registerRoles[$role]['label'],
-        'tagline' => $registerRoles[$role]['tagline'],
-    ]);
-})->whereIn('role', array_keys($registerRoles));
-*/
-
-
-//for future use
-
-/*})->whereIn('role', array_keys($registerRoles));*/
-
 // ---------- Dashboards: logged in AND the right role ----------
 // 'auth' sends guests to /login; 'role:x' answers 403 to other roles.
 Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function () {
