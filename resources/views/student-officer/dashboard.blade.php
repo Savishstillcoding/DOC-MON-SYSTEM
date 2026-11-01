@@ -18,7 +18,7 @@
     $tabs = ['All', 'Pending', 'Needs Revision', 'Approved', 'Rejected'];
 @endphp
 
-<x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard">
+<x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -40,7 +40,7 @@
         <div>
             <p class="so-hero-date">{{ strtoupper(now()->format('l, F j, Y')) }}</p>
             <h2 class="so-hero-title">{{ $greeting }}, {{ $account->position ?: $account->first_name }}!</h2>
-            <p class="so-hero-text">
+            <p class="so-hero-text" data-live="hero">
                 @if ($stats['total'] === 0)
                     No tickets yet. Submit your first one when your papers are ready.
                 @else
@@ -53,7 +53,7 @@
     </section>
 
     {{-- Numbers --}}
-    <section class="dm-stat-grid dm-stat-grid-5">
+    <section class="dm-stat-grid dm-stat-grid-5" data-live="stats">
         <x-docmon.stat-card label="Total Tickets" :value="$stats['total']" note="All your tickets" />
         <x-docmon.stat-card label="Pending" :value="$stats['pending']" note="Waiting for signatures" />
         <x-docmon.stat-card label="Approved" :value="$stats['approved']" note="Fully signed" />
@@ -61,7 +61,7 @@
         <x-docmon.stat-card label="Rejected" :value="$stats['rejected']" note="Not approved" />
     </section>
 
-    <div class="dm-columns">
+    <div class="dm-columns" data-live="columns">
         {{-- My Tickets --}}
         <section class="dm-card dm-panel">
             <div class="dm-panel-head">

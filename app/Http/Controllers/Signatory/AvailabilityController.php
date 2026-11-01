@@ -29,7 +29,7 @@ class AvailabilityController extends Controller
 
         // Not in $fillable, so set directly; "Available" needs no back-at time
         $user->availability = $data['availability'];
-        $user->back_at = $data['availability'] === 'Available' ? null : $data['back_at'];
+        $user->back_at = $data['availability'] === 'Available' ? null : ($data['back_at'] ?? null);
         $user->save();
 
         $after = $user->availability.($user->back_at ? " (back {$user->back_at})" : '');

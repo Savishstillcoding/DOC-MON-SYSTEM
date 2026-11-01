@@ -519,6 +519,29 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .nt-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: -4px; }
 .nt-note { margin-top: 16px; font-size: 14px; line-height: 1.6; color: var(--dm-muted); }
 
+/* Phones (AUD-028): five columns don't fit, so each document becomes a small stacked block:
+   [#] [Type] [x] / Title / Ref No. The column headers no longer line up, so they're hidden
+   (each field still has its aria-label, and Ref No. says what it is in its placeholder). */
+@media (max-width: 640px) {
+  .nt-doc-labels { display: none; }
+  .nt-doc-row {
+    grid-template-columns: 28px minmax(0, 1fr) 40px;
+    grid-template-areas:
+      "num type  remove"
+      ".   title title"
+      ".   ref   ref";
+    gap: 8px 10px;
+    margin-top: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--dm-border);
+  }
+  .nt-doc-row .nt-doc-num { grid-area: num; }
+  .nt-doc-row [data-field="type"] { grid-area: type; }
+  .nt-doc-row [data-field="title"] { grid-area: title; }
+  .nt-doc-row [data-field="ref_no"] { grid-area: ref; }
+  .nt-doc-row .nt-remove { grid-area: remove; }
+}
+
 /* ---------------- Signatory: dashboard ---------------- */
 .sg-status-pill {
   display: inline-flex;
@@ -890,6 +913,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .nt-two-cols,
   .pf-grid,
   .sl-grid { grid-template-columns: 1fr; }
+  .nt-two-cols { row-gap: 0; }   /* AUD-030: each field already has its own top margin */
   .so-hero { flex-direction: column; align-items: flex-start; padding: 20px; }
   .dm-search { width: 100%; }
   .dm-header-actions { flex-wrap: wrap; width: 100%; }
@@ -1111,3 +1135,27 @@ p.dm-form-alert { padding-left: 16px; }
 
 /* Activity Logs: the date range dropdown stays compact, like the design */
 .al-range { width: auto; min-width: 150px; }
+
+/* Live updates (AUD-050, docmon-live.js) */
+.dm-stack { display: flex; flex-direction: column; gap: 24px; }
+/* cards swapped in by a live update appear in place, without the page's "rise in" animation */
+.is-live-updated:is(.dm-stat-grid, .so-ticket-grid, .sl-grid, .dm-side) > *,
+.is-live-updated :is(.dm-stat-grid, .so-ticket-grid, .sl-grid, .dm-side) > * { animation: none; }
+.dm-live-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 50;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--dm-text);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--dm-shadow-lg);
+  opacity: 0;
+  translate: 0 8px;
+  pointer-events: none;
+  transition: opacity 0.25s, translate 0.25s;
+}
+.dm-live-toast.is-shown { opacity: 1; translate: 0 0; }
