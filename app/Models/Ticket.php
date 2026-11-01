@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * One submission by an officer: a Resolution No. plus one document (Single)
@@ -83,13 +84,29 @@ class Ticket extends Model
     }
 
     /**
-     * The signatory who has the papers now: the one on the earliest step that
-     * still has an unfinished document. Null when every document is done.
+     * Where the unfinished papers are now (AUD-049). Each document moves on its own,
+     * so a Batch can be split, e.g. one paper with the SSC President and one returned
+     * to the officer by the Adviser. One entry per place, signatories first in route order:
+     *   ['signatory' => User (with ->pivot), 'step' => 2, 'papers' => 1, 'with_officer' => false]
+     * with_officer = returned: the officer has it to revise, then gives it back to that signatory.
+     * Empty when every document is finished.
+     *
+     * @return Collection<int, array{signatory: ?User, step: int, papers: int, with_officer: bool}>
      */
-    public function currentSignatory(): ?User
+    public function holders(): Collection
     {
-        $step = $this->documents->whereIn('status', [Document::PENDING, Document::RETURNED])->min('current_step');
+        $route = $this->organization->signatories;
 
-        return $step ? $this->organization->signatories->firstWhere('pivot.step', $step) : null;
+        return $this->documents
+            ->whereIn('status', [Document::PENDING, Document::RETURNED])
+            ->groupBy(fn (Document $d) => $d->status.'@'.$d->current_step)
+            ->map(fn (Collection $papers) => [
+                'signatory' => $route->firstWhere('pivot.step', $papers->first()->current_step),
+                'step' => (int) $papers->first()->current_step,
+                'papers' => $papers->count(),
+                'with_officer' => $papers->first()->status === Document::RETURNED,
+            ])
+            ->sortBy([['with_officer', 'asc'], ['step', 'asc']])
+            ->values();
     }
 }
