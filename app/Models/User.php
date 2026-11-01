@@ -26,6 +26,24 @@ class User extends Authenticatable
     /** A signatory's possible statuses, shown on officers' ticket cards. */
     public const AVAILABILITY = ['Available', 'In a Meeting', 'In Class', 'Out of Office'];
 
+    /**
+     * Account statuses and how the admin pages show them. Only "verified" can log in.
+     * "deactivated" = turned off by the admin (e.g. graduated); can be reactivated.
+     */
+    public const STATUS_LABELS = [
+        'pending' => 'Unverified',
+        'verified' => 'Verified',
+        'rejected' => 'Rejected',
+        'deactivated' => 'Deactivated',
+    ];
+
+    /** How each role is called on screen. */
+    public const ROLE_LABELS = [
+        'officer' => 'Student Officer',
+        'signatory' => 'Signatory',
+        'admin' => 'Administrator',
+    ];
+
     /** The officer positions that may file tickets. */
     public const OFFICER_POSITIONS = ['Secretary', 'Deputy Secretary'];
 
@@ -88,6 +106,16 @@ class User extends Authenticatable
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'officer_id');
+    }
+
+    public function statusLabel(): string
+    {
+        return self::STATUS_LABELS[$this->status] ?? ucfirst((string) $this->status);
+    }
+
+    public function roleLabel(): string
+    {
+        return self::ROLE_LABELS[$this->role] ?? ucfirst((string) $this->role);
     }
 
     /** "Labastida, MJ Bryan", the way names are listed across DOC-MON. */

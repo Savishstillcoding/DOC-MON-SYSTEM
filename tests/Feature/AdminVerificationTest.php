@@ -37,7 +37,7 @@ class AdminVerificationTest extends TestCase
         $this->actingAs($this->admin)->get('/admin/dashboard')
             ->assertOk()
             ->assertSee('Labastida, MJ')
-            ->assertSee("/admin/users/{$this->pending->id}/id-document")
+            ->assertSee("/admin/verification?user={$this->pending->id}")
             ->assertViewHas('pending', fn ($p) => $p->sole()->idDocument->getAttributes() === array_intersect_key(
                 $p->sole()->idDocument->getAttributes(), array_flip(['id', 'user_id', 'mime', 'size'])))
             ->assertViewHas('stats', fn ($s) => $s['pending'] === 1);
@@ -62,16 +62,16 @@ class AdminVerificationTest extends TestCase
         $this->get("/admin/users/{$this->pending->id}/id-document")->assertRedirect('/login');
         $this->actingAs($officer)->get("/admin/users/{$this->pending->id}/id-document")->assertForbidden();
         $this->actingAs($signatory)->get("/admin/users/{$this->pending->id}/id-document")->assertForbidden();
-        $this->actingAs($officer)->post("/admin/users/{$this->pending->id}/verify")->assertForbidden();
+        $this->actingAs($officer)->post("/admin/users/{$this->pending->id}/review", ['decision' => 'verify', 'name_matches' => '1', 'id_matches' => '1', 'photo_clear' => '1'])->assertForbidden();
         $this->assertSame('pending', $this->pending->fresh()->status);
     }
 
     public function test_verifying_lets_them_log_in_and_deletes_the_id(): void
     {
-        $this->actingAs($this->admin)->from('/admin/dashboard')
-            ->post("/admin/users/{$this->pending->id}/verify")
-            ->assertRedirect('/admin/dashboard')
-            ->assertSessionHas('status', 'Verified Labastida, MJ. They can log in now.');
+        $this->actingAs($this->admin)
+            ->post("/admin/users/{$this->pending->id}/review", ['decision' => 'verify', 'name_matches' => '1', 'id_matches' => '1', 'photo_clear' => '1'])
+            ->assertRedirect('/admin/verification')
+            ->assertSessionHas('status', 'Approved Labastida, MJ. They can log in now.');
 
         $user = $this->pending->fresh();
         $this->assertSame('verified', $user->status);
@@ -86,31 +86,55 @@ class AdminVerificationTest extends TestCase
 
     public function test_rejecting_blocks_log_in_and_deletes_the_id(): void
     {
-        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/reject");
+        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/review", ['decision' => 'reject', 'review_note' => 'ID photo is blurry, please re-upload']);
 
         $this->assertSame('rejected', $this->pending->fresh()->status);
         $this->assertSame(0, IdDocument::count());
 
+        // They see the reason when they try to log in
         auth()->logout();
-        $this->post('/login/officer', ['student_id' => '2201234', 'password' => 'password'])->assertSessionHasErrors('student_id');
+        $this->post('/login/officer', ['student_id' => '2201234', 'password' => 'password'])
+            ->assertSessionHasErrors(['student_id' => 'Your account was not approved: ID photo is blurry, please re-upload. You can sign up again.']);
         $this->assertGuest();
     }
 
     public function test_only_pending_accounts_can_be_decided(): void
     {
-        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/verify");
+        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/review", ['decision' => 'verify', 'name_matches' => '1', 'id_matches' => '1', 'photo_clear' => '1']);
         // A second click (or a second admin) can't flip it to rejected
-        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/reject")->assertSessionHasErrors('verify');
+        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/review", ['decision' => 'reject', 'review_note' => 'x'])->assertSessionHasErrors('verify');
         $this->assertSame('verified', $this->pending->fresh()->status);
 
         // The admin account itself can't be rejected through this page
-        $this->actingAs($this->admin)->post("/admin/users/{$this->admin->id}/reject")->assertSessionHasErrors('verify');
+        $this->actingAs($this->admin)->post("/admin/users/{$this->admin->id}/review", ['decision' => 'reject', 'review_note' => 'x'])->assertSessionHasErrors('verify');
         $this->assertSame('verified', $this->admin->fresh()->status);
+    }
+
+    public function test_approving_needs_the_whole_checklist_and_rejecting_needs_a_reason(): void
+    {
+        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/review", ['decision' => 'verify', 'name_matches' => '1', 'id_matches' => '1'])
+            ->assertSessionHasErrors('photo_clear');
+        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/review", ['decision' => 'reject'])
+            ->assertSessionHasErrors('review_note');
+
+        $this->assertSame('pending', $this->pending->fresh()->status);
+        $this->assertSame(1, IdDocument::count());
+    }
+
+    public function test_the_verification_page_shows_the_queue_and_the_id(): void
+    {
+        $this->actingAs($this->admin)->get('/admin/verification')
+            ->assertOk()
+            ->assertViewHas('selected', fn ($u) => $u->is($this->pending))
+            ->assertSee('<img src="'.url("/admin/users/{$this->pending->id}/id-document").'"', false)
+            ->assertSee('Name matches the ID');
+
+        $this->actingAs($this->admin)->get('/admin/verification?q=nobody')->assertSee('Nothing matches your search.');
     }
 
     public function test_recent_activity_shows_decisions(): void
     {
-        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/verify");
+        $this->actingAs($this->admin)->post("/admin/users/{$this->pending->id}/review", ['decision' => 'verify', 'name_matches' => '1', 'id_matches' => '1', 'photo_clear' => '1']);
 
         $this->actingAs($this->admin)->get('/admin/dashboard')
             ->assertSee('Verified Labastida, MJ (Student Officer)')
