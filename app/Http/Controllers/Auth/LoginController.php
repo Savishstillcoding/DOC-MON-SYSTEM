@@ -47,14 +47,21 @@ class LoginController extends Controller
 
         // Correct password, but the admin hasn't verified the account yet
         // (or rejected it): sign them straight back out.
-        $status = $request->user()->status;
+        $account = $request->user();   // read before logout(), which forgets the user
+        $status = $account->status;
 
         if ($status !== 'verified') {
             Auth::logout();
 
-            $message = $status === 'pending'
-                ? 'Your account is waiting for admin verification.'
-                : 'Your account was not approved. Please contact the admin.';
+            $message = match ($status) {
+                'pending' => 'Your account is waiting for admin verification.',
+                // The admin's reason, so the person knows what to fix before signing up again
+                'rejected' => 'Your account was not approved'
+                    .($account->review_note ? ': '.rtrim($account->review_note, '.!? ').'.' : '.')
+                    .' You can sign up again.',
+                'deactivated' => 'Your account was deactivated. Please contact the admin.',
+                default => 'Your account cannot log in. Please contact the admin.',
+            };
 
             return back()->withErrors([$idField => $message])->onlyInput($idField);
         }
