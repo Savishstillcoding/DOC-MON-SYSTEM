@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Account\PasswordController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\SignatoryListController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -102,8 +104,15 @@ Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(functi
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
     Route::get('/users/{user}/id-document', [VerificationController::class, 'showId']);
-    Route::post('/users/{user}/verify', [VerificationController::class, 'verify']);
-    Route::post('/users/{user}/reject', [VerificationController::class, 'reject']);
+    Route::get('/verification', [VerificationController::class, 'index']);
+    Route::post('/users/{user}/review', [VerificationController::class, 'review']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}/edit', [UserController::class, 'edit']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::post('/users/{user}/deactivate', [UserController::class, 'deactivate']);
+    Route::post('/users/{user}/reactivate', [UserController::class, 'reactivate']);
+    Route::get('/signatory-lists', [SignatoryListController::class, 'index']);
+    Route::put('/signatory-lists/{organization}', [SignatoryListController::class, 'update']);
 });
 
 // Dev-only reference page showing every dashboard component.

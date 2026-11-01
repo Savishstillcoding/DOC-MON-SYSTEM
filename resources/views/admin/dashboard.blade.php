@@ -3,22 +3,13 @@
     From the controller: $pending (accounts waiting, filtered by $tab), $counts (per tab), $stats,
     $organizations (with their approval routes), $recent (latest verify/reject decisions).
       View ID → GET  /admin/users/{id}/id-document (opens the uploaded photo/PDF in a new tab)
-      Verify  → POST /admin/users/{id}/verify      Reject → POST /admin/users/{id}/reject
-    The ID file is deleted after Verify or Reject.
+      Review  → the User Verification page (checklist, reason) where the decision is made.
 --}}
 @php
-    $menu = [
-        ['label' => 'Dashboard',         'icon' => 'house',        'href' => url('/admin/dashboard')],
-        ['label' => 'User Verification', 'icon' => 'shield-check', 'href' => url('/admin/dashboard') . '#pending'],
-        ['label' => 'Users',             'icon' => 'users',        'href' => '#'],
-        ['label' => 'Organizations',     'icon' => 'building',     'href' => '#'],
-        ['label' => 'Signatory Lists',   'icon' => 'list',         'href' => '#'],
-        ['label' => 'Activity Logs',     'icon' => 'clock',        'href' => '#'],
-    ];
     $roleLabel = ['officer' => 'Student Officer', 'signatory' => 'Signatory'];
 @endphp
 
-<x-docmon.dashboard-layout title="Admin Dashboard" :menu="$menu" active="Dashboard">
+<x-docmon.admin-layout title="Admin Dashboard" active="Dashboard">
 
     <header class="dm-page-header">
         <div>
@@ -89,17 +80,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <div class="dm-actions">
-                                            <form method="POST" action="{{ url('/admin/users/' . $p->id . '/verify') }}">
-                                                @csrf
-                                                <button type="submit" class="dm-btn dm-btn-success dm-btn-xs">Verify</button>
-                                            </form>
-                                            <form method="POST" action="{{ url('/admin/users/' . $p->id . '/reject') }}">
-                                                @csrf
-                                                <button type="submit" class="dm-btn dm-btn-danger dm-btn-xs"
-                                                        onclick="return confirm('Reject this account? Their ID will be deleted and they will have to sign up again.')">Reject</button>
-                                            </form>
-                                        </div>
+                                        <a href="{{ url('/admin/verification?user=' . $p->id) }}" class="dm-btn dm-btn-primary dm-btn-xs">Review</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -151,4 +132,4 @@
         </div>
     </div>
 
-</x-docmon.dashboard-layout>
+</x-docmon.admin-layout>
