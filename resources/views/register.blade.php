@@ -8,12 +8,12 @@
   <link rel="preload" as="image" href="{{ asset('images/icon-grid.png') }}">
   <title>{{ $roleLabel }} Sign Up – DOC-MON</title>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
-  <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/signuppage.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/registerpage.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/transitions.css') }}">
-  <script src="{{ asset('js/icon-scroll.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset_v('css/fonts.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/signuppage.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/registerpage.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/wires.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/transitions.css') }}">
+  <script src="{{ asset_v('js/icon-scroll.js') }}"></script>
 </head>
 <body>
   <main class="landing">
@@ -90,6 +90,6 @@
     </section>
   </main>
 
-  <script src="{{ asset('js/register.js') }}"></script>
+  <script src="{{ asset_v('js/register.js') }}"></script>
 </body>
 </html>

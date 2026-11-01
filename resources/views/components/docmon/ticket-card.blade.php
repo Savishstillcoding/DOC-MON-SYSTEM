@@ -29,7 +29,10 @@
     <div class="dm-ticket-section dm-ticket-people">
         <p>Officer: {{ $ticket['officer'] }}</p>
         <p>Signatory: {{ $ticket['signatory'] }}</p>
-        <x-docmon.availability :status="$ticket['availability']" :note="$ticket['availability_note'] ?? null" :colored="true" />
+        {{-- No availability once every paper is done (nobody holds them anymore) --}}
+        @if ($ticket['availability'] ?? null)
+            <x-docmon.availability :status="$ticket['availability']" :note="$ticket['availability_note'] ?? null" :colored="true" />
+        @endif
     </div>
 
     <footer class="dm-ticket-foot">

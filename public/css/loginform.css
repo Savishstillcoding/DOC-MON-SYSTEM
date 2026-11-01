@@ -82,6 +82,17 @@
   color: #b42318;
 }
 
+/* Green note after signing up ("Account created! ...") */
+.form-status {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #e3f3e7;
+  color: #1e7b3a;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 @media (max-width: 600px) {
   .login-card { padding: 20px; }
 }

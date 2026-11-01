@@ -88,12 +88,19 @@
                         <p class="rv-purpose">{{ $t->purpose }}</p>
                     @endif
 
-                    <h3 class="rv-docs-title">
-                        Waiting for you: {{ $selected->documents->count() }} {{ Str::plural('document', $selected->documents->count()) }}
-                        @if ($selected->documents->count() < $t->documents_count)
-                            <span class="dm-cell-sub">({{ $t->documents_count - $selected->documents->count() }} other {{ Str::plural('paper', $t->documents_count - $selected->documents->count()) }} of this ticket {{ $t->documents_count - $selected->documents->count() === 1 ? 'is' : 'are' }} not at your step)</span>
-                        @endif
-                    </h3>
+                    @php
+                        $waitingCount = $selected->documents->count();
+                        $otherCount = $t->documents_count - $waitingCount;
+                        $flat = $waitingCount === 1 && $otherCount === 0;   // a plain Single: no list needed
+                    @endphp
+                    @unless ($flat)
+                        <h3 class="rv-docs-title">
+                            Waiting for you: {{ $waitingCount }} {{ Str::plural('document', $waitingCount) }}
+                            @if ($otherCount > 0)
+                                <span class="dm-cell-sub">({{ $otherCount }} other {{ Str::plural('paper', $otherCount) }} of this ticket {{ $otherCount === 1 ? 'is' : 'are' }} not at your step)</span>
+                            @endif
+                        </h3>
+                    @endunless
 
                     {{-- Above the list, so a big Batch (e.g. 12 certificates) doesn't hide it --}}
                     @if ($selected->documents->count() > 1)
@@ -108,11 +115,13 @@
 
                     @foreach ($selected->documents as $doc)
                         @php $isMine = (int) old('document_id') === $doc->id; @endphp
-                        <form method="POST" action="{{ url('/signatory/documents/' . $doc->id . '/action') }}" class="rv-doc">
+                        <form method="POST" action="{{ url('/signatory/documents/' . $doc->id . '/action') }}" class="rv-doc {{ $flat ? 'rv-doc-flat' : '' }}">
                             @csrf
                             <input type="hidden" name="document_id" value="{{ $doc->id }}">
-                            <p class="dm-cell-main">{{ $doc->type }}: {{ $doc->title }}</p>
-                            @if ($doc->ref_no) <p class="dm-cell-sub">Ref No. {{ $doc->ref_no }}</p> @endif
+                            <div>
+                                <p class="dm-cell-main">{{ $doc->type }}: {{ $doc->title }}</p>
+                                @if ($doc->ref_no) <p class="dm-cell-sub">Document Ref No. {{ $doc->ref_no }}</p> @endif
+                            </div>
 
                             <label class="rv-label" for="rv-remarks-{{ $doc->id }}">Remarks</label>
                             <textarea id="rv-remarks-{{ $doc->id }}" name="remarks" rows="2" maxlength="1000"
@@ -127,7 +136,6 @@
                             </div>
                         </form>
                     @endforeach
-
 
                     <p class="nt-note">
                         @if ($route->next)
