@@ -67,6 +67,21 @@ Adding is safe. **Removing or renaming** a column is not: the live code may stil
 
 ---
 
+## Forgot a password (MJ only for the live site)
+
+Nobody can look up a password: the database only keeps a scrambled version (a bcrypt hash).
+The fix is to set a **new** one. The command shows which account and database it will change,
+asks you to confirm, and hides what you type.
+
+| Where | Command |
+|---|---|
+| Your laptop | `php artisan docmon:reset-password admin` |
+| Live site | `php artisan docmon:reset-password admin --env=backup` |
+
+Replace `admin` with the person's log-in ID (student ID or employee ID). Check that the
+**Database** column says `docmon` before answering **yes** for the live site.
+Never send the new password in a group chat; tell the person directly.
+
 ## Never do these
 
 | Never                                       | Why                                                                                                                                                                       |

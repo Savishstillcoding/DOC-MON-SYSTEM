@@ -1,6 +1,7 @@
 {{--
-    DOC-MON · Student Officer · Dashboard
-    Static placeholder data for now (not connected to the database yet).
+    DOC-MON · Student Officer · Dashboard (Officer\DashboardController)
+    From the controller: $organization (with its route), $stats, $tab, $cards (the newest
+    tickets as <x-docmon.ticket-card> arrays), $activity (latest 5 events on my tickets).
 --}}
 @php
     $menu = [
@@ -11,51 +12,10 @@
         ['label' => 'Profile',     'icon' => 'user',      'href' => url('/officer/profile')],
     ];
 
-    $stats = [
-        ['label' => 'Total Tickets',  'value' => 24, 'note' => 'This semester'],
-        ['label' => 'Pending',        'value' => 6,  'note' => 'Waiting for signatures'],
-        ['label' => 'Approved',       'value' => 14, 'note' => 'Fully signed'],
-        ['label' => 'Needs Revision', 'value' => 3,  'note' => 'Returned to you'],
-        ['label' => 'Rejected',       'value' => 1,  'note' => 'Not approved'],
-    ];
-
-    $tickets = [
-        ['code' => 'DM-2026-00123', 'ref' => '2026-09-008', 'status' => 'Pending',
-         'title' => 'Activity Proposal – DIGITS Week', 'type' => 'Single',
-         'officer' => 'Labastida, MJ Bryan', 'signatory' => 'Dela Cruz, Ana (Adviser)',
-         'availability' => 'In a Meeting', 'availability_note' => 'Back at 2:00 PM',
-         'submitted' => 'Sep 27, 2026', 'updated' => 'Sep 27, 12:40'],
-        ['code' => 'DM-2026-00119', 'ref' => '2026-09-005', 'status' => 'Needs Revision',
-         'title' => 'Resolution + Budgetary – Tech Summit', 'type' => 'Batch · 3 documents',
-         'officer' => 'Labastida, MJ Bryan', 'signatory' => 'Reyes, Paolo (SSC President)',
-         'availability' => 'Available', 'availability_note' => null,
-         'submitted' => 'Sep 22, 2026', 'updated' => 'Sep 25, 16:12'],
-        ['code' => 'DM-2026-00114', 'ref' => '2026-09-002', 'status' => 'Approved',
-         'title' => 'Resolution – Election Guidelines', 'type' => 'Single',
-         'officer' => 'Labastida, MJ Bryan', 'signatory' => 'Santos, Liza (VPSD)',
-         'availability' => 'Available', 'availability_note' => null,
-         'submitted' => 'Sep 15, 2026', 'updated' => 'Sep 19, 09:30'],
-        ['code' => 'DM-2026-00110', 'ref' => '2026-08-031', 'status' => 'Rejected',
-         'title' => 'Activity Proposal – Outreach Program', 'type' => 'Single',
-         'officer' => 'Labastida, MJ Bryan', 'signatory' => 'Garcia, Ramon (ODSOA)',
-         'availability' => 'Out of Office', 'availability_note' => 'Back tomorrow',
-         'submitted' => 'Sep 10, 2026', 'updated' => 'Sep 12, 14:05'],
-    ];
-
-    $signatories = [
-        ['badge' => 'AD', 'name' => 'Dela Cruz, Ana', 'role' => 'Step 1 · Adviser',       'status' => 'Meeting', 'note' => '2 PM'],
-        ['badge' => 'PR', 'name' => 'Reyes, Paolo',   'role' => 'Step 2 · SSC President', 'status' => 'Available',    'note' => null],
-        ['badge' => 'RG', 'name' => 'Garcia, Ramon',  'role' => 'Step 3 · ODSOA',         'status' => 'Out of Office','note' => null],
-        ['badge' => 'LS', 'name' => 'Santos, Liza',   'role' => 'Step 4 · VPSD',          'status' => 'Available',    'note' => null],
-    ];
-
-    $activity = [
-        ['color' => 'green', 'text' => 'DM-00114 approved by VPSD',                  'time' => '2 hours ago'],
-        ['color' => 'blue',  'text' => 'DM-00119 returned for revision by SSC President', 'time' => 'Yesterday, 4:12 PM'],
-        ['color' => 'dark',  'text' => 'DM-00123 submitted to Adviser',              'time' => 'Sep 27, 12:40 PM'],
-    ];
-
-    $tabs = ['All', 'Pending', 'Approved', 'Needs Revision', 'Rejected'];
+    $hour = now()->hour;
+    $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
+    $account = auth()->user();
+    $tabs = ['All', 'Pending', 'Needs Revision', 'Approved', 'Rejected'];
 @endphp
 
 <x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard">
@@ -63,7 +23,7 @@
     <header class="dm-page-header">
         <div>
             <h1 class="dm-page-title">Dashboard</h1>
-            <p class="dm-page-sub">DIGITS · Student Officer</p>
+            <p class="dm-page-sub">{{ collect([$organization?->code, 'Student Officer'])->filter()->implode(' · ') }}</p>
         </div>
         <div class="dm-header-actions">
             <label class="dm-search">
@@ -78,18 +38,27 @@
     {{-- Welcome card --}}
     <section class="dm-card so-hero">
         <div>
-            <p class="so-hero-date">FRIDAY, OCTOBER 16, 2026</p>
-            <h2 class="so-hero-title">Good morning, Secretary!</h2>
-            <p class="so-hero-text">3 tickets are waiting on signatories · 1 needs your revision</p>
+            <p class="so-hero-date">{{ strtoupper(now()->format('l, F j, Y')) }}</p>
+            <h2 class="so-hero-title">{{ $greeting }}, {{ $account->position ?: $account->first_name }}!</h2>
+            <p class="so-hero-text">
+                @if ($stats['total'] === 0)
+                    No tickets yet. Submit your first one when your papers are ready.
+                @else
+                    {{ $stats['pending'] }} {{ Str::plural('ticket', $stats['pending']) }} {{ $stats['pending'] === 1 ? 'is' : 'are' }} waiting on signatories
+                    · {{ $stats['revision'] }} {{ $stats['revision'] === 1 ? 'needs' : 'need' }} your revision
+                @endif
+            </p>
         </div>
         <img class="so-hero-icons" src="{{ asset('images/dashboard-hero-icons.png') }}" alt="">
     </section>
 
     {{-- Numbers --}}
     <section class="dm-stat-grid dm-stat-grid-5">
-        @foreach ($stats as $stat)
-            <x-docmon.stat-card :label="$stat['label']" :value="$stat['value']" :note="$stat['note']" />
-        @endforeach
+        <x-docmon.stat-card label="Total Tickets" :value="$stats['total']" note="All your tickets" />
+        <x-docmon.stat-card label="Pending" :value="$stats['pending']" note="Waiting for signatures" />
+        <x-docmon.stat-card label="Approved" :value="$stats['approved']" note="Fully signed" />
+        <x-docmon.stat-card label="Needs Revision" :value="$stats['revision']" note="Returned to you" />
+        <x-docmon.stat-card label="Rejected" :value="$stats['rejected']" note="Not approved" />
     </section>
 
     <div class="dm-columns">
@@ -104,42 +73,60 @@
             </div>
 
             <nav class="dm-tabs">
-                @foreach ($tabs as $tab)
-                    <a href="#" class="dm-tab {{ $loop->first ? 'is-active' : '' }}">{{ $tab }}</a>
+                @foreach ($tabs as $label)
+                    <a href="{{ url('/officer/dashboard') . ($label === 'All' ? '' : '?status=' . urlencode($label)) }}"
+                       class="dm-tab {{ $label === $tab ? 'is-active' : '' }}">{{ $label }}</a>
                 @endforeach
             </nav>
 
-            <div class="so-ticket-grid">
-                @foreach ($tickets as $ticket)
-                    <x-docmon.ticket-card :ticket="$ticket" />
-                @endforeach
-            </div>
+            @if ($cards->isEmpty())
+                <p class="nt-note">
+                    {{ $tab === 'All' ? 'No tickets yet.' : 'No tickets with this status.' }}
+                    <a href="{{ url('/officer/tickets/new') }}">Submit a new ticket</a>
+                </p>
+            @else
+                <div class="so-ticket-grid">
+                    @foreach ($cards as $ticket)
+                        <x-docmon.ticket-card :ticket="$ticket" />
+                    @endforeach
+                </div>
+            @endif
         </section>
 
         <div class="dm-side">
             {{-- Signatory Availability --}}
             <section class="dm-card dm-panel">
                 <h2 class="dm-panel-title">Signatory Availability</h2>
-                <p class="dm-panel-sub">DIGITS approval route · live status</p>
+                <p class="dm-panel-sub">{{ $organization?->code }} approval route · live status</p>
 
-                <div class="dm-route">
-                    @foreach ($signatories as $s)
-                        <x-docmon.signatory-row :badge="$s['badge']" :name="$s['name']" :role="$s['role']" :status="$s['status']" :note="$s['note']" />
-                    @endforeach
-                </div>
+                @if ($organization && $organization->signatories->isNotEmpty())
+                    <div class="dm-route">
+                        @foreach ($organization->signatories as $s)
+                            <x-docmon.signatory-row :badge="$s->initials()" :name="$s->displayName()"
+                                                    :role="'Step ' . $s->pivot->step . ' · ' . $s->pivot->title"
+                                                    :status="$s->availability ?? 'Available'" :note="$s->back_at" />
+                        @endforeach
+                    </div>
+                @else
+                    <p class="nt-note">Your organization has no approval route yet. Ask the admin to add its signatories.</p>
+                @endif
             </section>
 
             {{-- Recent Activity --}}
             <section class="dm-card dm-panel">
                 <h2 class="dm-panel-title">Recent Activity</h2>
-                <ul class="dm-activity">
-                    @foreach ($activity as $item)
-                        <li class="dm-activity-{{ $item['color'] }}">
-                            <p>{{ $item['text'] }}</p>
-                            <span>{{ $item['time'] }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+                @if ($activity->isEmpty())
+                    <p class="nt-note">Submissions, approvals and returns on your tickets will show here.</p>
+                @else
+                    <ul class="dm-activity">
+                        @foreach ($activity as $item)
+                            <li class="dm-activity-{{ $item['color'] }}">
+                                <p>{{ $item['text'] }}</p>
+                                <span>{{ $item['at']->diffForHumans() }} · {{ $item['at']->format('M j, g:i A') }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
             </section>
         </div>
     </div>

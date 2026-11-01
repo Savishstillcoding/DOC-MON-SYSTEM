@@ -990,3 +990,5 @@ p.dm-form-alert { padding-left: 16px; }
 .rv-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .rv-all { margin-top: 12px; }
 .dm-btn.is-disabled { opacity: 0.45; pointer-events: none; }
+/* A plain Single ticket: the form sits directly in the panel, like the design */
+.rv-doc-flat { margin-top: 16px; padding: 16px 0 0; border: 0; border-top: 1px solid var(--dm-border); border-radius: 0; }

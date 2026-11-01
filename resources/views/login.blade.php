@@ -8,12 +8,12 @@
   <link rel="preload" as="image" href="{{ asset('images/icon-grid.png') }}">
   <title>Log In – DOC-MON</title>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
-  <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/loginpage.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/transitions.css') }}">
-  <script src="{{ asset('js/icon-scroll.js') }}"></script>
-  <script src="{{ asset('js/page-transitions.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset_v('css/fonts.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/loginpage.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/wires.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/transitions.css') }}">
+  <script src="{{ asset_v('js/icon-scroll.js') }}"></script>
+  <script src="{{ asset_v('js/page-transitions.js') }}"></script>
 </head>
 <body>
   <main class="landing">

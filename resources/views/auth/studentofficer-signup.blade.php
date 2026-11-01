@@ -8,12 +8,12 @@
   <link rel="preload" as="image" href="{{ asset('images/icon-grid.png') }}">
   <title>Student Officer Sign Up – DOC-MON</title>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/inter/inter-latin.woff2') }}" crossorigin>
-  <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/signuppage.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/registerpage.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/wires.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/transitions.css') }}">
-  <script src="{{ asset('js/icon-scroll.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset_v('css/fonts.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/signuppage.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/registerpage.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/wires.css') }}">
+  <link rel="stylesheet" href="{{ asset_v('css/transitions.css') }}">
+  <script src="{{ asset_v('js/icon-scroll.js') }}"></script>
 </head>
 <body>
   <main class="landing">
@@ -45,51 +45,70 @@
             <div class="field">
               <label for="first_name">First Name</label>
               <input id="first_name" name="first_name" type="text" placeholder="e.x. Juan Carlos" autocomplete="given-name" value="{{ old('first_name') }}" required>
+              @error('first_name')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
               <label for="last_name">Last Name</label>
               <input id="last_name" name="last_name" type="text" placeholder="e.x. Manalo" autocomplete="family-name" value="{{ old('last_name') }}" required>
+              @error('last_name')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
 
             <div class="field">
               <label for="student_id">Student ID</label>
               <input id="student_id" name="student_id" type="text" inputmode="numeric" placeholder="e.x. 1234567" value="{{ old('student_id') }}" required>
+              @error('student_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
-              <label for="organization">Student Organization</label>
-              <input id="organization" name="organization" type="text" placeholder="e.x. DIGITS" autocomplete="organization" value="{{ old('organization') }}" required>
+              <label for="organization_id">Student Organization</label>
+              <select id="organization_id" name="organization_id" required>
+                <option value="" disabled @selected(! old('organization_id'))>Choose your organization</option>
+                @foreach ($organizations as $org)
+                  <option value="{{ $org->id }}" @selected((string) old('organization_id') === (string) $org->id)>{{ $org->code }} · {{ $org->name }}</option>
+                @endforeach
+              </select>
+              @error('organization_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
 
             <div class="field">
                 <label for="email">Email</label>
                 <input id="email" name="email" type="email" placeholder="e.x. juan.manalo@lnu.edu.ph" autocomplete="email" value="{{ old('email') }}" required>
+              @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
                 <label for="phone">Phone Number</label>
                 <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" title="Enter an 11-digits number starting at 09" placeholder="e.x. 09123456789" autocomplete="tel" value="{{ old('phone') }}" required>
+              @error('phone')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
 
             <div class="field">
               <label for="position">Position</label>
-              <input id="position" name="position" type="text" placeholder="e.x. Secretary / Deputy Secretary" autocomplete="organization-title" value="{{ old('position') }}" required>
+              <select id="position" name="position" required>
+                <option value="" disabled @selected(! old('position'))>Choose your position</option>
+                @foreach ($positions as $position)
+                  <option @selected(old('position') === $position)>{{ $position }}</option>
+                @endforeach
+              </select>
+              @error('position')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
               <label for="password">Password</label>
-              <input id="password" name="password" type="password" placeholder="e.x. Testpassword#1" autocomplete="new-password" required>
+              <input id="password" name="password" type="password" minlength="8" placeholder="At least 8 characters" autocomplete="new-password" required>
+              @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
           </div>
 
           <div class="field">
-            <span class="field-label" id="school_id_label">School ID</span>
-            <label class="upload" for="school_id">
+            <span class="field-label" id="id_document_label">School ID</span>
+            <label class="upload" for="id_document">
               <svg class="upload-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>
               </svg>
               <span class="upload-text" data-upload-text>Click to upload</span>
             </label>
-            <input class="upload-input" id="school_id" name="school_id" type="file" accept="image/*,.pdf" aria-labelledby="school_id_label" aria-describedby="school_id_note school_id_error" required>
-            <p class="field-note" id="school_id_note">Note: Upload your school ID for verification. Photo or PDF, max 2 MB (big photos are shrunk automatically).</p>
-            <p class="form-error" id="school_id_error" role="alert" hidden></p>
+            <input class="upload-input" id="id_document" name="id_document" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" aria-labelledby="id_document_label" aria-describedby="id_document_note id_document_error" required>
+            <p class="field-note" id="id_document_note">Note: Upload your school ID for verification. Photo or PDF, max 2 MB (big photos are shrunk automatically).</p>
+            <p class="form-error" id="id_document_error" role="alert" hidden></p>
+            @error('id_document')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <button class="submit-btn" type="submit">Sign Up</button>
@@ -100,6 +119,6 @@
     </section>
   </main>
 
-  <script src="{{ asset('js/register.js') }}"></script>
+  <script src="{{ asset_v('js/register.js') }}"></script>
 </body>
 </html>
