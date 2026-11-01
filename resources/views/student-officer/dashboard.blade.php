@@ -4,21 +4,13 @@
     tickets as <x-docmon.ticket-card> arrays), $activity (latest 5 events on my tickets).
 --}}
 @php
-    $menu = [
-        ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
-        ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
-        ['label' => 'My Tickets',  'icon' => 'file-text', 'href' => url('/officer/tickets')],
-        ['label' => 'Signatories', 'icon' => 'users',     'href' => url('/officer/signatories')],
-        ['label' => 'Profile',     'icon' => 'user',      'href' => url('/officer/profile')],
-    ];
-
     $hour = now()->hour;
     $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
     $account = auth()->user();
     $tabs = ['All', 'Pending', 'Needs Revision', 'Approved', 'Rejected'];
 @endphp
 
-<x-docmon.dashboard-layout title="Dashboard" :menu="$menu" active="Dashboard" :live="true">
+<x-docmon.officer-layout title="Dashboard" active="Dashboard" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -131,4 +123,4 @@
         </div>
     </div>
 
-</x-docmon.dashboard-layout>
+</x-docmon.officer-layout>

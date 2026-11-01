@@ -5,17 +5,7 @@
     Under each ticket, a fold-out list of its documents: status, where each paper is,
     the signatory's remarks, and a Resubmit button for returned papers.
 --}}
-@php
-    $menu = [
-        ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
-        ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
-        ['label' => 'My Tickets',  'icon' => 'file-text', 'href' => url('/officer/tickets')],
-        ['label' => 'Signatories', 'icon' => 'users',     'href' => url('/officer/signatories')],
-        ['label' => 'Profile',     'icon' => 'user',      'href' => url('/officer/profile')],
-    ];
-@endphp
-
-<x-docmon.dashboard-layout title="My Tickets" :menu="$menu" active="My Tickets" :live="true">
+<x-docmon.officer-layout title="My Tickets" active="My Tickets" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -143,4 +133,4 @@
         @endif
     </section>
 
-</x-docmon.dashboard-layout>
+</x-docmon.officer-layout>

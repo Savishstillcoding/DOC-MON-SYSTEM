@@ -6,17 +6,7 @@
     Name and Student ID are shown but not sent: the admin verified them against the uploaded ID.
     Telegram and the notification switches return when notifications are built.
 --}}
-@php
-    $menu = [
-        ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
-        ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
-        ['label' => 'My Tickets',  'icon' => 'file-text', 'href' => url('/officer/tickets')],
-        ['label' => 'Signatories', 'icon' => 'users',     'href' => url('/officer/signatories')],
-        ['label' => 'Profile',     'icon' => 'user',      'href' => url('/officer/profile')],
-    ];
-@endphp
-
-<x-docmon.dashboard-layout title="Profile" :menu="$menu" active="Profile">
+<x-docmon.officer-layout title="Profile" active="Profile">
 
     <header class="dm-page-header">
         <div>
@@ -129,4 +119,4 @@
         </div>
     </div>
 
-</x-docmon.dashboard-layout>
+</x-docmon.officer-layout>

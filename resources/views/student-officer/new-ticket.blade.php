@@ -7,14 +7,6 @@
     From the controller: $organization (with its signatories), $documentTypes
 --}}
 @php
-    $menu = [
-        ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
-        ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
-        ['label' => 'My Tickets',  'icon' => 'file-text', 'href' => url('/officer/tickets')],
-        ['label' => 'Signatories', 'icon' => 'users',     'href' => url('/officer/signatories')],
-        ['label' => 'Profile',     'icon' => 'user',      'href' => url('/officer/profile')],
-    ];
-
     // Document rows: what was typed before a failed submit, or one empty row (Single)
     $rows = old('documents', [['type' => $documentTypes[0], 'title' => '', 'ref_no' => '']]);
 
@@ -22,7 +14,7 @@
     $documentErrors = collect($errors->get('documents'))->merge(collect($errors->get('documents.*'))->flatten());
 @endphp
 
-<x-docmon.dashboard-layout title="New Ticket" :menu="$menu" active="New Ticket" :live="true">
+<x-docmon.officer-layout title="New Ticket" active="New Ticket" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -201,4 +193,4 @@
         })();
     </script>
 
-</x-docmon.dashboard-layout>
+</x-docmon.officer-layout>

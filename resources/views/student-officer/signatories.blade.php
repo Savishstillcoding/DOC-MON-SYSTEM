@@ -4,17 +4,7 @@
     THIS officer's papers are. From the controller: $organization, $signatories (in route
     order: ->step, ->title, ->name, ->initials, ->availability, ->back_at, ->pending, ->approved, ->returned).
 --}}
-@php
-    $menu = [
-        ['label' => 'Dashboard',   'icon' => 'house',     'href' => url('/officer/dashboard')],
-        ['label' => 'New Ticket',  'icon' => 'file-plus', 'href' => url('/officer/tickets/new')],
-        ['label' => 'My Tickets',  'icon' => 'file-text', 'href' => url('/officer/tickets')],
-        ['label' => 'Signatories', 'icon' => 'users',     'href' => url('/officer/signatories')],
-        ['label' => 'Profile',     'icon' => 'user',      'href' => url('/officer/profile')],
-    ];
-@endphp
-
-<x-docmon.dashboard-layout title="Signatories" :menu="$menu" active="Signatories" :live="true">
+<x-docmon.officer-layout title="Signatories" active="Signatories" :live="true">
 
     <header class="dm-page-header">
         <div>
@@ -96,4 +86,4 @@
     @endif
     </div>
 
-</x-docmon.dashboard-layout>
+</x-docmon.officer-layout>
