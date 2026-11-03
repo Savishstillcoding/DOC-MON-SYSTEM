@@ -16,8 +16,14 @@
      credits                           -> "made by" note (every page)
    ========================================================== */
 
-/* Turn on animations when moving between our pages */
-@view-transition { navigation: auto; }
+/* Turn on animations when moving between our pages, but only when the
+   user's system doesn't ask for reduced motion: the same rule as the
+   dashboards (docmon-dashboard.css). If only one side opted in, Chrome
+   aborted the animation halfway and logged "InvalidStateError:
+   Transition was aborted ... ViewTransition opt-in disabled". */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
 
 /* Everything without a name (title, nav, icons...) is identical on
    both pages, so swap it instantly instead of cross-fading.
