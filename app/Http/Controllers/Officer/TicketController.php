@@ -23,9 +23,12 @@ class TicketController extends Controller
 {
     public function index(Request $request): View
     {
+        $search = trim((string) $request->query('q', ''));
+
         // with(): load documents and the approval route in a few queries,
         // instead of one extra query per ticket (the "N+1" problem)
         $all = $request->user()->tickets()
+            ->when($search !== '', fn ($q) => $q->search($search))
             ->with(['documents.latestAction', 'organization.signatories'])
             ->latest()
             ->get();
@@ -37,7 +40,7 @@ class TicketController extends Controller
         $tab = in_array($request->query('status'), Ticket::STATUS_TABS, true) ? $request->query('status') : 'All';
         $tickets = $tab === 'All' ? $all : $all->filter(fn ($t) => $t->status() === $tab);
 
-        return view('student-officer.my-tickets', compact('tickets', 'counts', 'tab'));
+        return view('student-officer.my-tickets', compact('tickets', 'counts', 'tab', 'search'));
     }
 
     public function create(Request $request): View

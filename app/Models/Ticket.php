@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,6 +39,28 @@ class Ticket extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
+    }
+
+    /**
+     * The search boxes on My Tickets and For Review (AUD-021): tickets whose code,
+     * Ref No. or title, one of whose papers (title or Ref No.), or whose officer's
+     * name contains the words. Ticket::search('budget')->get()
+     */
+    public function scopeSearch(Builder $query, string $term): void
+    {
+        $like = '%'.$term.'%';
+
+        // One group, so the ORs can't leak out of "my tickets only"
+        $query->where(fn (Builder $q) => $q
+            ->where('code', 'like', $like)
+            ->orWhere('ref_no', 'like', $like)
+            ->orWhere('title', 'like', $like)
+            ->orWhereHas('documents', fn (Builder $d) => $d->where(fn (Builder $dw) => $dw
+                ->where('title', 'like', $like)
+                ->orWhere('ref_no', 'like', $like)))
+            ->orWhereHas('officer', fn (Builder $o) => $o->where(fn (Builder $ow) => $ow
+                ->where('first_name', 'like', $like)
+                ->orWhere('last_name', 'like', $like))));
     }
 
     /**

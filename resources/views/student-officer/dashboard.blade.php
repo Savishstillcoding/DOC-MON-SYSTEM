@@ -17,14 +17,15 @@
             <h1 class="dm-page-title">Dashboard</h1>
             <p class="dm-page-sub">{{ collect([$organization?->code, 'Student Officer'])->filter()->implode(' · ') }}</p>
         </div>
-        <div class="dm-header-actions">
+        {{-- Search goes to My Tickets, which lists every ticket (AUD-021) --}}
+        <form method="GET" action="{{ url('/officer/tickets') }}" class="dm-header-actions">
             <label class="dm-search">
                 <x-docmon.icon name="search" size="18" />
-                <input type="search" placeholder="Search ticket or Ref No.">
+                <input type="search" name="q" placeholder="Search ticket, Ref No. or paper" aria-label="Search my tickets">
             </label>
             <x-docmon.notify-bell />
             <a href="{{ url('/officer/tickets/new') }}" class="dm-btn dm-btn-primary"><x-docmon.icon name="plus" size="16" /> New Ticket</a>
-        </div>
+        </form>
     </header>
 
     {{-- Welcome card --}}

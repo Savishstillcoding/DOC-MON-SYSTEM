@@ -30,7 +30,8 @@
                 @endif
             </p>
         </div>
-        <div class="dm-header-actions">
+        {{-- Search goes to For Review, which lists everything waiting for you (AUD-021) --}}
+        <form method="GET" action="{{ url('/signatory/review') }}" class="dm-header-actions">
             @php $pillVariant = collect($availabilityOptions)->firstWhere('label', $account->availability ?? 'Available')['variant'] ?? 'available'; @endphp
             <span class="sg-status-pill is-{{ $pillVariant }}">
                 <span class="dm-dot"></span>{{ $account->availability ?? 'Available' }}@if ($account->back_at) · {{ $account->back_at }}@endif
@@ -38,10 +39,10 @@
             </span>
             <label class="dm-search">
                 <x-docmon.icon name="search" size="18" />
-                <input type="search" placeholder="Search ticket or Ref No.">
+                <input type="search" name="q" placeholder="Search ticket, Ref No. or officer" aria-label="Search the queue">
             </label>
             <x-docmon.notify-bell />
-        </div>
+        </form>
     </header>
 
     <section class="dm-stat-grid dm-stat-grid-4">
