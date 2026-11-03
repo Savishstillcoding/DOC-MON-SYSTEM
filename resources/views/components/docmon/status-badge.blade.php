@@ -1,7 +1,7 @@
 {{--
     Colored status pill.
     Usage: <x-docmon.status-badge status="Pending" />
-    Statuses: Pending, Approved, Partly Approved, Rejected, Needs Revision, Verified, For Review, Unverified, Deactivated
+    Statuses: Pending, Approved, Partly Approved, Rejected, Needs Revision, Verified, For Review, Unverified, Deactivated, Connected
 --}}
 @props(['status'])
 
@@ -16,6 +16,7 @@
         'For Review'     => 'review',
         'Unverified'     => 'pending',
         'Deactivated'    => 'review',
+        'Connected'      => 'approved',
     ][$status] ?? 'review';
 @endphp
 
