@@ -16,6 +16,9 @@ services:
             DB_DATABASE: docmon
             DB_USERNAME: docmon
             DB_PASSWORD: secret
+            # Empty on purpose (AUD-007): .env may hold TiDB's SSL certificate path, but the
+            # local MySQL container doesn't use SSL, so connecting with it would fail
+            MYSQL_ATTR_SSL_CA: ""
         depends_on:
             db:
                 condition: service_healthy
