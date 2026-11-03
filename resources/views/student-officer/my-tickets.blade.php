@@ -1,7 +1,8 @@
 {{--
     DOC-MON · Student Officer · My Tickets
     The logged-in officer's real tickets (TicketController@index).
-    From the controller: $tickets (filtered by the tab), $counts (per tab), $tab (the active tab)
+    From the controller: $tickets (filtered by the tab and the search), $counts (per tab), $tab (the active tab),
+    $search (the search box, ?q=; also used by the Dashboard's search box)
     Under each ticket, a fold-out list of its documents: status, where each paper is,
     the signatory's remarks, and a Resubmit button for returned papers.
 --}}
@@ -12,9 +13,14 @@
             <h1 class="dm-page-title">My Tickets</h1>
             <p class="dm-page-sub">All tickets you have submitted.</p>
         </div>
-        <div class="dm-header-actions">
+        <form method="GET" action="{{ url('/officer/tickets') }}" class="dm-header-actions">
+            @if ($tab !== 'All') <input type="hidden" name="status" value="{{ $tab }}"> @endif
+            <label class="dm-search">
+                <x-docmon.icon name="search" size="18" />
+                <input type="search" name="q" value="{{ $search }}" placeholder="Search ticket, Ref No. or paper" aria-label="Search my tickets">
+            </label>
             <a href="{{ url('/officer/tickets/new') }}" class="dm-btn dm-btn-primary"><x-docmon.icon name="plus" size="16" /> New Ticket</a>
-        </div>
+        </form>
     </header>
 
     @error('resubmit') <p class="dm-form-alert" role="alert">{{ $message }}</p> @enderror
@@ -23,22 +29,26 @@
         <div class="dm-panel-head">
             <div>
                 <h2 class="dm-panel-title">{{ $tab === 'All' ? 'All Tickets' : $tab }}</h2>
-                <p class="dm-panel-sub">Newest first</p>
+                <p class="dm-panel-sub">Newest first{{ $search !== '' ? ' · matching “'.$search.'”' : '' }}</p>
             </div>
         </div>
 
         <nav class="dm-tabs">
             @foreach ($counts as $label => $count)
-                <a href="{{ url('/officer/tickets') . ($label === 'All' ? '' : '?status=' . urlencode($label)) }}"
+                <a href="{{ url('/officer/tickets') . '?' . http_build_query(array_filter(['status' => $label === 'All' ? null : $label, 'q' => $search])) }}"
                    class="dm-tab {{ $label === $tab ? 'is-active' : '' }}">{{ $label }} ({{ $count }})</a>
             @endforeach
         </nav>
 
         @if ($tickets->isEmpty())
-            <p class="nt-note">
-                {{ $tab === 'All' ? 'No tickets yet.' : 'No tickets with this status.' }}
-                <a href="{{ url('/officer/tickets/new') }}">Submit a new ticket</a>
-            </p>
+            @if ($search !== '')
+                <p class="nt-note">No tickets match “{{ $search }}”. <a href="{{ url('/officer/tickets') }}">Clear the search</a></p>
+            @else
+                <p class="nt-note">
+                    {{ $tab === 'All' ? 'No tickets yet.' : 'No tickets with this status.' }}
+                    <a href="{{ url('/officer/tickets/new') }}">Submit a new ticket</a>
+                </p>
+            @endif
         @else
             <div class="dm-table-wrap">
                 <table class="dm-table">

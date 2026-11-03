@@ -1,7 +1,8 @@
 {{--
     DOC-MON · Signatory · For Review (Signatory\ReviewController)
     From the controller: $queue (one item per ticket: ->ticket, ->documents waiting for me, ->since),
-    $counts (per tab), $tab, $selected (the ticket shown in the panel), $route (->step, ->total, ->title, ->next).
+    $counts (per tab), $tab, $search (?q=, also used by the Dashboard's search box),
+    $selected (the ticket shown in the panel), $route (->step, ->total, ->title, ->next).
     Each waiting document has its own form → POST /signatory/documents/{id}/action
     (Batch rule: every paper is approved separately). "Approve all" → POST /signatory/tickets/{id}/approve-all.
 --}}
@@ -12,6 +13,13 @@
             <h1 class="dm-page-title">For Review</h1>
             <p class="dm-page-sub">Update the status of the papers handed to you.</p>
         </div>
+        <form method="GET" action="{{ url('/signatory/review') }}" class="dm-header-actions">
+            @if ($tab !== 'All') <input type="hidden" name="type" value="{{ $tab }}"> @endif
+            <label class="dm-search">
+                <x-docmon.icon name="search" size="18" />
+                <input type="search" name="q" value="{{ $search }}" placeholder="Search ticket, Ref No. or officer" aria-label="Search the queue">
+            </label>
+        </form>
     </header>
 
     @error('action') <p class="dm-form-alert" role="alert">{{ $message }}</p> @enderror
@@ -22,25 +30,29 @@
             <div class="dm-panel-head">
                 <div>
                     <h2 class="dm-panel-title">Queue</h2>
-                    <p class="dm-panel-sub">{{ $counts['All'] }} waiting · oldest first</p>
+                    <p class="dm-panel-sub">{{ $counts['All'] }} waiting · oldest first{{ $search !== '' ? ' · matching “'.$search.'”' : '' }}</p>
                 </div>
             </div>
 
             <nav class="dm-tabs">
                 @foreach ($counts as $label => $count)
-                    <a href="{{ url('/signatory/review') . ($label === 'All' ? '' : '?type=' . $label) }}"
+                    <a href="{{ url('/signatory/review') . '?' . http_build_query(array_filter(['type' => $label === 'All' ? null : $label, 'q' => $search])) }}"
                        class="dm-tab {{ $label === $tab ? 'is-active' : '' }}">{{ $label }} ({{ $count }})</a>
                 @endforeach
             </nav>
 
             @if ($queue->isEmpty())
-                <p class="nt-note">Nothing to sign right now. New papers appear here when they reach your step.</p>
+                @if ($search !== '')
+                    <p class="nt-note">Nothing waiting matches “{{ $search }}”. <a href="{{ url('/signatory/review') }}">Clear the search</a></p>
+                @else
+                    <p class="nt-note">Nothing to sign right now. New papers appear here when they reach your step.</p>
+                @endif
             @else
                 <ul class="rv-queue">
                     @foreach ($queue as $item)
                         @php $t = $item->ticket; @endphp
                         <li>
-                            <a href="{{ url('/signatory/review') . '?' . http_build_query(array_filter(['type' => $tab === 'All' ? null : $tab, 'ticket' => $t->id])) }}"
+                            <a href="{{ url('/signatory/review') . '?' . http_build_query(array_filter(['type' => $tab === 'All' ? null : $tab, 'q' => $search, 'ticket' => $t->id])) }}"
                                class="rv-item {{ $selected && $selected->ticket->is($t) ? 'is-selected' : '' }}">
                                 <div>
                                     <p class="dm-cell-main">{{ $t->code }}</p>

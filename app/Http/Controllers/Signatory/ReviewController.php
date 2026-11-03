@@ -19,10 +19,13 @@ class ReviewController extends Controller
     public function index(Request $request): View
     {
         $signatory = $request->user();
+        $search = trim((string) $request->query('q', ''));
 
-        // Only documents at this signatory's step; grouped into tickets afterwards
+        // Only documents at this signatory's step; grouped into tickets afterwards.
+        // The search picks whole tickets, so a Batch never shows only some of its papers
         $waiting = Document::atStepOf($signatory)
             ->where('status', Document::PENDING)
+            ->when($search !== '', fn ($q) => $q->whereHas('ticket', fn ($t) => $t->search($search)))
             ->with(['ticket' => fn ($q) => $q->withCount('documents')->with('officer', 'organization.signatories')])
             ->oldest('updated_at')
             ->get();
@@ -54,6 +57,7 @@ class ReviewController extends Controller
             'queue' => $shown,
             'counts' => $counts,
             'tab' => $tab,
+            'search' => $search,
             'selected' => $selected,
             'route' => $selected ? $this->routeInfo($selected, $signatory->id) : null,
         ]);
