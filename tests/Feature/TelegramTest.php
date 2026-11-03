@@ -241,6 +241,38 @@ class TelegramTest extends TestCase
             ->assertDontSee("You'll get a Telegram message", false);
     }
 
+    // ---------- The 🔔 in page headers (AUD-059) ----------
+
+    public static function bellPages(): array
+    {
+        return [
+            'officer dashboard' => ['officer', '/officer/dashboard'],
+            'new ticket' => ['officer', '/officer/tickets/new'],
+            'signatories' => ['officer', '/officer/signatories'],
+            'signatory dashboard' => ['signatory', '/signatory/dashboard'],
+        ];
+    }
+
+    #[DataProvider('bellPages')]
+    public function test_the_bell_links_to_telegram_and_shows_if_it_is_on(string $role, string $page): void
+    {
+        $user = $role === 'officer' ? $this->officer : $this->adviser;
+        $link = 'href="'.url("/{$role}/profile#telegram").'" class="dm-icon-btn dm-bell"';
+
+        // Was a <button> that did nothing
+        $this->actingAs($user)->get($page)->assertOk()
+            ->assertSee($link, false)
+            ->assertSee('Telegram notifications are on')
+            ->assertSee('dm-bell-dot', false)
+            ->assertDontSee('aria-label="Notifications"', false);
+
+        $user->forceFill(['telegram_chat_id' => null])->save();
+        $this->actingAs($user->fresh())->get($page)
+            ->assertSee($link, false)
+            ->assertSee('Telegram notifications are off')
+            ->assertDontSee('dm-bell-dot', false);
+    }
+
     // ---------- Helpers ----------
 
     public static function roles(): array

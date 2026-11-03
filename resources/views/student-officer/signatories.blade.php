@@ -12,7 +12,7 @@
             <p class="dm-page-sub">{{ $organization?->code }} approval route and who is available right now.</p>
         </div>
         <div class="dm-header-actions">
-            <button type="button" class="dm-icon-btn" aria-label="Notifications"><x-docmon.icon name="bell" size="18" /></button>
+            <x-docmon.notify-bell />
         </div>
     </header>
 

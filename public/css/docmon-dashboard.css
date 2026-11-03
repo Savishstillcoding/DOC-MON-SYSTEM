@@ -188,6 +188,18 @@ button, input, select, textarea { font: inherit; color: inherit; }
   cursor: pointer;
 }
 .dm-icon-btn:hover { background: #fafafa; }
+/* 🔔 header link to Profile → Telegram (AUD-059); a green dot = notifications are on */
+.dm-bell { position: relative; color: inherit; }
+.dm-bell-dot {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dm-green);
+  box-shadow: 0 0 0 2px #fff;
+}
 
 /* ---------------- Buttons ---------------- */
 .dm-btn {
