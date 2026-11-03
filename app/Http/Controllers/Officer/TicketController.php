@@ -20,9 +20,6 @@ use Illuminate\View\View;
  */
 class TicketController extends Controller
 {
-    /** The status tabs on My Tickets, in order. */
-    private const TABS = ['All', 'Pending', 'Needs Revision', 'Approved', 'Partly Approved', 'Rejected'];
-
     public function index(Request $request): View
     {
         // with(): load documents and the approval route in a few queries,
@@ -32,11 +29,11 @@ class TicketController extends Controller
             ->latest()
             ->get();
 
-        $counts = collect(self::TABS)->mapWithKeys(fn ($tab) => [
+        $counts = collect(Ticket::STATUS_TABS)->mapWithKeys(fn ($tab) => [
             $tab => $tab === 'All' ? $all->count() : $all->filter(fn ($t) => $t->status() === $tab)->count(),
         ]);
 
-        $tab = in_array($request->query('status'), self::TABS, true) ? $request->query('status') : 'All';
+        $tab = in_array($request->query('status'), Ticket::STATUS_TABS, true) ? $request->query('status') : 'All';
         $tickets = $tab === 'All' ? $all : $all->filter(fn ($t) => $t->status() === $tab);
 
         return view('student-officer.my-tickets', compact('tickets', 'counts', 'tab'));

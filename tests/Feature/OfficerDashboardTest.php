@@ -74,7 +74,7 @@ class OfficerDashboardTest extends TestCase
         $this->ticket('REF-9', $other);
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
-            ->assertViewHas('stats', ['total' => 3, 'pending' => 1, 'approved' => 1, 'revision' => 1, 'rejected' => 0])
+            ->assertViewHas('stats', ['total' => 3, 'pending' => 1, 'approved' => 1, 'partly' => 0, 'revision' => 1, 'rejected' => 0])
             ->assertSee('1 ticket is waiting on signatories')
             ->assertSee('1 needs your revision')
             ->assertSee("{$approved->code} · Paper of REF-1 approved by VPSD")
@@ -84,6 +84,38 @@ class OfficerDashboardTest extends TestCase
         // The tabs filter the cards
         $this->actingAs($this->officer)->get('/officer/dashboard?status=Needs+Revision')
             ->assertViewHas('cards', fn ($cards) => $cards->sole()['code'] === $returned->code);
+    }
+
+    public function test_a_partly_approved_ticket_does_not_vanish_from_the_dashboard(): void
+    {
+        // AUD-057: a finished Batch with one paper approved and one rejected is "Partly Approved".
+        // It was only under "All" and in Total, so the cards didn't add up
+        $ticket = $this->ticket('REF-1');
+        [$a, $b] = [$ticket->documents[0], $ticket->documents()->create(['type' => 'Budget', 'title' => 'Paper B'])];
+        $this->actingAs($this->adviser)->post("/signatory/documents/{$b->id}/action", ['action' => 'reject', 'remarks' => 'Over budget']);
+        $this->actingAs($this->adviser)->post("/signatory/documents/{$a->id}/action", ['action' => 'approve']);
+        $this->actingAs($this->vpsd)->post("/signatory/documents/{$a->id}/action", ['action' => 'approve']);
+        $this->assertSame('Partly Approved', $ticket->fresh(['documents'])->status());
+
+        $this->actingAs($this->officer)->get('/officer/dashboard')
+            ->assertViewHas('stats', fn ($s) => $s['partly'] === 1
+                && $s['total'] === $s['pending'] + $s['approved'] + $s['partly'] + $s['revision'] + $s['rejected'])
+            ->assertSee('Fully signed · +1 partly approved')
+            ->assertSee('?status=Partly+Approved', false);
+
+        // Its own tab finds it
+        $this->actingAs($this->officer)->get('/officer/dashboard?status=Partly+Approved')
+            ->assertViewHas('cards', fn ($cards) => $cards->sole()['code'] === $ticket->code);
+    }
+
+    public function test_the_dashboard_and_my_tickets_offer_the_same_tabs(): void
+    {
+        $tabs = fn (string $html) => preg_match_all('#class="dm-tab[^"]*">([^<(]+?)\s*(?:\(\d+\))?</a>#', $html, $m) ? $m[1] : [];
+
+        // Both pages show exactly the shared list (so an empty match can't pass by accident)
+        foreach (['/officer/tickets', '/officer/dashboard'] as $page) {
+            $this->assertSame(Ticket::STATUS_TABS, $tabs($this->actingAs($this->officer)->get($page)->getContent()), $page);
+        }
     }
 
     public function test_the_greeting_and_date_use_philippine_time(): void

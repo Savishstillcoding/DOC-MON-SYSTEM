@@ -7,7 +7,7 @@
     $hour = now()->hour;
     $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
     $account = auth()->user();
-    $tabs = ['All', 'Pending', 'Needs Revision', 'Approved', 'Rejected'];
+    $tabs = App\Models\Ticket::STATUS_TABS;
 @endphp
 
 <x-docmon.officer-layout title="Dashboard" active="Dashboard" :live="true">
@@ -48,7 +48,9 @@
     <section class="dm-stat-grid dm-stat-grid-5" data-live="stats">
         <x-docmon.stat-card label="Total Tickets" :value="$stats['total']" note="All your tickets" />
         <x-docmon.stat-card label="Pending" :value="$stats['pending']" note="Waiting for signatures" />
-        <x-docmon.stat-card label="Approved" :value="$stats['approved']" note="Fully signed" />
+        {{-- A finished Batch with some papers rejected is "Partly Approved": no card of its own, noted here (AUD-057) --}}
+        <x-docmon.stat-card label="Approved" :value="$stats['approved']"
+            :note="'Fully signed' . ($stats['partly'] ? ' · +' . $stats['partly'] . ' partly approved' : '')" />
         <x-docmon.stat-card label="Needs Revision" :value="$stats['revision']" note="Returned to you" />
         <x-docmon.stat-card label="Rejected" :value="$stats['rejected']" note="Not approved" />
     </section>

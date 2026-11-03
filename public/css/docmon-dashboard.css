@@ -897,7 +897,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ---------------- Smaller screens ---------------- */
 @media (max-width: 1200px) {
-  .dm-columns { grid-template-columns: 1fr; }
+  .dm-columns { grid-template-columns: minmax(0, 1fr); }   /* minmax(0, …): wide content (the tab row) scrolls instead of stretching the page (AUD-057) */
   .dm-stat-grid-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .so-hero-icons { width: 220px; }
   .pf-columns { grid-template-columns: 1fr; }

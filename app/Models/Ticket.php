@@ -65,6 +65,13 @@ class Ticket extends Model
     }
 
     /**
+     * The status tabs on the officer's Dashboard and My Tickets, in order: every
+     * label status() can return, after "All". One list, so the two pages can't
+     * drift apart again (AUD-057: the Dashboard was missing "Partly Approved").
+     */
+    public const STATUS_TABS = ['All', 'Pending', 'Needs Revision', 'Approved', 'Partly Approved', 'Rejected'];
+
+    /**
      * The ticket's overall status, worked out from its documents.
      * Uses the labels of <x-docmon.status-badge>. Order matters: anything
      * still to fix or sign wins over finished documents.

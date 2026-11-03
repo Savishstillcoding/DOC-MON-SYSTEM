@@ -15,9 +15,6 @@ use Illuminate\View\View;
  */
 class DashboardController extends Controller
 {
-    /** The status tabs above the ticket cards (the full list is on My Tickets). */
-    private const TABS = ['All', 'Pending', 'Needs Revision', 'Approved', 'Rejected'];
-
     /** How many ticket cards the dashboard shows. */
     private const CARDS = 4;
 
@@ -33,7 +30,7 @@ class DashboardController extends Controller
 
         $byStatus = $tickets->countBy(fn (Ticket $t) => $t->status());
 
-        $tab = in_array($request->query('status'), self::TABS, true) ? $request->query('status') : 'All';
+        $tab = in_array($request->query('status'), Ticket::STATUS_TABS, true) ? $request->query('status') : 'All';
         $shown = $tab === 'All' ? $tickets : $tickets->filter(fn (Ticket $t) => $t->status() === $tab);
 
         return view('student-officer.dashboard', [
@@ -42,6 +39,8 @@ class DashboardController extends Controller
                 'total' => $tickets->count(),
                 'pending' => $byStatus['Pending'] ?? 0,
                 'approved' => $byStatus['Approved'] ?? 0,
+                // Not its own card (decided 2026-11-03): shown as a note on the Approved card
+                'partly' => $byStatus['Partly Approved'] ?? 0,
                 'revision' => $byStatus['Needs Revision'] ?? 0,
                 'rejected' => $byStatus['Rejected'] ?? 0,
             ],
