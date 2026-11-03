@@ -1,4 +1,4 @@
-# DOC-MON – PHP 8.3 image for Laravel (development)
+# DOC-MON – PHP 8.4 image for Laravel (development), same PHP as Dockerfile.prod
 FROM php:8.4-cli
 
 # System packages + the PHP extensions Laravel needs for MySQL
