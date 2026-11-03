@@ -13,8 +13,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Officer\DashboardController as OfficerDashboardController;
 use App\Http\Controllers\Officer\DocumentController;
 use App\Http\Controllers\Officer\LiveController as OfficerLiveController;
-use App\Http\Controllers\Officer\SignatoryController;
 use App\Http\Controllers\Officer\ProfileController;
+use App\Http\Controllers\Officer\SignatoryController;
 use App\Http\Controllers\Officer\TicketController;
 use App\Http\Controllers\Signatory\AvailabilityController;
 use App\Http\Controllers\Signatory\DashboardController;
@@ -41,10 +41,18 @@ Route::middleware('guest')->group(function () {
         ->whereIn('role', ['officer', 'signatory'])
         ->middleware('throttle:5,10');
 
-    Route::get('/login', function() { return view('login'); });
-    Route::get('/login/officer', function () { return view('auth.studentofficer-login'); });
-    Route::get('/login/signatory', function () { return view('auth.signatory-login'); });
-    Route::get('/login/admin', function () { return view('auth.admin-login'); });
+    Route::get('/login', function () {
+        return view('login');
+    });
+    Route::get('/login/officer', function () {
+        return view('auth.studentofficer-login');
+    });
+    Route::get('/login/signatory', function () {
+        return view('auth.signatory-login');
+    });
+    Route::get('/login/admin', function () {
+        return view('auth.admin-login');
+    });
 
     // Real log-in: checks the ID + password + role, and only lets verified accounts in.
     // throttle:5,1 = at most 5 attempts per minute, to slow down password guessing.
@@ -114,5 +122,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 // Dev-only reference page showing every dashboard component.
 // Registered only on a developer's laptop (APP_ENV=local), so the live site answers 404.
 if (app()->environment('local')) {
-    Route::get('/dev/components', function () { return view('docmon-dev.components-preview'); });
+    Route::get('/dev/components', function () {
+        return view('docmon-dev.components-preview');
+    });
 }
