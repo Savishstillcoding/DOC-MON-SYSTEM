@@ -40,7 +40,7 @@
                 <x-docmon.icon name="search" size="18" />
                 <input type="search" placeholder="Search ticket or Ref No.">
             </label>
-            <button type="button" class="dm-icon-btn" aria-label="Notifications"><x-docmon.icon name="bell" size="18" /></button>
+            <x-docmon.notify-bell />
         </div>
     </header>
 

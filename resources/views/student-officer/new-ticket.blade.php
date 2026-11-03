@@ -22,7 +22,7 @@
             <p class="dm-page-sub">Add one document for a Single ticket, or more for a Batch ticket.</p>
         </div>
         <div class="dm-header-actions">
-            <button type="button" class="dm-icon-btn" aria-label="Notifications"><x-docmon.icon name="bell" size="18" /></button>
+            <x-docmon.notify-bell />
         </div>
     </header>
 
