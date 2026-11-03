@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Document;
 use App\Models\Ticket;
+use App\Services\TicketAlerts;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class TicketController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, TicketAlerts $alerts): RedirectResponse
     {
         $officer = $request->user();
         $organization = $officer->organization;
@@ -115,6 +116,8 @@ class TicketController extends Controller
         } catch (UniqueConstraintViolationException) {
             return back()->withInput()->withErrors(['ref_no' => 'Your organization already used this Ref No.']);
         }
+
+        $alerts->submitted($ticket);   // Telegram to the first signatory
 
         $first = $organization->signatories->first();
 

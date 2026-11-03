@@ -5,7 +5,7 @@
       Profile form  → PUT /signatory/profile:          email, phone
       Password form → PUT /signatory/profile/password: current_password, password, password_confirmation
     Name, Employee ID and title are shown but not sent: the admin verified them and sets the routes.
-    Telegram and the notification switches return when notifications are built.
+    Telegram panel → POST /signatory/telegram/connect, /signatory/telegram/check, DELETE /signatory/telegram
 --}}
 <x-docmon.signatory-layout title="Profile" active="Profile">
 
@@ -86,6 +86,8 @@
                     </div>
                 </section>
             </form>
+
+            <x-docmon.telegram-panel :account="$account" />
 
             {{-- Separate form so changing the password never saves the other fields.
                  Its errors are in their own bag ("password"), so they show only here. --}}

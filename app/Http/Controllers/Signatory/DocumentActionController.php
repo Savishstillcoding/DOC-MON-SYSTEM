@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Signatory;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\Ticket;
+use App\Services\TicketAlerts;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ use Illuminate\Validation\Rule;
 class DocumentActionController extends Controller
 {
     /** One document: the buttons on the dashboard and the For Review page. */
-    public function store(Request $request, Document $document): RedirectResponse
+    public function store(Request $request, Document $document, TicketAlerts $alerts): RedirectResponse
     {
         $signatory = $request->user();
 
@@ -47,6 +48,9 @@ class DocumentActionController extends Controller
             return back()->withErrors(['action' => 'This document is not waiting for your signature anymore.']);
         }
 
+        // Telegram, after the transaction: the action is saved even if this fails
+        $alerts->acted(collect([$document]), $signatory, $data['action'], $data['remarks'] ?? null);
+
         $label = "{$document->title} ({$document->ticket->code})";
 
         return back()->with('status', match ($data['action']) {
@@ -61,7 +65,7 @@ class DocumentActionController extends Controller
      * signatory, approved together. Each one is still checked and recorded
      * separately, exactly as if its own Approve button was clicked.
      */
-    public function approveAll(Request $request, Ticket $ticket): RedirectResponse
+    public function approveAll(Request $request, Ticket $ticket, TicketAlerts $alerts): RedirectResponse
     {
         $signatory = $request->user();
 
@@ -74,6 +78,8 @@ class DocumentActionController extends Controller
         if ($approved->isEmpty()) {
             return back()->withErrors(['action' => 'No documents of this ticket are waiting for your signature.']);
         }
+
+        $alerts->acted($approved->values(), $signatory, 'approve');   // one message for all of them
 
         $count = $approved->count();
 

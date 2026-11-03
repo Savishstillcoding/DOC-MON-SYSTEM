@@ -138,7 +138,12 @@
             {{-- Notifications info --}}
             <section class="dm-card dm-panel">
                 <h2 class="dm-panel-title">Notifications</h2>
-                <p class="nt-note">You'll get an SMS and Telegram message every time a signatory approves, returns, or rejects this ticket.</p>
+                {{-- AUD-058: only promise what exists (Telegram, and only once connected) --}}
+                @if (auth()->user()->telegram_chat_id)
+                    <p class="nt-note">You'll get a Telegram message every time a signatory approves, returns, or rejects a paper of this ticket.</p>
+                @else
+                    <p class="nt-note">Want a Telegram message every time a signatory approves, returns, or rejects a paper? <a href="{{ url('/officer/profile#telegram') }}">Connect Telegram on your Profile.</a></p>
+                @endif
             </section>
         </div>
     </div>

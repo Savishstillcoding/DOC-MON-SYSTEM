@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Account\PasswordController;
+use App\Http\Controllers\Account\TelegramController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrganizationController;
@@ -68,6 +69,10 @@ Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function (
     Route::put('/profile', [ProfileController::class, 'update']);
     // Throttled like log-in: this form also checks a password, so it must not allow guessing
     Route::put('/profile/password', [PasswordController::class, 'update'])->middleware('throttle:5,1');
+    Route::post('/telegram/connect', [TelegramController::class, 'connect']);
+    // Throttled: each click asks Telegram's servers
+    Route::post('/telegram/check', [TelegramController::class, 'check'])->middleware('throttle:10,1');
+    Route::delete('/telegram', [TelegramController::class, 'disconnect']);
 });
 
 Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(function () {
@@ -79,6 +84,9 @@ Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(functi
     Route::get('/profile', [SignatoryProfileController::class, 'edit']);
     Route::put('/profile', [SignatoryProfileController::class, 'update']);
     Route::put('/profile/password', [PasswordController::class, 'update'])->middleware('throttle:5,1');
+    Route::post('/telegram/connect', [TelegramController::class, 'connect']);
+    Route::post('/telegram/check', [TelegramController::class, 'check'])->middleware('throttle:10,1');
+    Route::delete('/telegram', [TelegramController::class, 'disconnect']);
     Route::put('/availability', [AvailabilityController::class, 'update']);
 });
 

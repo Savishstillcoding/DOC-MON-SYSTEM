@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Document;
 use App\Models\DocumentAction;
+use App\Services\TicketAlerts;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\DB;
  */
 class DocumentController extends Controller
 {
-    public function resubmit(Request $request, Document $document): RedirectResponse
+    public function resubmit(Request $request, Document $document, TicketAlerts $alerts): RedirectResponse
     {
         $officer = $request->user();
 
@@ -43,6 +44,8 @@ class DocumentController extends Controller
         if ($document === null) {
             return back()->withErrors(['resubmit' => 'This document can\'t be resubmitted.']);
         }
+
+        $alerts->resubmitted($document);
 
         $signatory = $document->ticket->organization->signatories->firstWhere('pivot.step', $document->current_step);
 
