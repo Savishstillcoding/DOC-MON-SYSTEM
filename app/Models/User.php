@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -116,6 +117,12 @@ class User extends Authenticatable
     public function roleLabel(): string
     {
         return self::ROLE_LABELS[$this->role] ?? ucfirst((string) $this->role);
+    }
+
+    /** "Forgot password?" sends DOC-MON's own wording of the reset email (AUD-008). */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /** "Labastida, MJ Bryan", the way names are listed across DOC-MON. */

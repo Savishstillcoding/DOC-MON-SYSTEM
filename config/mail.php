@@ -37,6 +37,12 @@ return [
 
     'mailers' => [
 
+        // DOC-MON's live mailer (password reset): Brevo's HTTPS API, because Render's
+        // free plan blocks the SMTP ports. Registered in AppServiceProvider.
+        'brevo' => [
+            'transport' => 'brevo',
+        ],
+
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),

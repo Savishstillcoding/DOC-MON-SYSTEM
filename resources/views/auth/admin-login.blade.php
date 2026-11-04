@@ -57,7 +57,7 @@
 
           <button class="submit-btn" type="submit">Sign In</button>
 
-          <a class="forgot-link" href="#">Forgot password?</a>
+          <a class="forgot-link" href="{{ url('/forgot-password') }}">Forgot password?</a>
         </form>
       </div>
 

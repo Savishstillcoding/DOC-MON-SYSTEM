@@ -28,6 +28,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Email for password reset (AUD-008): API key from Brevo → SMTP & API → API Keys
+    // (Restricted, "Transactional email: All"). Expires after 90 days without use.
+    'brevo' => [
+        'key' => env('BREVO_API_KEY'),
+    ],
+
     // DOC-MON's notification bot: token and username from @BotFather (username without the @)
     'telegram' => [
         'token' => env('TELEGRAM_BOT_TOKEN'),

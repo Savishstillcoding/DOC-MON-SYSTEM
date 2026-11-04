@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SignatoryListController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Officer\DashboardController as OfficerDashboardController;
 use App\Http\Controllers\Officer\DocumentController;
@@ -59,6 +60,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/login/{role}', [LoginController::class, 'store'])
         ->whereIn('role', ['officer', 'signatory', 'admin'])
         ->middleware('throttle:5,1');
+
+    // Forgot password (AUD-008): emailed one-time link. Throttled so nobody can
+    // flood someone's inbox (Laravel also allows one email per account per minute).
+    Route::get('/forgot-password', [PasswordResetController::class, 'create']);
+    Route::post('/forgot-password', [PasswordResetController::class, 'store'])->middleware('throttle:5,10');
+    // Named: the reset email builds its link from this name
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'update'])->middleware('throttle:5,1');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
