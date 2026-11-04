@@ -7,6 +7,7 @@ use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -45,6 +46,9 @@ class User extends Authenticatable
         'admin' => 'Administrator',
     ];
 
+    /** Accounts are reviewed after this many years; the privacy notice promises it (AUD-078). */
+    public const RETENTION_YEARS = 4;
+
     /** The officer positions that may file tickets. */
     public const OFFICER_POSITIONS = ['Secretary', 'Deputy Secretary'];
 
@@ -70,6 +74,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'reviewed_at' => 'datetime',
+            'privacy_accepted_at' => 'datetime',
         ];
     }
 
@@ -117,6 +122,14 @@ class User extends Authenticatable
     public function roleLabel(): string
     {
         return self::ROLE_LABELS[$this->role] ?? ucfirst((string) $this->role);
+    }
+
+    /** Active accounts past the retention period, for the admin's yearly review (AUD-078). */
+    public function scopePastRetention(Builder $query): void
+    {
+        $query->where('status', 'verified')
+            ->whereIn('role', ['officer', 'signatory'])
+            ->where('created_at', '<=', now()->subYears(self::RETENTION_YEARS));
     }
 
     /** "Forgot password?" sends DOC-MON's own wording of the reset email (AUD-008). */

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsurePrivacyAccepted;
 use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
 
         // 'role:officer' etc. in routes/web.php
-        $middleware->alias(['role' => EnsureUserHasRole::class]);
+        $middleware->alias(['role' => EnsureUserHasRole::class, 'privacy' => EnsurePrivacyAccepted::class]);
 
         // Not logged in and opens a protected page → go to log-in
         $middleware->redirectGuestsTo('/login');

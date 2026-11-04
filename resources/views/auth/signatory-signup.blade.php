@@ -72,8 +72,8 @@
               @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
-                <label for="phone">Phone Number</label>
-                <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" title="Enter an 11-digit number starting with 09" placeholder="e.x. 09123456789" autocomplete="tel" value="{{ old('phone') }}" required>
+                <label for="phone">Phone Number (optional)</label>
+                <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" title="Enter an 11-digit number starting with 09" placeholder="e.x. 09123456789" autocomplete="tel" value="{{ old('phone') }}">
               @error('phone')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
@@ -96,6 +96,8 @@
             <p class="form-error" id="id_document_error" role="alert" hidden></p>
             @error('id_document')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
+
+          @include('partials.privacy-consent')
 
           <button class="submit-btn" type="submit">Sign Up</button>
         </form>

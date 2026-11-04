@@ -62,6 +62,7 @@ class ActivityLogTest extends TestCase
     public function test_sign_up_and_verification_are_logged(): void
     {
         $this->post('/register/officer', [
+            'privacy_accepted' => '1',
             'first_name' => 'Juan', 'last_name' => 'Test', 'student_id' => '2200001', 'organization_id' => $this->digits->id,
             'email' => 'juan@lnu.edu.ph', 'phone' => '09170000000', 'position' => 'Secretary', 'password' => 'Secret#2026',
             'id_document' => UploadedFile::fake()->image('id.jpg'),

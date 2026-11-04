@@ -47,7 +47,7 @@ class RegistrationTest extends TestCase
         $this->post('/register/signatory', [
             'first_name' => 'Ana', 'last_name' => 'Dela Cruz', 'employee_id' => 'EMP-0451',
             'email' => 'ana@lnu.edu.ph', 'phone' => '09181234567', 'position' => 'Adviser',
-            'password' => 'Secret#2026', 'id_document' => $this->pdf(),
+            'password' => 'Secret#2026', 'id_document' => $this->pdf(), 'privacy_accepted' => '1',
             'organization_id' => $this->digits->id,   // ignored: the admin puts signatories on routes
         ])->assertRedirect('/login/signatory');
 
@@ -154,7 +154,7 @@ class RegistrationTest extends TestCase
         return array_merge([
             'first_name' => 'MJ', 'last_name' => 'Labastida', 'student_id' => '2201234',
             'organization_id' => $this->digits->id, 'email' => 'mj@lnu.edu.ph', 'phone' => '09171234567',
-            'position' => 'Secretary', 'password' => 'Secret#2026',
+            'position' => 'Secretary', 'password' => 'Secret#2026', 'privacy_accepted' => '1',
             'id_document' => UploadedFile::fake()->image('school-id.jpg', 600, 380),
         ], $overrides);
     }

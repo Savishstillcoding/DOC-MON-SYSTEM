@@ -54,11 +54,14 @@ class RegisterController extends Controller
             'last_name' => ['required', 'string', 'max:100'],
             $idField => ['required', 'string', 'max:30', Rule::unique('users', 'login_id')->where($notRejected)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->where($notRejected)],
-            'phone' => ['required', 'regex:/^09\d{9}$/'],
+            // Optional: nothing uses it since SMS was dropped (AUD-078)
+            'phone' => ['nullable', 'regex:/^09\d{9}$/'],
             'password' => ['required', 'string', Password::defaults()],
             // mimes checks the file's real content, not just its name; the browser
             // check in register.js can be skipped, so this is the one that counts
             'id_document' => ['required', 'file', 'mimes:'.implode(',', IdDocument::MIMES), 'max:'.IdDocument::MAX_KB],
+            // Consent to the privacy notice (AUD-078); the time is saved on the account
+            'privacy_accepted' => ['accepted'],
         ];
 
         $rules += $role === 'officer'
@@ -73,6 +76,7 @@ class RegisterController extends Controller
 
         $data = $request->validate($rules, [
             "{$idField}.unique" => 'This ID number already has an account.',
+            'privacy_accepted.accepted' => 'Please read and accept the Privacy Notice to sign up.',
             'email.unique' => 'Another account already uses this email.',
             'phone.regex' => 'Enter an 11-digit number starting with 09.',
             'organization_id.required' => 'Choose your organization.',
@@ -96,13 +100,13 @@ class RegisterController extends Controller
                     'last_name' => $data['last_name'],
                     'login_id' => $data[$idField],
                     'email' => $data['email'],
-                    'phone' => $data['phone'],
+                    'phone' => $data['phone'] ?? null,
                     'position' => $data['position'],
                     'organization_id' => $role === 'officer' ? $data['organization_id'] : null,
                     'password' => $data['password'],   // hashed by the User model's cast
                 ]);
                 // Not fillable on purpose: set by the app only, never by the form
-                $user->forceFill(['role' => $role, 'status' => 'pending'])->save();
+                $user->forceFill(['role' => $role, 'status' => 'pending', 'privacy_accepted_at' => now()])->save();
 
                 ActivityLog::record($user, 'verification', 'Signed up',
                     collect([$user->organization?->code, $user->position])->filter()->implode(' · ').' · waiting for verification');

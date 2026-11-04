@@ -965,6 +965,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
   line-height: 1.6;
 }
 p.dm-form-alert { padding-left: 16px; }
+/* A calm notice for the admin, not an error */
+.dm-form-note {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--dm-blue-bg);
+  color: var(--dm-blue);
+  font-size: 14px;
+}
+.dm-form-note a { color: inherit; font-weight: 600; text-decoration: underline; }
 
 /* ---------- Signatory actions and document fold-out (AUD-046) ---------- */
 /* A finished Batch where some papers were approved and some rejected */

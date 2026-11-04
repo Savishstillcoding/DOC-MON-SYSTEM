@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\PrivacyController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Officer\DashboardController as OfficerDashboardController;
 use App\Http\Controllers\Officer\DocumentController;
@@ -72,9 +73,14 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 
+// Privacy notice (AUD-078): public, and the page existing accounts accept once
+Route::get('/privacy', [PrivacyController::class, 'show']);
+Route::post('/privacy/accept', [PrivacyController::class, 'accept'])->middleware('auth');
+
 // ---------- Dashboards: logged in AND the right role ----------
-// 'auth' sends guests to /login; 'role:x' answers 403 to other roles.
-Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function () {
+// 'auth' sends guests to /login; 'role:x' answers 403 to other roles;
+// 'privacy' sends anyone who hasn't accepted the privacy notice to /privacy first.
+Route::middleware(['auth', 'role:officer', 'privacy'])->prefix('officer')->group(function () {
     Route::get('/dashboard', [OfficerDashboardController::class, 'index']);
     Route::get('/tickets', [TicketController::class, 'index']);
     Route::get('/tickets/new', [TicketController::class, 'create']);
@@ -92,7 +98,7 @@ Route::middleware(['auth', 'role:officer'])->prefix('officer')->group(function (
     Route::delete('/telegram', [TelegramController::class, 'disconnect']);
 });
 
-Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(function () {
+Route::middleware(['auth', 'role:signatory', 'privacy'])->prefix('signatory')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/review', [ReviewController::class, 'index']);
     Route::get('/history', [HistoryController::class, 'index']);
@@ -107,7 +113,7 @@ Route::middleware(['auth', 'role:signatory'])->prefix('signatory')->group(functi
     Route::put('/availability', [AvailabilityController::class, 'update']);
 });
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin', 'privacy'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
     Route::get('/users/{user}/id-document', [VerificationController::class, 'showId']);
     Route::get('/verification', [VerificationController::class, 'index']);

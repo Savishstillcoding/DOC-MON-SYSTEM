@@ -150,6 +150,18 @@
 }
 
 /* Upload error (AUD-040), same red as the log-in errors */
+/* Privacy consent at sign-up (AUD-078) */
+.privacy-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+/* color-scheme: the page is dark, which drew an unticked box dark too, as if already ticked */
+.privacy-check input { width: 18px; height: 18px; flex-shrink: 0; margin: 2px 0 0; color-scheme: light; }
+.privacy-check a { color: inherit; text-decoration: underline; }
+
 .form-error {
   font-size: 14px;
   line-height: 20px;

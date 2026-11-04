@@ -85,6 +85,10 @@ Never send the new password in a group chat; tell the person directly.
 Most people don't need this: **Forgot password?** on the log-in page emails them a reset link.
 Use the command when the email doesn't arrive.
 
+## Yearly account review
+
+Once a year, open **Admin → Users**. A note appears when active accounts are older than 4 years: click **Review them**, and deactivate the ones no longer needed. The Privacy Notice promises this.
+
 ## Render settings
 
 Set these in **Render → Environment** (names only here, never the values). A new setting
@@ -98,6 +102,7 @@ takes effect after the next deploy.
 | `BREVO_API_KEY`         | From Brevo: Restricted, *Transactional email: All*             |
 | `MAIL_FROM_ADDRESS`     | The sender verified in Brevo                                   |
 | `MAIL_FROM_NAME`        | `DOC-MON`                                                      |
+| `PRIVACY_CONTACT_EMAIL` | Shown on `/privacy`. Without it, the page shows only the name  |
 
 **The Brevo key expires after 90 days without use.** If reset emails stop, Render's logs say
 `Password reset email failed`: make a new key in Brevo and update `BREVO_API_KEY`.
