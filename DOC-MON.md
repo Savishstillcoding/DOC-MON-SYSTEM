@@ -8,6 +8,8 @@ A System Analysis and Design (SAD) capstone project by **Carusa, Labastida, Ligu
 
 Live site: <https://doc-mon-system.onrender.com>
 
+**New here?** [HOW-IT-WORKS.md](HOW-IT-WORKS.md) explains how the system flows, with diagrams.
+
 ---
 
 ## What it does
@@ -29,6 +31,17 @@ Live site: <https://doc-mon-system.onrender.com>
 - **Forgot password?** emails a one-time link (valid 60 minutes) through Brevo.
 
 **Not built yet:** SMS notifications.
+
+---
+
+## Recent changes
+
+Newest first, important things only.
+
+- **2026-11-04:** An organization's officers now share its tickets, so the Deputy can carry on for the Secretary. Each ticket shows who filed it.
+- **2026-11-04:** Forgot password emails a one-time link through Brevo.
+- **2026-11-04:** The search boxes work, and the 🔔 links to Telegram settings.
+- **2026-11-04:** Telegram notifications for officers and signatories.
 
 ---
 
