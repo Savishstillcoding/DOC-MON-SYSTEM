@@ -24,8 +24,10 @@ Live site: <https://doc-mon-system.onrender.com>
 - Accounts are reviewed by the admin before they can log in, so nobody can pose as an officer or a signatory.
 - Officer pages refresh their data by themselves (every 20 seconds) without reloading.
 - Every important action is recorded in a write-only activity log.
+- **Telegram notifications:** after connecting Telegram on their Profile, officers hear when papers are approved, returned or rejected, and signatories hear when a paper is waiting for them.
+- **Forgot password?** emails a one-time link (valid 60 minutes) through Brevo.
 
-**Not built yet:** SMS (Semaphore) and Telegram notifications, and password reset by email.
+**Not built yet:** SMS notifications.
 
 ---
 
@@ -51,6 +53,19 @@ touch database/database.sqlite
 php artisan migrate --seed      # creates the tables and the demo accounts
 php artisan serve               # then open http://127.0.0.1:8000
 ```
+
+### Optional: Telegram and email
+
+Both stay off until you fill in their keys in `.env`; the rest of DOC-MON works without them. Use **your own** test bot and Brevo account, never the live ones.
+
+| Feature | `.env` lines | Where to get them |
+|---|---|---|
+| Telegram notifications | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME` (without the @) | Telegram → **@BotFather** → `/newbot` |
+| Password reset email | `MAIL_MAILER=brevo`, `BREVO_API_KEY`, `MAIL_FROM_ADDRESS` (the sender you verified in Brevo) | brevo.com → **SMTP & API → API Keys**: Restricted, *Transactional email: All* |
+
+Without a Brevo key, keep `MAIL_MAILER=log`: reset emails are then written to `storage/logs/laravel.log` instead of being sent.
+
+> **The Brevo key expires after 90 days without use.** If "Forgot password?" stops sending emails (the log says `Password reset email failed`), make a new key in Brevo and update `.env` and Render's Environment settings.
 
 ### Demo accounts
 
