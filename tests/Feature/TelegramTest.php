@@ -205,6 +205,27 @@ class TelegramTest extends TestCase
         $this->assertSentTo('102', ['3 papers are waiting for your signature', '• Budgetary: Paper 2']);
     }
 
+    public function test_every_verified_officer_of_the_organization_hears_about_a_ticket(): void
+    {
+        // AUD-075 + AUD-089: shared tickets, so the Deputy hears too; a deactivated officer doesn't,
+        // nor does anyone from another organization, and one Telegram gets each message once
+        $this->makeUser('officer', '2202222', ['organization_id' => $this->digits->id, 'telegram_chat_id' => '200']);
+        $this->makeUser('officer', '2202223', ['organization_id' => $this->digits->id, 'telegram_chat_id' => '100']);
+        $this->makeUser('officer', '2202224', ['organization_id' => $this->digits->id, 'telegram_chat_id' => '300'])
+            ->forceFill(['status' => 'deactivated'])->save();
+        $elsewhere = Organization::create(['code' => 'OTHER', 'name' => 'Other Org']);
+        $this->makeUser('officer', '2202225', ['organization_id' => $elsewhere->id, 'telegram_chat_id' => '400']);
+
+        $doc = $this->submit(['Resolution'])->documents->sole();
+        Http::fake([]);   // forget the message about the submit (keeps the fake above)
+
+        $this->act($this->adviser, $doc, 'return', 'Fix the date');
+
+        $this->assertSentTo('100', ['returned for revision']);
+        $this->assertSentTo('200', ['returned for revision']);
+        Http::assertSentCount(2);
+    }
+
     public function test_people_without_telegram_get_nothing(): void
     {
         User::query()->update(['telegram_chat_id' => null]);

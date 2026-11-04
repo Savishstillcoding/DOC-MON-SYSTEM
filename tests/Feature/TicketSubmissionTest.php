@@ -164,12 +164,14 @@ class TicketSubmissionTest extends TestCase
 
     // ---------- My Tickets ----------
 
-    public function test_my_tickets_lists_only_the_officers_own_tickets(): void
+    public function test_my_tickets_lists_only_my_organizations_tickets(): void
     {
         $this->actingAs($this->officer)->post('/officer/tickets', $this->form(['title' => 'Mine']));
 
-        $classmate = $this->makeUser('officer', '2205555', ['organization_id' => $this->digits->id]);
-        $this->actingAs($classmate)->post('/officer/tickets', $this->form(['ref_no' => '2026-09-099', 'title' => 'Not mine']));
+        $elsewhere = Organization::create(['code' => 'OTHER', 'name' => 'Other Org']);
+        $elsewhere->signatories()->attach($this->adviser, ['step' => 1, 'title' => 'Adviser']);
+        $outsider = $this->makeUser('officer', '2205555', ['organization_id' => $elsewhere->id]);
+        $this->actingAs($outsider)->post('/officer/tickets', $this->form(['ref_no' => '2026-09-099', 'title' => 'Not mine']));
 
         $this->actingAs($this->officer)
             ->get('/officer/tickets')

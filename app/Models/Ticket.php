@@ -42,6 +42,23 @@ class Ticket extends Model
     }
 
     /**
+     * The tickets an officer works on: all of their organization's (AUD-075), so the
+     * Deputy can carry on when the Secretary is away or has graduated. The officer who
+     * filed a ticket stays on record (officer_id), and document_actions records who did what.
+     */
+    public function scopeVisibleTo(Builder $query, User $officer): void
+    {
+        $query->where('organization_id', $officer->organization_id);
+    }
+
+    /** The same rule for one ticket: may this officer work on it? */
+    public function isVisibleTo(User $officer): bool
+    {
+        return $officer->organization_id !== null
+            && (int) $this->organization_id === (int) $officer->organization_id;
+    }
+
+    /**
      * The search boxes on My Tickets and For Review (AUD-021): tickets whose code,
      * Ref No. or title, one of whose papers (title or Ref No.), or whose officer's
      * name contains the words. Ticket::search('budget')->get()
@@ -50,7 +67,7 @@ class Ticket extends Model
     {
         $like = '%'.$term.'%';
 
-        // One group, so the ORs can't leak out of "my tickets only"
+        // One group, so the ORs can't leak out of "my organization's tickets only"
         $query->where(fn (Builder $q) => $q
             ->where('code', 'like', $like)
             ->orWhere('ref_no', 'like', $like)

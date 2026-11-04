@@ -14,7 +14,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 | Role | Can do |
 |---|---|
-| **Student Officer** (Secretary / Deputy Secretary) | Submit a ticket with one document (Single) or several (Batch); follow each paper on the Dashboard, My Tickets and Signatories pages; see the signatories' live availability; resubmit a returned paper |
+| **Student Officer** (Secretary / Deputy Secretary) | Submit a ticket with one document (Single) or several (Batch); follow each of the organization's papers on the Dashboard, My Tickets and Signatories pages; see the signatories' live availability; resubmit a returned paper |
 | **Signatory** (e.g. Adviser, SSC President, ODSOA, VPSD) | See the papers waiting at their step; approve, return for revision or reject each document (remarks required for return/reject), or approve a whole Batch at once; set their availability ("In a Meeting · back at 2:00 PM"); see their history |
 | **Admin** | Verify new accounts against their uploaded school ID (approve, or reject with a reason the person sees at log-in); edit, deactivate and reactivate users; add organizations; set each organization's approval route; read the Activity Logs |
 
@@ -22,6 +22,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 **Other details:**
 - Accounts are reviewed by the admin before they can log in, so nobody can pose as an officer or a signatory.
+- An organization's officers share its tickets, so the Deputy Secretary can carry on for the Secretary; each ticket shows who filed it.
 - Officer pages refresh their data by themselves (every 20 seconds) without reloading.
 - Every important action is recorded in a write-only activity log.
 - **Telegram notifications:** after connecting Telegram on their Profile, officers hear when papers are approved, returned or rejected, and signatories hear when a paper is waiting for them.

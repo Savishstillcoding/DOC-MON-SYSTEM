@@ -1,6 +1,7 @@
 {{--
     DOC-MON · Student Officer · My Tickets
-    The logged-in officer's real tickets (TicketController@index).
+    The real tickets of the officer's organization (TicketController@index), shared by its
+    officers so the Deputy can carry on for the Secretary (AUD-075); each shows who filed it.
     From the controller: $tickets (filtered by the tab and the search), $counts (per tab), $tab (the active tab),
     $search (the search box, ?q=; also used by the Dashboard's search box)
     Under each ticket, a fold-out list of its documents: status, where each paper is,
@@ -11,7 +12,7 @@
     <header class="dm-page-header">
         <div>
             <h1 class="dm-page-title">My Tickets</h1>
-            <p class="dm-page-sub">All tickets you have submitted.</p>
+            <p class="dm-page-sub">All tickets of your organization.</p>
         </div>
         <form method="GET" action="{{ url('/officer/tickets') }}" class="dm-header-actions">
             @if ($tab !== 'All') <input type="hidden" name="status" value="{{ $tab }}"> @endif
@@ -69,7 +70,7 @@
                                 <td class="dm-strong">{{ $t->code }}</td>
                                 <td>
                                     <p class="dm-cell-main">{{ $t->title }}</p>
-                                    <p class="dm-cell-sub">Ref No. {{ $t->ref_no }}</p>
+                                    <p class="dm-cell-sub">Ref No. {{ $t->ref_no }} · Filed by {{ $t->officer->displayName() }}</p>
                                 </td>
                                 <td>{{ $t->typeLabel() }}</td>
                                 <td>

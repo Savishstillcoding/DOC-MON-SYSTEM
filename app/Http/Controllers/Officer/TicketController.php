@@ -27,9 +27,9 @@ class TicketController extends Controller
 
         // with(): load documents and the approval route in a few queries,
         // instead of one extra query per ticket (the "N+1" problem)
-        $all = $request->user()->tickets()
+        $all = Ticket::visibleTo($request->user())
             ->when($search !== '', fn ($q) => $q->search($search))
-            ->with(['documents.latestAction', 'organization.signatories'])
+            ->with(['documents.latestAction', 'organization.signatories', 'officer'])
             ->latest()
             ->get();
 

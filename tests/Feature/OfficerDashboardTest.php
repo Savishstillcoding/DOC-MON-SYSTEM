@@ -69,9 +69,9 @@ class OfficerDashboardTest extends TestCase
         $this->actingAs($this->vpsd)->post("/signatory/documents/{$approved->documents[0]->id}/action", ['action' => 'approve']);
         $this->actingAs($this->adviser)->post("/signatory/documents/{$returned->documents[0]->id}/action", ['action' => 'return', 'remarks' => 'Fix it']);
 
-        // Another officer's ticket must not be counted
-        $other = $this->makeUser('officer', '2209999', ['organization_id' => $this->digits->id]);
-        $this->ticket('REF-9', $other);
+        // Another organization's ticket must not be counted
+        $elsewhere = Organization::create(['code' => 'OTHER', 'name' => 'Other Org']);
+        $this->ticket('REF-9', $this->makeUser('officer', '2209999', ['organization_id' => $elsewhere->id]));
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
             ->assertViewHas('stats', ['total' => 3, 'pending' => 1, 'approved' => 1, 'partly' => 0, 'revision' => 1, 'rejected' => 0])
@@ -217,7 +217,7 @@ class OfficerDashboardTest extends TestCase
     {
         $ticket = new Ticket(['ref_no' => $refNo, 'title' => "Ticket {$refNo}"]);
         $ticket->code = Ticket::nextCode();
-        $ticket->organization()->associate($this->digits);
+        $ticket->organization()->associate($officer?->organization ?? $this->digits);
         $ticket->officer()->associate($officer ?? $this->officer);
         $ticket->save();
         $ticket->documents()->create(['type' => 'Resolution', 'title' => "Paper of {$refNo}"]);

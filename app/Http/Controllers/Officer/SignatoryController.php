@@ -10,7 +10,7 @@ use Illuminate\View\View;
 
 /**
  * The officer's Signatories page (AUD-038): their organization's approval route,
- * each signatory's live availability, and where THIS officer's papers are.
+ * each signatory's live availability, and where the organization's papers are.
  */
 class SignatoryController extends Controller
 {
@@ -18,17 +18,17 @@ class SignatoryController extends Controller
     {
         $officer = $request->user();
         $route = $officer->organization?->signatories ?? collect();
-        $mine = fn ($q) => $q->where('officer_id', $officer->id);
+        $ours = fn ($q) => $q->visibleTo($officer);
 
-        // This officer's papers waiting at each step: [step => count]
-        $waiting = Document::whereHas('ticket', $mine)
+        // The organization's papers waiting at each step: [step => count]
+        $waiting = Document::whereHas('ticket', $ours)
             ->where('status', Document::PENDING)
             ->selectRaw('current_step, count(*) as total')
             ->groupBy('current_step')
             ->pluck('total', 'current_step');
 
-        // What each signatory did with this officer's papers: [user_id][action] => count
-        $done = DocumentAction::whereHas('document.ticket', $mine)
+        // What each signatory did with the organization's papers: [user_id][action] => count
+        $done = DocumentAction::whereHas('document.ticket', $ours)
             ->whereIn('action', [DocumentAction::APPROVED, DocumentAction::RETURNED])
             ->selectRaw('user_id, action, count(*) as total')
             ->groupBy('user_id', 'action')
