@@ -81,12 +81,12 @@ class LiveUpdatesTest extends TestCase
         $this->assertNotSame($before, $this->stamp());
     }
 
-    public function test_other_officers_papers_do_not_change_my_fingerprint(): void
+    public function test_another_organizations_papers_do_not_change_my_fingerprint(): void
     {
         $before = $this->stamp();
 
-        $other = $this->makeUser('officer', '2209999', ['organization_id' => $this->digits->id]);
-        $this->ticket('REF-9', $other);
+        $elsewhere = Organization::create(['code' => 'OTHER', 'name' => 'Other Org']);
+        $this->ticket('REF-9', $this->makeUser('officer', '2209999', ['organization_id' => $elsewhere->id]));
 
         $this->assertSame($before, $this->stamp());
     }
@@ -139,7 +139,7 @@ class LiveUpdatesTest extends TestCase
     {
         $ticket = new Ticket(['ref_no' => $refNo, 'title' => "Ticket {$refNo}"]);
         $ticket->code = Ticket::nextCode();
-        $ticket->organization()->associate($this->digits);
+        $ticket->organization()->associate($officer?->organization ?? $this->digits);
         $ticket->officer()->associate($officer ?? $this->officer);
         $ticket->save();
         $ticket->documents()->create(['type' => 'Resolution', 'title' => "Paper of {$refNo}"]);

@@ -10,8 +10,8 @@ use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 /**
- * The officer's dashboard (AUD-038): their real tickets and numbers, the live
- * availability of their organization's signatories, and what happened recently.
+ * The officer's dashboard (AUD-038): their organization's real tickets and numbers
+ * (shared, AUD-075), the live availability of its signatories, and what happened recently.
  */
 class DashboardController extends Controller
 {
@@ -23,8 +23,8 @@ class DashboardController extends Controller
         $officer = $request->user();
         $organization = $officer->organization?->load('signatories');
 
-        $tickets = $officer->tickets()
-            ->with(['documents', 'organization.signatories'])
+        $tickets = Ticket::visibleTo($officer)
+            ->with(['documents', 'organization.signatories', 'officer'])
             ->latest()->latest('id')
             ->get();
 
@@ -45,13 +45,13 @@ class DashboardController extends Controller
                 'rejected' => $byStatus['Rejected'] ?? 0,
             ],
             'tab' => $tab,
-            'cards' => $shown->take(self::CARDS)->map(fn (Ticket $t) => $this->card($t, $officer->displayName()))->values(),
-            'activity' => $this->activity($officer->id, $tickets),
+            'cards' => $shown->take(self::CARDS)->map(fn (Ticket $t) => $this->card($t))->values(),
+            'activity' => $this->activity($tickets),
         ]);
     }
 
     /** The array <x-docmon.ticket-card> expects, built from a real ticket. */
-    private function card(Ticket $ticket, string $officerName): array
+    private function card(Ticket $ticket): array
     {
         $holders = $ticket->holders();
         // All unfinished papers in one place: the card looks like always (one signatory + their dot)
@@ -64,7 +64,7 @@ class DashboardController extends Controller
             'status' => $ticket->status(),
             'title' => $ticket->title,
             'type' => $count > 1 ? "Batch · {$count} documents" : 'Single',
-            'officer' => $officerName,
+            'officer' => $ticket->officer->displayName(),
             'signatory' => $signatory ? "{$signatory->displayName()} ({$signatory->pivot->title})" : 'Done: no signatory left',
             // Live availability of whoever holds the papers now (none when the ticket is finished)
             'availability' => $signatory ? ($signatory->availability ?? 'Available') : null,
@@ -89,12 +89,12 @@ class DashboardController extends Controller
     }
 
     /**
-     * The latest 5 events on this officer's tickets: submissions plus every
+     * The latest 5 events on the organization's tickets: submissions plus every
      * approve, return, reject and resubmit, newest first.
      *
      * @param  Collection<int, Ticket>  $tickets
      */
-    private function activity(int $officerId, Collection $tickets): Collection
+    private function activity(Collection $tickets): Collection
     {
         $submitted = $tickets->take(5)->map(fn (Ticket $t) => [
             'color' => 'dark',
@@ -102,8 +102,8 @@ class DashboardController extends Controller
             'at' => $t->created_at,
         ]);
 
-        $actions = DocumentAction::whereHas('document.ticket', fn ($q) => $q->where('officer_id', $officerId))
-            ->with('document.ticket.organization.signatories')
+        $actions = DocumentAction::whereHas('document.ticket', fn ($q) => $q->whereKey($tickets->modelKeys()))
+            ->with('document.ticket.organization.signatories', 'user')
             ->latest()->latest('id')->limit(5)->get()
             ->map(function (DocumentAction $a) {
                 $ticket = $a->document->ticket;
@@ -113,7 +113,7 @@ class DashboardController extends Controller
                     DocumentAction::APPROVED => ['green', "approved by {$title}"],
                     DocumentAction::RETURNED => ['blue', "returned for revision by {$title}"],
                     DocumentAction::REJECTED => ['red', "rejected by {$title}"],
-                    default => ['dark', "resubmitted to {$title}"],
+                    default => ['dark', "resubmitted to {$title} by {$a->user->displayName()}"],
                 };
 
                 return ['color' => $color, 'text' => "{$ticket->code} · {$a->document->title} {$text}", 'at' => $a->created_at];

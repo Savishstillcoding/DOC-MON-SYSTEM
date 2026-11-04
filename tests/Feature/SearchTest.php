@@ -21,7 +21,7 @@ class SearchTest extends TestCase
 
     private User $officer;
 
-    private User $other;     // another officer of the same organization
+    private User $other;     // an officer of another organization
 
     private User $adviser;   // step 1
 
@@ -43,7 +43,11 @@ class SearchTest extends TestCase
         $this->digits->signatories()->attach($this->adviser, ['step' => 1, 'title' => 'Adviser']);
         $this->digits->signatories()->attach($this->vpsd, ['step' => 2, 'title' => 'VPSD']);
         $this->officer = $this->makeUser('officer', '2201234', ['first_name' => 'MJ', 'last_name' => 'Labastida']);
-        $this->other = $this->makeUser('officer', '2209999', ['first_name' => 'Jessa', 'last_name' => 'Villanueva']);
+
+        // Another organization on the same Adviser's queue
+        $elsewhere = Organization::create(['code' => 'OTHER', 'name' => 'Other Org']);
+        $elsewhere->signatories()->attach($this->adviser, ['step' => 1, 'title' => 'Adviser']);
+        $this->other = $this->makeUser('officer', '2209999', ['first_name' => 'Jessa', 'last_name' => 'Villanueva', 'organization_id' => $elsewhere->id]);
 
         $this->week = $this->ticket($this->officer, '2026-11-001', 'DIGITS Week', [['Budget Plan', null], ['Program Flow', null]]);
         $this->seminar = $this->ticket($this->officer, '2026-11-002', 'Seminar', [['Letter', 'RES-77']]);
@@ -65,10 +69,10 @@ class SearchTest extends TestCase
         $this->assertSame([], $found('nothing like this'));
     }
 
-    public function test_a_search_never_shows_another_officers_tickets(): void
+    public function test_a_search_never_shows_another_organizations_tickets(): void
     {
         // Their ticket matches too ("DIGITS Week Too", "Budget Plan", officer name),
-        // but the ORs in the search must stay inside "my tickets"
+        // but the ORs in the search must stay inside "my organization's tickets"
         foreach (['DIGITS', 'Budget', 'Villanueva', $this->othersWeek->code] as $q) {
             $codes = $this->actingAs($this->officer)->get('/officer/tickets?q='.urlencode($q))->viewData('tickets')->pluck('code');
             $this->assertNotContains($this->othersWeek->code, $codes, "search: {$q}");
@@ -135,7 +139,7 @@ class SearchTest extends TestCase
     {
         $ticket = new Ticket(['ref_no' => $refNo, 'title' => $title]);
         $ticket->code = Ticket::nextCode();
-        $ticket->organization()->associate($this->digits);
+        $ticket->organization()->associate($officer->organization);
         $ticket->officer()->associate($officer);
         $ticket->save();
 
@@ -148,9 +152,9 @@ class SearchTest extends TestCase
 
     private function makeUser(string $role, string $loginId, array $extra = []): User
     {
-        return User::factory()->create([
+        return User::factory()->create($extra + [
             'role' => $role, 'status' => 'verified', 'login_id' => $loginId,
             'organization_id' => $role === 'officer' ? $this->digits->id : null,
-        ] + $extra);
+        ]);
     }
 }

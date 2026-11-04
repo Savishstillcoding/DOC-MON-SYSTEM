@@ -10,10 +10,12 @@ use Illuminate\Support\Collection;
 /**
  * The Telegram messages sent when papers move (Increment 7: notifications).
  *   officer submits     → step-1 signatory: a paper is waiting
- *   signatory approves  → officer: approved (or fully approved); next signatory: a paper is waiting
- *   signatory returns   → officer: returned, with the remarks
- *   signatory rejects   → officer: rejected, with the remarks
+ *   signatory approves  → officers: approved (or fully approved); next signatory: a paper is waiting
+ *   signatory returns   → officers: returned, with the remarks
+ *   signatory rejects   → officers: rejected, with the remarks
  *   officer resubmits   → the same signatory: the revised paper is back
+ * "officers" = every verified officer of the ticket's organization (shared tickets, AUD-075),
+ * so a returned paper isn't missed when the one who filed it is away or has left.
  * Users who haven't connected Telegram (no telegram_chat_id) are skipped.
  * Called after the database work is saved, so a slow Telegram never holds a lock.
  */
@@ -31,7 +33,7 @@ class TicketAlerts
 
     /**
      * One signatory acted on one or more papers of the same ticket ("Approve all"
-     * sends them together), so the officer gets one message, not one per paper.
+     * sends them together), so each officer gets one message, not one per paper.
      *
      * @param  Collection<int, Document>  $documents
      */
@@ -72,8 +74,15 @@ class TicketAlerts
 
     private function toOfficer(Ticket $ticket, string $line): void
     {
-        $this->telegram->send($ticket->officer?->telegram_chat_id,
-            "DOC-MON · {$ticket->code} · {$ticket->title}\n{$line}\n\n".url('/officer/tickets'));
+        // unique(): someone with two accounts on one Telegram gets it once
+        $chats = User::where('role', 'officer')->where('status', 'verified')
+            ->where('organization_id', $ticket->organization_id)
+            ->whereNotNull('telegram_chat_id')
+            ->pluck('telegram_chat_id')->unique();
+
+        foreach ($chats as $chat) {
+            $this->telegram->send($chat, "DOC-MON · {$ticket->code} · {$ticket->title}\n{$line}\n\n".url('/officer/tickets'));
+        }
     }
 
     /** @param  Collection<int, Document>  $documents */

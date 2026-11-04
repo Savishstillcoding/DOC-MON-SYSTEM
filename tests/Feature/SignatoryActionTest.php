@@ -187,17 +187,18 @@ class SignatoryActionTest extends TestCase
         $this->assertSame(3, $doc->fresh()->current_step);
     }
 
-    public function test_only_the_ticket_owner_can_resubmit_and_only_returned_documents(): void
+    public function test_only_the_tickets_organization_can_resubmit_and_only_returned_documents(): void
     {
         $doc = $this->ticket()->documents->first();
-        $otherOfficer = $this->makeUser('officer', '2209999', ['organization_id' => $this->digits->id]);
+        $elsewhere = Organization::create(['code' => 'OTHER', 'name' => 'Other Org']);
+        $otherOfficer = $this->makeUser('officer', '2209999', ['organization_id' => $elsewhere->id]);
 
         // Still pending: nothing to resubmit
         $this->actingAs($this->officer)->post("/officer/documents/{$doc->id}/resubmit")->assertSessionHasErrors('resubmit');
 
         $this->act($this->adviser, $doc, 'return', 'Fix the date');
 
-        // Returned, but this officer didn't file the ticket
+        // Returned, but this officer is from another organization
         $this->actingAs($otherOfficer)->post("/officer/documents/{$doc->id}/resubmit")->assertSessionHasErrors('resubmit');
         $this->assertSame(Document::RETURNED, $doc->fresh()->status);
     }

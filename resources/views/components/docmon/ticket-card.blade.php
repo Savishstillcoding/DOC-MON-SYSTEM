@@ -30,7 +30,7 @@
     </div>
 
     <div class="dm-ticket-section dm-ticket-people">
-        <p>Officer: {{ $ticket['officer'] }}</p>
+        <p>Filed by: {{ $ticket['officer'] }}</p>
         @if (! empty($ticket['holders']))
             @foreach ($ticket['holders'] as $holder)
                 <p class="dm-ticket-holder">{{ $holder['text'] }}</p>

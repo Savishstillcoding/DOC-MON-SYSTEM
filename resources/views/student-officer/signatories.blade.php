@@ -47,7 +47,7 @@
 
                 <dl class="dm-facts">
                     <div><dt>Back at</dt><dd>{{ $s->back_at ?? '—' }}</dd></div>
-                    <div><dt>Your papers with them</dt><dd>{{ $s->pending }}</dd></div>
+                    <div><dt>Papers with them</dt><dd>{{ $s->pending }}</dd></div>
                 </dl>
             </article>
         @endforeach
@@ -55,7 +55,7 @@
 
     <section class="dm-card dm-panel">
         <h2 class="dm-panel-title">Papers per Signatory</h2>
-        <p class="dm-panel-sub">Waiting with each signatory now, and what each one did with your papers so far</p>
+        <p class="dm-panel-sub">Waiting with each signatory now, and what each one did with your organization's papers so far</p>
 
         <div class="dm-table-wrap sl-table">
             <table class="dm-table">
