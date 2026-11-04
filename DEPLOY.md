@@ -82,13 +82,33 @@ Replace `admin` with the person's log-in ID (student ID or employee ID). Check t
 **Database** column says `docmon` before answering **yes** for the live site.
 Never send the new password in a group chat; tell the person directly.
 
+Most people don't need this: **Forgot password?** on the log-in page emails them a reset link.
+Use the command when the email doesn't arrive.
+
+## Render settings
+
+Set these in **Render → Environment** (names only here, never the values). A new setting
+takes effect after the next deploy.
+
+| Setting                 | What it is                                                     |
+| ----------------------- | -------------------------------------------------------------- |
+| `TELEGRAM_BOT_TOKEN`    | From @BotFather. Without it, Telegram stays off                |
+| `TELEGRAM_BOT_USERNAME` | The bot's username, without the @                              |
+| `MAIL_MAILER`           | `brevo`                                                        |
+| `BREVO_API_KEY`         | From Brevo: Restricted, *Transactional email: All*             |
+| `MAIL_FROM_ADDRESS`     | The sender verified in Brevo                                   |
+| `MAIL_FROM_NAME`        | `DOC-MON`                                                      |
+
+**The Brevo key expires after 90 days without use.** If reset emails stop, Render's logs say
+`Password reset email failed`: make a new key in Brevo and update `BREVO_API_KEY`.
+
 ## Never do these
 
 | Never                                       | Why                                                                                                                                                                       |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `php artisan migrate:fresh --env=backup`    | Deletes **every table and every account**                                                                                                                                 |
 | `php artisan migrate:rollback --env=backup` | Undoes migrations and can delete data                                                                                                                                     |
-| `php artisan db:seed --env=backup`          | Adds demo accounts with the password `password`                                                                                                                           |
+| `php artisan db:seed --env=backup`          | Does nothing useful: the seeder refuses to run in production. Demo data is for laptops only                                                                               |
 | Set Render's `DB_USERNAME` to **root**      | The site must use `docmon_app` (it can't delete tables). If the site can't connect, the password is probably mistyped: reset `docmon_app`'s password in TiDB and paste it into Render |
 | Put a password in any file on GitHub        | Anyone can read it, even after you delete it. If it happens, **change the password right away**                                                                           |
 
