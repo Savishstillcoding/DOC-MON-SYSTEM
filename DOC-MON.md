@@ -29,6 +29,7 @@ Live site: <https://doc-mon-system.onrender.com>
 - Every important action is recorded in a write-only activity log.
 - **Telegram notifications:** after connecting Telegram on their Profile, officers hear when papers are approved, returned or rejected, and signatories hear when a paper is waiting for them.
 - **Forgot password?** emails a one-time link (valid 60 minutes) through Brevo.
+- **Privacy:** a public Privacy Notice, consent at sign-up, and a yearly admin review of accounts older than 4 years.
 
 **Not built yet:** SMS notifications.
 
@@ -38,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-05:** Privacy Notice at `/privacy`. Sign-up needs consent, the phone number is optional, and existing accounts accept once at their next log-in.
 - **2026-11-04:** An organization's officers now share its tickets, so the Deputy can carry on for the Secretary. Each ticket shows who filed it.
 - **2026-11-04:** Forgot password emails a one-time link through Brevo.
 - **2026-11-04:** The search boxes work, and the 🔔 links to Telegram settings.

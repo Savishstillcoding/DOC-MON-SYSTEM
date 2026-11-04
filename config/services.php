@@ -28,6 +28,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Shown on the privacy page (AUD-078). A setting, so no personal address is in the code
+    'privacy' => [
+        'email' => env('PRIVACY_CONTACT_EMAIL'),
+    ],
+
     // Email for password reset (AUD-008): API key from Brevo → SMTP & API → API Keys
     // (Restricted, "Transactional email: All"). Expires after 90 days without use.
     'brevo' => [

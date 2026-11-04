@@ -28,6 +28,13 @@
 
     @error('user') <p class="dm-form-alert" role="alert">{{ $message }}</p> @enderror
 
+    {{-- Yearly review promised in the privacy notice (AUD-078): turn off accounts no longer needed --}}
+    @if ($review)
+        <p class="dm-form-note">Showing active accounts older than {{ \App\Models\User::RETENTION_YEARS }} years. Deactivate the ones no longer needed. <a href="{{ $query(['review' => null, 'page' => null]) }}">Show everyone</a></p>
+    @elseif ($pastRetention > 0)
+        <p class="dm-form-note">{{ $pastRetention }} active {{ Str::plural('account', $pastRetention) }} {{ $pastRetention === 1 ? 'is' : 'are' }} older than {{ \App\Models\User::RETENTION_YEARS }} years. <a href="{{ $query(['review' => 1, 'page' => null]) }}">Review them</a></p>
+    @endif
+
     <section class="dm-card dm-panel">
         <div class="dm-panel-head">
             <div>

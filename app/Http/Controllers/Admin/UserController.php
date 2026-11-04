@@ -28,8 +28,10 @@ class UserController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
         $orgId = (int) $request->query('org');
+        $review = $request->boolean('review');   // the yearly review of old accounts (AUD-078)
 
         $base = fn () => User::query()
+            ->when($review, fn (Builder $q) => $q->pastRetention())
             ->when($search !== '', fn (Builder $q) => $q->where(fn (Builder $w) => $w
                 ->where('first_name', 'like', "%{$search}%")
                 ->orWhere('last_name', 'like', "%{$search}%")
@@ -56,6 +58,8 @@ class UserController extends Controller
             'tab' => $tab,
             'search' => $search,
             'orgId' => $orgId,
+            'review' => $review,
+            'pastRetention' => User::pastRetention()->count(),
             'organizations' => Organization::orderBy('code')->get(['id', 'code']),
         ]);
     }

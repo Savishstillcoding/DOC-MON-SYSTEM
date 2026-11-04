@@ -79,7 +79,7 @@ flowchart LR
 | Stop | Job | Where |
 |---|---|---|
 | **Route** | Matches the address to a controller | `routes/web.php` |
-| **Middleware** | Are you logged in? Is this your role? | `EnsureUserHasRole.php` |
+| **Middleware** | Are you logged in? Is this your role? Did you accept the privacy notice? | `app/Http/Middleware/` |
 | **Controller** | Checks the input and coordinates the work | `app/Http/Controllers/` |
 | **Model** | Holds the rules and talks to the database | `app/Models/` |
 | **View** | Builds the page you see | `resources/views/` |
@@ -99,7 +99,9 @@ stateDiagram-v2
 ```
 
 - Only **verified** accounts can log in.
+- Signing up needs **consent** to the [Privacy Notice](https://doc-mon-system.onrender.com/privacy). Accounts older than that notice accept it once, at their next log-in.
 - The ID photo is **deleted** right after the admin's review.
+- Once a year, the admin reviews accounts older than 4 years.
 - Admins aren't created through sign-up.
 
 ---
@@ -302,6 +304,7 @@ The code updates **by itself**, but the database **doesn't**. A new migration ha
 | The approval rules | `app/Models/Document.php` |
 | A ticket's status or search | `app/Models/Ticket.php` |
 | Telegram messages | `app/Services/TicketAlerts.php` |
+| The privacy notice | `resources/views/privacy.blade.php` |
 | The reset email | `app/Notifications/ResetPasswordNotification.php` |
 | A table | a **new** file in `database/migrations/` |
 
