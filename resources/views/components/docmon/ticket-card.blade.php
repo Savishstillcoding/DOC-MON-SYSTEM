@@ -9,6 +9,7 @@
         'availability' => 'In a Meeting', 'availability_note' => 'Back at 2:00 PM',
         'submitted' => 'Sep 27, 2026', 'updated' => 'Sep 27, 12:40',
     ]
+    Optional (AUD-077): 'needed' => 'Oct 3, 2026' (the Date Needed), 'deadline' => 'Overdue' or 'Due Soon'
     Optional 'holders' (a split Batch, AUD-049): one line per place instead of 'signatory', e.g.
         [['text' => 'With Reyes, Paolo (SSC President): 1 paper', 'availability' => 'Available', 'note' => null],
          ['text' => 'Back with you: 1 paper to revise, then to Adviser', 'availability' => null, 'note' => null]]
@@ -21,12 +22,20 @@
             <p class="dm-ticket-code">{{ $ticket['code'] }}</p>
             <p class="dm-ticket-ref">Ref No.: {{ $ticket['ref'] }}</p>
         </div>
-        <x-docmon.status-badge :status="$ticket['status']" />
+        <div class="dm-badges">
+            <x-docmon.status-badge :status="$ticket['status']" />
+            @if ($ticket['deadline'] ?? null)
+                <x-docmon.status-badge :status="$ticket['deadline']" />
+            @endif
+        </div>
     </header>
 
     <div class="dm-ticket-section">
         <p class="dm-ticket-title">{{ $ticket['title'] }}</p>
         <p class="dm-ticket-type">Type: {{ $ticket['type'] }}</p>
+        @if ($ticket['needed'] ?? null)
+            <p class="dm-ticket-type">Needed by: {{ $ticket['needed'] }}</p>
+        @endif
     </div>
 
     <div class="dm-ticket-section dm-ticket-people">
