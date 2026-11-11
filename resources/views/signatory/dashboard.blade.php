@@ -1,6 +1,6 @@
 {{--
     DOC-MON · Signatory · Dashboard (Signatory\DashboardController)
-    From the controller: $documents (waiting for this signatory, oldest first, filtered by $tab),
+    From the controller: $documents (waiting for this signatory, most urgent first, filtered by $tab),
     $counts (per tab), $stats, $recent (this signatory's last 5 actions).
     Each row posts to /signatory/documents/{id}/action; return and reject need remarks.
     The availability form: PUT /signatory/availability (availability, back_at).
@@ -58,7 +58,7 @@
             <div class="dm-panel-head">
                 <div>
                     <h2 class="dm-panel-title">Documents for Review</h2>
-                    <p class="dm-panel-sub">Oldest submissions first</p>
+                    <p class="dm-panel-sub">Most urgent first: closest Date Needed, then the oldest</p>
                 </div>
                 <a href="{{ url('/signatory/review') }}" class="dm-btn dm-btn-outline dm-btn-sm">Open For Review</a>
             </div>
@@ -92,6 +92,12 @@
                                 <td>
                                     <p class="dm-cell-main">{{ $doc->ticket->code }}</p>
                                     <p class="dm-cell-sub">Ref No. {{ $doc->ticket->ref_no }}</p>
+                                    @if ($doc->ticket->date_needed)
+                                        <p class="dm-cell-sub">Needed {{ $doc->ticket->date_needed->format('M j') }}</p>
+                                    @endif
+                                    @if ($due = $doc->ticket->deadlineStatus())
+                                        <x-docmon.status-badge :status="$due" />
+                                    @endif
                                 </td>
                                 <td>
                                     <p class="dm-cell-main">{{ $doc->type }}: {{ $doc->title }}</p>

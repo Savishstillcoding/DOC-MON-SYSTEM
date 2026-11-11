@@ -71,6 +71,9 @@ class DashboardController extends Controller
             'availability_note' => $signatory?->back_at ? "Back at {$signatory->back_at}" : null,
             // A split Batch (AUD-049): one line per place, each signatory with their own dot
             'holders' => $holders->count() > 1 ? $holders->map(fn (array $h) => $this->holderLine($h))->all() : [],
+            // AUD-077: the Date Needed, and Overdue / Due Soon while papers are still moving
+            'needed' => $ticket->date_needed?->format('M j, Y'),
+            'deadline' => $ticket->deadlineStatus(),
             'submitted' => $ticket->created_at->format('M j, Y'),
             'updated' => $ticket->updated_at->format('M j, g:i A'),
         ];

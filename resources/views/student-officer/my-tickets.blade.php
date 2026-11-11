@@ -71,6 +71,9 @@
                                 <td>
                                     <p class="dm-cell-main">{{ $t->title }}</p>
                                     <p class="dm-cell-sub">Ref No. {{ $t->ref_no }} · Filed by {{ $t->officer->displayName() }}</p>
+                                    @if ($t->date_needed)
+                                        <p class="dm-cell-sub">Needed by {{ $t->date_needed->format('M j, Y') }}</p>
+                                    @endif
                                 </td>
                                 <td>{{ $t->typeLabel() }}</td>
                                 <td>
@@ -96,7 +99,15 @@
                                         </div>
                                     @endif
                                 </td>
-                                <td><x-docmon.status-badge :status="$t->status()" /></td>
+                                <td>
+                                    {{-- AUD-077: Overdue / Due Soon next to the status while papers are still moving --}}
+                                    <div class="dm-badges">
+                                        <x-docmon.status-badge :status="$t->status()" />
+                                        @if ($due = $t->deadlineStatus())
+                                            <x-docmon.status-badge :status="$due" />
+                                        @endif
+                                    </div>
+                                </td>
                                 <td>
                                     <p class="dm-cell-main dm-cell-regular">{{ $t->updated_at->format('M j') }}</p>
                                     <p class="dm-cell-sub">{{ $t->updated_at->format('g:i A') }}</p>

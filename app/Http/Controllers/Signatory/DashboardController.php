@@ -22,13 +22,16 @@ class DashboardController extends Controller
     {
         $signatory = $request->user();
 
-        // Oldest first: updated_at is when the paper reached this step
-        // (moved here by an approval, or resubmitted after a revision)
+        // Most urgent first (AUD-077): soonest Date Needed, then no date; ties oldest
+        // first (updated_at is when the paper reached this step: moved here by an
+        // approval, or resubmitted after a revision). The sort is stable
         $waiting = Document::atStepOf($signatory)
             ->where('status', Document::PENDING)
-            ->with(['ticket' => fn ($q) => $q->withCount('documents')->with('officer')])
+            ->with(['ticket' => fn ($q) => $q->withCount('documents')->with('documents', 'officer')])
             ->oldest('updated_at')
-            ->get();
+            ->get()
+            ->sortBy(fn (Document $d) => $d->ticket->urgencyKey())
+            ->values();
 
         $isBatch = fn (Document $d) => $d->ticket->documents_count > 1;
         $counts = [

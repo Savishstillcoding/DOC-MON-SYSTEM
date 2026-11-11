@@ -309,6 +309,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-badge-rejected { background: var(--dm-red-bg);   color: var(--dm-red); }
 .dm-badge-revision { background: var(--dm-blue-bg);  color: var(--dm-blue); }
 .dm-badge-review   { background: #eeeeee;            color: #2c2c2c; }
+/* Deadline badges (AUD-077): solid red so Overdue stands out from a Rejected pill */
+.dm-badge-overdue  { background: var(--dm-red);      color: #fff; }
+.dm-badge-due      { background: #ffe8d6;            color: #9a3412; }
+.dm-badges { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 
 /* ---------------- Availability (dot + text) ---------------- */
 .dm-availability {

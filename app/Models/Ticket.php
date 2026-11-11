@@ -130,6 +130,39 @@ class Ticket extends Model
         };
     }
 
+    /** A Date Needed this many days away (or fewer) counts as "Due Soon" (AUD-077). */
+    public const DUE_SOON_DAYS = 3;
+
+    /**
+     * "Overdue" (Date Needed has passed), "Due Soon" (today or within DUE_SOON_DAYS),
+     * or null: no date, plenty of time, or every paper is finished, so nothing to chase.
+     * Worked out from today's date, never stored, so it can't go stale overnight.
+     */
+    public function deadlineStatus(): ?string
+    {
+        if ($this->date_needed === null || ! in_array($this->status(), ['Pending', 'Needs Revision'], true)) {
+            return null;
+        }
+
+        $daysLeft = (int) today()->diffInDays($this->date_needed, false);
+
+        return match (true) {
+            $daysLeft < 0 => 'Overdue',
+            $daysLeft <= self::DUE_SOON_DAYS => 'Due Soon',
+            default => null,
+        };
+    }
+
+    /**
+     * The sort key for a signatory's queue (AUD-077): soonest Date Needed first, so
+     * overdue papers come out on top, then tickets without a date. Sorting is stable,
+     * so papers with the same key keep their oldest-first order.
+     */
+    public function urgencyKey(): string
+    {
+        return $this->date_needed ? '1|'.$this->date_needed->toDateString() : '2|';
+    }
+
     /**
      * Where the unfinished papers are now (AUD-049). Each document moves on its own,
      * so a Batch can be split, e.g. one paper with the SSC President and one returned
