@@ -26,7 +26,7 @@ class ResetPasswordCommandTest extends TestCase
     {
         $this->artisan('docmon:reset-password', ['login_id' => 'admin'])
             ->expectsConfirmation('Set a new password for this account?', 'yes')
-            ->expectsQuestion('New password (at least 8 characters)', 'NewAdmin#2026')
+            ->expectsQuestion('New password (8+ characters, letters and numbers)', 'NewAdmin#2026')
             ->expectsQuestion('Type it again', 'NewAdmin#2026')
             ->expectsOutputToContain('can log in with the new password')
             ->assertSuccessful();
@@ -44,7 +44,7 @@ class ResetPasswordCommandTest extends TestCase
 
         $this->artisan('docmon:reset-password', ['login_id' => 'admin'])
             ->expectsConfirmation('Set a new password for this account?', 'yes')
-            ->expectsQuestion('New password (at least 8 characters)', 'NewAdmin#2026')
+            ->expectsQuestion('New password (8+ characters, letters and numbers)', 'NewAdmin#2026')
             ->expectsQuestion('Type it again', 'NewAdmin#2027')
             ->expectsOutputToContain('different')
             ->assertFailed();

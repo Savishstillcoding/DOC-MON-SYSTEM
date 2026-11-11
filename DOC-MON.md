@@ -26,7 +26,7 @@ Live site: <https://doc-mon-system.onrender.com>
 - Accounts are reviewed by the admin before they can log in, so nobody can pose as an officer or a signatory.
 - An organization's officers share its tickets, so the Deputy Secretary can carry on for the Secretary; each ticket shows who filed it.
 - Officer pages refresh their data by themselves (every 20 seconds) without reloading.
-- Every important action is recorded in a write-only activity log.
+- Every important action is recorded in a write-only activity log, including log-ins (failed ones too) and every view of an uploaded ID.
 - **Telegram notifications:** after connecting Telegram on their Profile, officers hear when papers are approved, returned or rejected, and signatories hear when a paper is waiting for them.
 - **Forgot password?** emails a one-time link (valid 60 minutes) through Brevo.
 - **Privacy:** a public Privacy Notice, consent at sign-up, and a yearly admin review of accounts older than 4 years.
@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-11:** Security: passwords need letters and numbers and can't be a known leaked one; changing a password signs out other devices; log-ins and ID views are recorded; a per-account log-in limit; anti-clickjacking headers; `docmon:create-admin` adds an admin.
 - **2026-11-05:** Privacy Notice at `/privacy`. Sign-up needs consent, the phone number is optional, and existing accounts accept once at their next log-in.
 - **2026-11-04:** An organization's officers now share its tickets, so the Deputy can carry on for the Secretary. Each ticket shows who filed it.
 - **2026-11-04:** Forgot password emails a one-time link through Brevo.

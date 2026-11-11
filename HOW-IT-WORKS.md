@@ -250,6 +250,13 @@ flowchart TD
 
 The screen always says the same thing, so strangers can't use the form to find out which accounts exist. The link works **once** and expires in **60 minutes**.
 
+### Passwords and log-ins
+
+- A password needs **8+ characters with letters and numbers**, and can't be one from a known data leak.
+- Log-in allows **5 tries a minute** per internet address and **10 a minute** per account.
+- Every log-in, failed or not, goes into the **Activity Log**, but never the typed password.
+- Changing your password **signs out your other devices**.
+
 ---
 
 ## 11. How the data connects

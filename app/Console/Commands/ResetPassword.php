@@ -50,7 +50,7 @@ class ResetPassword extends Command
             return self::SUCCESS;
         }
 
-        $new = password('New password (at least 8 characters)', required: true, validate: fn ($value) => Validator::make(
+        $new = password('New password (8+ characters, letters and numbers)', required: true, validate: fn ($value) => Validator::make(
             ['password' => $value], ['password' => [Password::defaults()]]
         )->errors()->first('password') ?: null);
 

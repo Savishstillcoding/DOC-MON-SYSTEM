@@ -59,6 +59,9 @@ class VerificationController extends Controller
         $document = $user->idDocument;
         abort_if($document === null, 404);
 
+        // Personal data: every view is on record, who and whose (AUD-072)
+        ActivityLog::record(request()->user(), 'verification', 'Viewed ID', "{$user->displayName()} ({$user->login_id})");
+
         $extension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'application/pdf' => 'pdf'][$document->mime] ?? 'bin';
 
         return response($document->data, 200, [

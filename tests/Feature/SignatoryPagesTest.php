@@ -175,7 +175,7 @@ class SignatoryPagesTest extends TestCase
 
         $this->actingAs($this->adviser)->put('/signatory/profile/password', [
             'current_password' => 'password', 'password' => 'NewPass#2026', 'password_confirmation' => 'NewPass#2026',
-        ])->assertSessionHas('status', 'Password updated.');
+        ])->assertSessionHas('status', 'Password updated. Any other device using your account was signed out.');
 
         $this->assertTrue(Hash::check('NewPass#2026', $this->adviser->fresh()->password));
     }
