@@ -82,12 +82,12 @@ class ProfileAndAvailabilityTest extends TestCase
         $this->actingAs($officer)
             ->put('/officer/profile/password', [
                 'current_password' => 'password',
-                'password' => 'a-new-password',
-                'password_confirmation' => 'a-new-password',
+                'password' => 'a-new-password7',
+                'password_confirmation' => 'a-new-password7',
             ])
-            ->assertSessionHas('status', 'Password updated.');
+            ->assertSessionHas('status', 'Password updated. Any other device using your account was signed out.');
 
-        $this->assertTrue(Hash::check('a-new-password', $officer->fresh()->password));
+        $this->assertTrue(Hash::check('a-new-password7', $officer->fresh()->password));
     }
 
     public function test_a_wrong_current_password_or_mismatched_confirmation_is_rejected(): void

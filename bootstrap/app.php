@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsurePrivacyAccepted;
 use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
+
+        // Anti-clickjacking, nosniff, referrer and (live) HSTS headers on every page (AUD-069)
+        $middleware->web(append: [SecurityHeaders::class]);
 
         // 'role:officer' etc. in routes/web.php
         $middleware->alias(['role' => EnsureUserHasRole::class, 'privacy' => EnsurePrivacyAccepted::class]);

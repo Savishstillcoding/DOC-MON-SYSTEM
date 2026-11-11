@@ -57,10 +57,10 @@ Route::middleware('guest')->group(function () {
     });
 
     // Real log-in: checks the ID + password + role, and only lets verified accounts in.
-    // throttle:5,1 = at most 5 attempts per minute, to slow down password guessing.
+    // throttle:login = 5 tries a minute per IP and 10 per account (AppServiceProvider, AUD-073)
     Route::post('/login/{role}', [LoginController::class, 'store'])
         ->whereIn('role', ['officer', 'signatory', 'admin'])
-        ->middleware('throttle:5,1');
+        ->middleware('throttle:login');
 
     // Forgot password (AUD-008): emailed one-time link. Throttled so nobody can
     // flood someone's inbox (Laravel also allows one email per account per minute).

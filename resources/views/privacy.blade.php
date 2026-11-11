@@ -30,6 +30,7 @@
       <li><strong>Your uploaded ID:</strong> used only to check that you are who you say you are. It is deleted as soon as the admin approves or rejects your account.</li>
       <li><strong>Your password:</strong> stored scrambled, so nobody can read it.</li>
       <li><strong>What you do in DOC-MON:</strong> tickets, approvals, returns, rejections, remarks, and your availability status.</li>
+      <li><strong>Log-ins:</strong> when you log in, failed attempts, and the IP address they came from, to spot password guessing.</li>
       <li><strong>Your Telegram chat ID:</strong> only if you choose to connect Telegram.</li>
     </ul>
 
@@ -53,6 +54,7 @@
       <li><strong>Render</strong> hosts the website, and <strong>TiDB Cloud</strong> hosts the database.</li>
       <li><strong>Brevo</strong> delivers password reset emails, so it receives your email address.</li>
       <li><strong>Telegram</strong> delivers notifications if you connect it, so ticket details and remarks pass through it.</li>
+      <li><strong>Have I Been Pwned</strong> checks whether a new password appeared in a known data leak. It receives only a short piece of the scrambled password, never the password itself or who you are.</li>
     </ul>
     <p>We don't sell your information.</p>
 

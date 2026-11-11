@@ -20,6 +20,7 @@ class ActivityLog extends Model
         'signatory_lists' => 'Signatory Lists',
         'organizations' => 'Organizations',
         'accounts' => 'Accounts',
+        'logins' => 'Log-ins',   // AUD-071: successful, failed and blocked log-ins
     ];
 
     public const UPDATED_AT = null;   // lines are never updated

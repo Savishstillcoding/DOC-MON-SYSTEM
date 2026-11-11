@@ -85,6 +85,19 @@ Never send the new password in a group chat; tell the person directly.
 Most people don't need this: **Forgot password?** on the log-in page emails them a reset link.
 Use the command when the email doesn't arrive.
 
+## Add another admin (MJ only for the live site)
+
+Admins can't sign up. Keep at least **two** admins, so one forgotten password doesn't leave
+nobody able to verify accounts. The command asks for the name, username and email, shows
+which database it will change, asks you to confirm, then asks for the password (hidden).
+
+| Where | Command |
+|---|---|
+| Your laptop | `php artisan docmon:create-admin` |
+| Live site | `php artisan docmon:create-admin --env=backup` |
+
+The new admin accepts the Privacy Notice at their first log-in.
+
 ## Yearly account review
 
 Once a year, open **Admin → Users**. A note appears when active accounts are older than 4 years: click **Review them**, and deactivate the ones no longer needed. The Privacy Notice promises this.
@@ -103,6 +116,9 @@ takes effect after the next deploy.
 | `MAIL_FROM_ADDRESS`     | The sender verified in Brevo                                   |
 | `MAIL_FROM_NAME`        | `DOC-MON`                                                      |
 | `PRIVACY_CONTACT_EMAIL` | Shown on `/privacy`. Without it, the page shows only the name  |
+| `SESSION_SECURE_COOKIE` | `true`: the log-in cookie is only sent over HTTPS. Live only   |
+
+Never set `SESSION_SECURE_COOKIE=true` on your laptop: `http://127.0.0.1` would lose its log-in.
 
 **The Brevo key expires after 90 days without use.** If reset emails stop, Render's logs say
 `Password reset email failed`: make a new key in Brevo and update `BREVO_API_KEY`.
