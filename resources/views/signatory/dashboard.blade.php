@@ -39,7 +39,7 @@
             </span>
             <label class="dm-search">
                 <x-docmon.icon name="search" size="18" />
-                <input type="search" name="q" placeholder="Search ticket, Ref No. or officer" aria-label="Search the queue">
+                <input type="search" name="q" placeholder="Search tickets or officers" aria-label="Search the queue">
             </label>
             <x-docmon.notify-bell />
         </form>
@@ -116,7 +116,7 @@
                                         @csrf
                                         <input type="hidden" name="document_id" value="{{ $doc->id }}">
                                         <input type="text" name="remarks" maxlength="1000" aria-label="Remarks for {{ $doc->title }}"
-                                               placeholder="Remarks (needed to revise or reject)" value="{{ $isMine ? old('remarks') : '' }}">
+                                               placeholder="Remarks (to revise or reject)" value="{{ $isMine ? old('remarks') : '' }}">
                                         @if ($isMine) @error('remarks') <p class="dm-field-error">{{ $message }}</p> @enderror @endif
                                         <div class="dm-actions">
                                             <button type="submit" name="action" value="approve" class="dm-btn dm-btn-success dm-btn-xs">Approve</button>

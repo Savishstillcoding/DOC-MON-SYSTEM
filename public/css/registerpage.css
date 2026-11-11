@@ -61,9 +61,9 @@
   border-radius: 8px;
 }
 .field input::placeholder {
-  color: #b3b3b3;
+  color: #767676;   /* 4.5:1 on white (AUD-092) */
 }
-.field select:invalid { color: #b3b3b3; }   /* "Choose your ..." looks like a placeholder */
+.field select:invalid { color: #767676; }   /* "Choose your ..." looks like a placeholder */
 .field select option { color: #1e1e1e; }
 .field input:focus-visible,
 .field select:focus-visible {
@@ -113,6 +113,8 @@
 .upload-text.has-file {
   color: #1e1e1e;
 }
+/* Rule shown under a box while typing (AUD-065: placeholders vanish and got cut off) */
+.field-hint { font-size: 14px; line-height: 20px; color: #5f5f5f; }
 .field-note {
   font-size: 16px;
   line-height: 22px;

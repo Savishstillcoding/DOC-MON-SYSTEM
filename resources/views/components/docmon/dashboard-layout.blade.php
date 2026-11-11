@@ -42,6 +42,9 @@
     @endif
 </head>
 <body class="dm-body">
+    {{-- AUD-093: first thing a keyboard user reaches; jumps past the sidebar --}}
+    <a href="#main" class="dm-skip">Skip to content</a>
+
     <aside class="dm-sidebar">
         <div class="dm-brand">
             <span class="dm-brand-logo">
@@ -82,7 +85,7 @@
         </form>
     </aside>
 
-    <main class="dm-main">
+    <main class="dm-main" id="main" tabindex="-1">
         @if (session('status'))
             <p class="dm-flash" role="status"><x-docmon.icon name="check" size="18" /> {{ session('status') }}</p>
         @endif

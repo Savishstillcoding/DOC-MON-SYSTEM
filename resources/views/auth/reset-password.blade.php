@@ -59,13 +59,14 @@
 
           <div class="field">
             <label for="password">New password</label>
-            <input id="password" name="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+            <input id="password" name="password" type="password" aria-describedby="password_hint" autocomplete="new-password" minlength="8" required>
+            <p class="field-hint" id="password_hint">At least 8 characters, with letters and numbers.</p>
             @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="password_confirmation">Confirm new password</label>
-            <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Re-type the new password" autocomplete="new-password" required>
+            <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Type it again" autocomplete="new-password" required>
           </div>
 
           <button class="submit-btn" type="submit">Save new password</button>

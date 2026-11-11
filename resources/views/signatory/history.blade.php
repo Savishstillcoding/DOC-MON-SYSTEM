@@ -19,7 +19,7 @@
             @if ($tab !== 'All') <input type="hidden" name="tab" value="{{ $tab }}"> @endif
             <label class="dm-search">
                 <x-docmon.icon name="search" size="18" />
-                <input type="search" name="q" value="{{ $search }}" placeholder="Search ticket, Ref No. or officer" aria-label="Search history">
+                <input type="search" name="q" value="{{ $search }}" placeholder="Search tickets or officers" aria-label="Search history">
             </label>
         </form>
     </header>
