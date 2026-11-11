@@ -132,6 +132,17 @@ flowchart TD
 2. **Return keeps your progress.** The paper comes back to the same signatory, and earlier approvals stay valid.
 3. **Reject is final.** The officer has to file a new ticket.
 
+### Deadlines
+
+The **Date Needed** is optional. While a paper is still moving, the ticket gets a badge:
+
+| Badge | When |
+|---|---|
+| **Due Soon** | Today, or 3 days or fewer away |
+| **Overdue** | The date has passed |
+
+The badge is worked out from today's date every time a page opens, so it changes by itself overnight. A finished ticket keeps its date but loses the badge. The signatory's queue shows the **most urgent first**: closest date (so overdue on top), then papers with no date, oldest first.
+
 ### A Batch can split
 
 Each paper moves on its own, so a ticket can be in several places at once:
@@ -309,7 +320,7 @@ The code updates **by itself**, but the database **doesn't**. A new migration ha
 | A page or URL | `routes/web.php` |
 | How a page looks | `resources/views/`, `public/css/` |
 | The approval rules | `app/Models/Document.php` |
-| A ticket's status or search | `app/Models/Ticket.php` |
+| A ticket's status, search or deadline badge | `app/Models/Ticket.php` |
 | Telegram messages | `app/Services/TicketAlerts.php` |
 | The privacy notice | `resources/views/privacy.blade.php` |
 | The reset email | `app/Notifications/ResetPasswordNotification.php` |

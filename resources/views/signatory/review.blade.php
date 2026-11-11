@@ -1,6 +1,6 @@
 {{--
     DOC-MON · Signatory · For Review (Signatory\ReviewController)
-    From the controller: $queue (one item per ticket: ->ticket, ->documents waiting for me, ->since),
+    From the controller: $queue (one item per ticket, most urgent first: ->ticket, ->documents waiting for me, ->since),
     $counts (per tab), $tab, $search (?q=, also used by the Dashboard's search box),
     $selected (the ticket shown in the panel), $route (->step, ->total, ->title, ->next).
     Each waiting document has its own form → POST /signatory/documents/{id}/action
@@ -30,7 +30,7 @@
             <div class="dm-panel-head">
                 <div>
                     <h2 class="dm-panel-title">Queue</h2>
-                    <p class="dm-panel-sub">{{ $counts['All'] }} waiting · oldest first{{ $search !== '' ? ' · matching “'.$search.'”' : '' }}</p>
+                    <p class="dm-panel-sub">{{ $counts['All'] }} waiting · most urgent first{{ $search !== '' ? ' · matching “'.$search.'”' : '' }}</p>
                 </div>
             </div>
 
@@ -59,11 +59,13 @@
                                     <p class="rv-title">{{ $t->title }}</p>
                                     <p class="dm-cell-sub">
                                         {{ $t->documents_count > 1 ? 'Batch (' . $t->documents_count . ')' : 'Single' }} · {{ $t->officer->displayName() }}
+                                        @if ($t->date_needed) · Needed {{ $t->date_needed->format('M j') }} @endif
                                     </p>
                                 </div>
                                 <div class="rv-item-side">
                                     <span class="dm-cell-sub">{{ $item->since->format('M j') }}</span>
-                                    <x-docmon.status-badge status="For Review" />
+                                    {{-- AUD-077: Overdue / Due Soon replaces the plain pill when the date is close --}}
+                                    <x-docmon.status-badge :status="$t->deadlineStatus() ?? 'For Review'" />
                                 </div>
                             </a>
                         </li>
@@ -82,7 +84,7 @@
                             <h2 class="dm-panel-title">{{ $t->code }}</h2>
                             <p class="dm-panel-sub">{{ $t->title }}</p>
                         </div>
-                        <x-docmon.status-badge status="For Review" />
+                        <x-docmon.status-badge :status="$t->deadlineStatus() ?? 'For Review'" />
                     </div>
 
                     <dl class="dm-facts rv-facts">

@@ -40,6 +40,7 @@ Live site: <https://doc-mon-system.onrender.com>
 Newest first, important things only.
 
 - **2026-11-11:** Security: passwords need letters and numbers and can't be a known leaked one; changing a password signs out other devices; log-ins and ID views are recorded; a per-account log-in limit; anti-clickjacking headers; `docmon:create-admin` adds an admin.
+- **2026-11-07:** Overdue and Due Soon badges (3 days or fewer). Officers now see the Date Needed, and the signatory's queue shows the most urgent papers first.
 - **2026-11-05:** Privacy Notice at `/privacy`. Sign-up needs consent, the phone number is optional, and existing accounts accept once at their next log-in.
 - **2026-11-04:** An organization's officers now share its tickets, so the Deputy can carry on for the Secretary. Each ticket shows who filed it.
 - **2026-11-04:** Forgot password emails a one-time link through Brevo.
