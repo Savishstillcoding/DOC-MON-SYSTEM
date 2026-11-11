@@ -125,7 +125,7 @@ class SearchTest extends TestCase
         // Before: no form, no name, no label; typing did nothing
         $this->actingAs($this->officer)->get('/officer/dashboard')
             ->assertSee('<form method="GET" action="'.url('/officer/tickets').'" class="dm-header-actions">', false)
-            ->assertSee('name="q" placeholder="Search ticket, Ref No. or paper" aria-label="Search my tickets"', false);
+            ->assertSee('name="q" placeholder="Search tickets" aria-label="Search my tickets"', false);
 
         $this->actingAs($this->adviser)->get('/signatory/dashboard')
             ->assertSee('<form method="GET" action="'.url('/signatory/review').'" class="dm-header-actions">', false)

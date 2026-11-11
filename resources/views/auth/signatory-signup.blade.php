@@ -68,7 +68,7 @@
 
             <div class="field">
                 <label for="email">Email</label>
-                <input id="email" name="email" type="email" placeholder="e.x. juan.manalo@lnu.edu.ph" autocomplete="email" value="{{ old('email') }}" required>
+                <input id="email" name="email" type="email" placeholder="juan@lnu.edu.ph" autocomplete="email" value="{{ old('email') }}" required>
               @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
@@ -78,7 +78,8 @@
             </div>
             <div class="field">
               <label for="password">Password</label>
-              <input id="password" name="password" type="password" minlength="8" placeholder="At least 8 characters" autocomplete="new-password" required>
+              <input id="password" name="password" type="password" minlength="8" aria-describedby="password_hint" autocomplete="new-password" required>
+              <p class="field-hint" id="password_hint">At least 8 characters, with letters and numbers.</p>
               @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
           </div>

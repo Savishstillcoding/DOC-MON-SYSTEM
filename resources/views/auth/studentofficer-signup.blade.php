@@ -62,7 +62,7 @@
             <div class="field">
               <label for="organization_id">Student Organization</label>
               <select id="organization_id" name="organization_id" required>
-                <option value="" disabled @selected(! old('organization_id'))>Choose your organization</option>
+                <option value="" disabled @selected(! old('organization_id'))>Choose one</option>
                 @foreach ($organizations as $org)
                   <option value="{{ $org->id }}" @selected((string) old('organization_id') === (string) $org->id)>{{ $org->code }} · {{ $org->name }}</option>
                 @endforeach
@@ -72,7 +72,7 @@
 
             <div class="field">
                 <label for="email">Email</label>
-                <input id="email" name="email" type="email" placeholder="e.x. juan.manalo@lnu.edu.ph" autocomplete="email" value="{{ old('email') }}" required>
+                <input id="email" name="email" type="email" placeholder="juan@lnu.edu.ph" autocomplete="email" value="{{ old('email') }}" required>
               @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
@@ -84,7 +84,7 @@
             <div class="field">
               <label for="position">Position</label>
               <select id="position" name="position" required>
-                <option value="" disabled @selected(! old('position'))>Choose your position</option>
+                <option value="" disabled @selected(! old('position'))>Choose one</option>
                 @foreach ($positions as $position)
                   <option @selected(old('position') === $position)>{{ $position }}</option>
                 @endforeach
@@ -93,7 +93,8 @@
             </div>
             <div class="field">
               <label for="password">Password</label>
-              <input id="password" name="password" type="password" minlength="8" placeholder="At least 8 characters" autocomplete="new-password" required>
+              <input id="password" name="password" type="password" minlength="8" aria-describedby="password_hint" autocomplete="new-password" required>
+              <p class="field-hint" id="password_hint">At least 8 characters, with letters and numbers.</p>
               @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
           </div>

@@ -106,12 +106,13 @@
                         </div>
                         <div class="dm-field">
                             <label for="pf-new">New Password</label>
-                            <input id="pf-new" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
+                            <input id="pf-new" name="password" type="password" autocomplete="new-password" minlength="8" aria-describedby="pf-new-hint" required>
+                            <p class="dm-field-hint" id="pf-new-hint">At least 8 characters, with letters and numbers.</p>
                             @error('password', 'password') <p class="dm-field-error">{{ $message }}</p> @enderror
                         </div>
                         <div class="dm-field">
                             <label for="pf-confirm">Confirm Password</label>
-                            <input id="pf-confirm" name="password_confirmation" type="password" autocomplete="new-password" placeholder="Re-type new password" required>
+                            <input id="pf-confirm" name="password_confirmation" type="password" autocomplete="new-password" placeholder="Type it again" required>
                         </div>
                     </div>
 

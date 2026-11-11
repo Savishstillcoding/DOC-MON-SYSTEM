@@ -16,7 +16,8 @@
   --dm-border: #e6e6e6;
   --dm-text: #1a1a1a;
   --dm-muted: #5f5f5f;
-  --dm-faint: #9a9a9a;
+  /* AUD-092: was #9a9a9a (2.8:1). 5.3:1 on white, 4.9:1 on the page background */
+  --dm-faint: #6b6b6b;
   --dm-purple: #5b3fd9;
   --dm-purple-dark: #4a31bf;
   --dm-green: #1e7b3a;
@@ -96,7 +97,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   margin: 30px 0 10px 16px;
   font-size: 11px;
   letter-spacing: 1px;
-  color: var(--dm-faint);
+  color: #9a9a9a;   /* on the dark sidebar: 5.9:1 (darker would be harder to read) */
 }
 
 .dm-menu { display: flex; flex-direction: column; gap: 6px; }
@@ -172,7 +173,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: #fff;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  color: #8a8a8a;
+  color: #6b6b6b;   /* AUD-092: was #8a8a8a (3.4:1) */
 }
 .dm-search input { border: 0; outline: 0; width: 100%; background: transparent; color: var(--dm-text); }
 .dm-search:focus-within { border-color: var(--dm-purple); }
@@ -274,11 +275,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
   margin: 18px 0 16px;
   border-bottom: 1px solid var(--dm-border);
   overflow-x: auto;
+  overflow-y: hidden;   /* AUD-066: no tiny ▲▼ arrows (overflow-x alone turns vertical scrolling on too) */
 }
 .dm-tab {
   padding-bottom: 12px;
   font-size: 15px;
-  color: #8a8a8a;
+  color: #6b6b6b;   /* AUD-092: was #8a8a8a (3.4:1) */
   white-space: nowrap;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
@@ -359,7 +361,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .dm-signatory-info { flex: 1; min-width: 0; }
 .dm-signatory-name { font-size: 15px; font-weight: 600; }
-.dm-signatory-role { font-size: 13px; color: #777; margin-top: 2px; }
+.dm-signatory-role { font-size: 13px; color: #666; margin-top: 2px; }   /* AUD-092: was #777 */
 
 /* connector line between steps (availability timeline only) */
 .dm-route:not(.dm-route-plain) .dm-signatory-row:not(:last-child)::after {
@@ -450,7 +452,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-field textarea:focus,
 .dm-select:focus,
 .nt-doc-row input:focus { border-color: var(--dm-purple); }
-::placeholder { color: #9a9a9a; }
+::placeholder { color: #767676; }   /* 4.5:1 on white (AUD-092) */
 
 .dm-select { cursor: pointer; }
 .dm-select-sm { width: auto; height: 34px; }
@@ -603,7 +605,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding: 0 12px;
   border: 1px solid #d4d4d4;
   border-radius: 6px;
-  color: #8a8a8a;
+  color: #6b6b6b;   /* AUD-092: was #8a8a8a (3.4:1) */
   margin-bottom: 16px;
 }
 .sg-time input { border: 0 !important; height: auto !important; padding: 0 !important; }
@@ -958,6 +960,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-weight: 600;
 }
 /* Red message under a field, and red box for form-wide errors */
+.dm-field-hint { margin-top: 6px; font-size: 13px; color: var(--dm-muted); }   /* rule under a box (AUD-065) */
 .dm-field-error { margin-top: 6px; font-size: 13px; color: var(--dm-red); }
 .dm-form-alert {
   margin: 0 0 16px;
@@ -1196,3 +1199,21 @@ p.dm-form-alert { padding-left: 16px; }
   transition: opacity 0.25s, translate 0.25s;
 }
 .dm-live-toast.is-shown { opacity: 1; translate: 0 0; }
+
+/* "Skip to content" (AUD-093): hidden until a keyboard user presses Tab, so they don't
+   have to Tab through the whole sidebar on every page */
+.dm-skip {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--dm-text);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.dm-skip:focus { top: 16px; }
+/* The skip link focuses <main> itself: no outline around the whole page */
+.dm-main:focus { outline: none; }
