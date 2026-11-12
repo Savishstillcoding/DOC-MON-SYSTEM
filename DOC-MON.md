@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-12 (database):** Tickets get `active_ref_no` so a fully rejected ticket's Ref No. can be used again (the screens follow in the next update), and users get `availability_updated_at` so "Back at 2:00 PM" can show when it was set. Run the migration on TiDB before merging.
 - **2026-11-12:** Easier to read and use: darker grey text (passes the WCAG AA contrast check on every page), a "Skip to content" link for keyboard users, the password rule shown under the box, no more cut-off placeholders, and a properly styled Email box on Forgot / Reset Password.
 - **2026-11-11:** Security: passwords need letters and numbers and can't be a known leaked one; changing a password signs out other devices; log-ins and ID views are recorded; a per-account log-in limit; anti-clickjacking headers; `docmon:create-admin` adds an admin.
 - **2026-11-07:** Overdue and Due Soon badges (3 days or fewer). Officers now see the Date Needed, and the signatory's queue shows the most urgent papers first.

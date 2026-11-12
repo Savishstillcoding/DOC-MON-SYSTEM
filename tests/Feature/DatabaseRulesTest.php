@@ -56,7 +56,7 @@ class DatabaseRulesTest extends TestCase
 
     // ---------- Tickets ----------
 
-    public function test_a_ref_no_can_only_be_used_once_per_organization(): void
+    public function test_a_ref_no_can_only_be_used_once_per_organization_among_live_tickets(): void
     {
         $digits = $this->makeOrganization('DIGITS');
         $officer = User::factory()->create();
@@ -215,6 +215,7 @@ class DatabaseRulesTest extends TestCase
         return DB::table('tickets')->insertGetId([
             'code' => 'DM-TEST-'.$number,
             'ref_no' => $refNo,
+            'active_ref_no' => $refNo,   // what Ticket::creating does for every app-made ticket (AUD-079)
             'organization_id' => $organizationId,
             'officer_id' => $officer->id,
             'title' => 'Test ticket',

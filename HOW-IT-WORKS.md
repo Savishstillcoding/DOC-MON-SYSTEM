@@ -289,7 +289,7 @@ erDiagram
 | `users` | Everyone, with a role and a status |
 | `organizations` | Student organizations |
 | `organization_signatory` | The route: who signs at which step |
-| `tickets` | One request, with its Ref No. |
+| `tickets` | One request, with its Ref No. A Ref No. can't repeat among an organization's live tickets; a fully rejected ticket frees its number (`active_ref_no` goes empty) |
 | `documents` | Each paper, with its own status and step |
 | `document_actions` | Every approve, return, reject and resubmit |
 | `id_documents` | ID photos, only until the admin's review |
