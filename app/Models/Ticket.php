@@ -26,6 +26,15 @@ class Ticket extends Model
         ];
     }
 
+    /**
+     * A new ticket holds its Ref No. in active_ref_no, where the database's unique rule
+     * checks it (AUD-079). It's emptied when every paper is rejected, freeing the number.
+     */
+    protected static function booted(): void
+    {
+        static::creating(fn (Ticket $ticket) => $ticket->active_ref_no ??= $ticket->ref_no);
+    }
+
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
