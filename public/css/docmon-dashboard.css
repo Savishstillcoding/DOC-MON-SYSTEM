@@ -133,6 +133,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 .dm-logout { margin-top: auto; }
+
+/* Phone top bar (see "Smaller screens"): on wide screens the panel is just the rest of the sidebar */
+.dm-sidebar-panel { display: flex; flex-direction: column; flex: 1; }
+.dm-menu-toggle { display: none; }
 /* the Log out button looks exactly like a menu link */
 .dm-logout-btn { width: 100%; border: 0; background: none; font-family: inherit; text-align: left; cursor: pointer; }
 
@@ -349,17 +353,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .dm-avatar-light { width: 40px; height: 40px; background: #fff; color: var(--dm-text); font-size: 14px; }
 
-.dm-route { margin-top: 18px; display: flex; flex-direction: column; gap: 38px; }
-.dm-route-plain { gap: 40px; }
+.dm-route { margin-top: 18px; display: flex; flex-direction: column; gap: 24px; }
 
 .dm-signatory-row {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding-left: 12px;
 }
 .dm-signatory-info { flex: 1; min-width: 0; }
+.dm-signatory-status { margin-top: 6px; }
 .dm-signatory-name { font-size: 15px; font-weight: 600; }
 .dm-signatory-role { font-size: 13px; color: #666; margin-top: 2px; }   /* AUD-092: was #777 */
 
@@ -368,8 +372,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   content: "";
   position: absolute;
   left: 30px;
-  top: 46px;
-  height: 18px;
+  top: 42px;      /* 6px under this avatar ... */
+  bottom: -18px;  /* ... to 6px above the next one (the route's gap is 24px) */
   width: 1px;
   background: #cfcfcf;
 }
@@ -482,9 +486,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border-radius: 10px;
   padding: 18px 20px 14px;
 }
-.dm-ticket-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-.dm-ticket-code { font-size: 16px; font-weight: 600; }
-.dm-ticket-ref { margin-top: 2px; font-size: 13px; color: #666; }
+.dm-ticket-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 8px; }
+/* Codes and Ref Nos. are read and copied whole: keep them on one line, and let the
+   badges drop below when the card is narrow (was "DM-2026-" / "00001") */
+.dm-ticket-code { font-size: 16px; font-weight: 600; white-space: nowrap; }
+.dm-ticket-ref { margin-top: 2px; font-size: 13px; color: #666; white-space: nowrap; }
 .dm-ticket-section { border-top: 1px solid #ececec; margin-top: 12px; padding-top: 14px; }
 .dm-ticket-title { font-size: 16px; font-weight: 600; }
 .dm-ticket-type { margin-top: 4px; font-size: 14px; color: #666; }
@@ -493,14 +499,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-ticket-people .dm-availability + .dm-ticket-holder { margin-top: 12px; }
 .dm-ticket-foot {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px;
+  gap: 4px 12px;
   margin-top: 14px;
   padding-top: 12px;
   border-top: 1px solid #ececec;
   font-size: 12px;
   color: var(--dm-faint);
 }
+.dm-ticket-foot span { white-space: nowrap; }   /* "Updated: Nov 16, 12:52 AM" never splits before "AM" */
 
 /* ---------------- Student officer: new ticket ---------------- */
 .nt-form { display: flex; flex-direction: column; gap: 24px; }
@@ -931,8 +939,26 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 @media (max-width: 860px) {
   .dm-body { flex-direction: column; }
-  .dm-sidebar { position: static; width: 100%; height: auto; }
+  /* The sidebar becomes a slim bar that stays at the top; the menu folds under a button,
+     so the page starts with the page, not with 330px of menu */
+  .dm-sidebar { position: sticky; top: 0; z-index: 20; width: 100%; height: auto; padding: 10px 16px; }
+  .dm-sidebar-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .dm-brand { padding: 0; gap: 10px; }
+  .dm-brand-logo { width: 34px; height: 34px; }
+  .dm-brand-name { font-size: 18px; }
+  .dm-sidebar.is-collapsible .dm-menu-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 40px; padding: 0 14px; border: 0; border-radius: 8px;
+    background: var(--dm-sidebar-card); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .dm-sidebar.is-collapsible .dm-sidebar-panel { display: none; }
+  .dm-sidebar.is-collapsible.is-open .dm-sidebar-panel {
+    display: flex; max-height: calc(100vh - 60px); overflow-y: auto; padding-bottom: 6px;
+  }
+  .dm-user-card { margin-top: 14px; }
+  .dm-menu-label { margin-top: 18px; }
   .dm-logout { margin-top: 12px; }
+  .so-hero-icons { display: none; }   /* decoration only; on phones the space is worth more */
   .dm-main { padding: 20px 16px; }
   .dm-stat-grid-5,
   .dm-stat-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1018,6 +1044,8 @@ p.dm-form-alert { padding-left: 16px; }
 .mt-holders .dm-cell-sub + .dm-cell-main { margin-top: 8px; }
 @media (max-width: 640px) {
   .mt-docs li { flex-direction: column; }
+  /* Status tabs wrap onto a second line instead of hiding "Approved" off the edge */
+  .dm-tabs { flex-wrap: wrap; row-gap: 10px; column-gap: 18px; }
 }
 
 /* ---------- Signatory: For Review (rv-) and History pages ---------- */

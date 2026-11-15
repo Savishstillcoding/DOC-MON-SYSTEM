@@ -14,10 +14,13 @@
     <div class="dm-signatory-info">
         <p class="dm-signatory-name">{{ $name }}</p>
         <p class="dm-signatory-role">{{ $role }}</p>
+        {{-- Under the name, not beside it: beside it squeezed long names onto 3 lines --}}
+        <div class="dm-signatory-status">
+            @if ($status === 'Verified')
+                <span class="dm-availability dm-availability-available"><span class="dm-dot"></span>Verified</span>
+            @else
+                <x-docmon.availability :status="$status" :note="$note" />
+            @endif
+        </div>
     </div>
-    @if ($status === 'Verified')
-        <span class="dm-availability dm-availability-available"><span class="dm-dot"></span>Verified</span>
-    @else
-        <x-docmon.availability :status="$status" :note="$note" />
-    @endif
 </div>
