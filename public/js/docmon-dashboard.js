@@ -24,3 +24,30 @@
     requestAnimationFrame(step);
   });
 })();
+
+// Phone menu: below 860px the sidebar is a slim top bar and this button folds the
+// menu open and shut. Only switched on here, so without JavaScript the menu stays open.
+(function () {
+  var sidebar = document.querySelector('.dm-sidebar');
+  var button = sidebar && sidebar.querySelector('.dm-menu-toggle');
+  if (!button) return;
+
+  sidebar.classList.add('is-collapsible');
+
+  function setOpen(open) {
+    sidebar.classList.toggle('is-open', open);
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  button.addEventListener('click', function () {
+    setOpen(!sidebar.classList.contains('is-open'));
+  });
+
+  // Escape closes it and puts the keyboard back on the button
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
+      setOpen(false);
+      button.focus();
+    }
+  });
+})();

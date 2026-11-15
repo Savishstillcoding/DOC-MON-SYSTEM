@@ -46,13 +46,22 @@
     <a href="#main" class="dm-skip">Skip to content</a>
 
     <aside class="dm-sidebar">
-        <div class="dm-brand">
-            <span class="dm-brand-logo">
-                <img src="{{ asset('images/logo.png') }}" alt="">
-            </span>
-            <span class="dm-brand-name">DOC-MON</span>
+        {{-- On phones this row is a slim top bar and the Menu button folds the rest away
+             (docmon-dashboard.js). Without JavaScript the button stays hidden and the menu open. --}}
+        <div class="dm-sidebar-top">
+            <div class="dm-brand">
+                <span class="dm-brand-logo">
+                    <img src="{{ asset('images/logo.png') }}" alt="">
+                </span>
+                <span class="dm-brand-name">DOC-MON</span>
+            </div>
+            <button type="button" class="dm-menu-toggle" aria-expanded="false" aria-controls="dm-sidebar-panel">
+                <x-docmon.icon name="menu" />
+                <span>Menu</span>
+            </button>
         </div>
 
+        <div class="dm-sidebar-panel" id="dm-sidebar-panel">
         <div class="dm-user-card">
             <span class="dm-avatar dm-avatar-light">{{ $user['initials'] ?? '' }}</span>
             <div>
@@ -83,6 +92,7 @@
                 <span>Log out</span>
             </button>
         </form>
+        </div>
     </aside>
 
     <main class="dm-main" id="main" tabindex="-1">
