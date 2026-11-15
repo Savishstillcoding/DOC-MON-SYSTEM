@@ -87,7 +87,7 @@ class DashboardController extends Controller
 
         return $holder['with_officer']
             ? ['text' => "Back with you: {$papers} to revise, then to {$s?->pivot->title}", 'availability' => null, 'note' => null]
-            : ['text' => "With {$s?->displayName()} ({$s?->pivot->title}): {$papers}",
+            : ['text' => "Waiting for {$s?->displayName()} ({$s?->pivot->title}): {$papers}",
                 'availability' => $s?->availability ?? 'Available', 'note' => $s?->back_at ? "Back at {$s->back_at}" : null];
     }
 

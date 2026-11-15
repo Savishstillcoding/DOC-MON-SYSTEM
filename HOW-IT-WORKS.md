@@ -10,7 +10,7 @@ A short recap of how the system works and how everything flows. For setup, see [
 
 **DOC-MON is parcel tracking for paper documents.**
 
-A courier app doesn't carry your parcel. It only tells you where the parcel is and who has it. DOC-MON does the same for resolutions, proposals and budgets: the papers are still real and carried by hand, and DOC-MON tracks them.
+A courier app doesn't carry your parcel. It only tells you where the parcel is in its journey and who it's waiting for. DOC-MON does the same for resolutions, proposals and budgets: the papers are still real and carried by hand by the officer, and DOC-MON tracks whose signature is next. That's why the pages say **"Waiting for"**, not "With": the moment the Adviser approves, the paper is waiting for the SSC President, even though the officer still has to walk it over.
 
 | Parcel tracking | DOC-MON |
 |---|---|
@@ -194,6 +194,8 @@ sequenceDiagram
 ```
 
 **Why the lock?** If someone double-clicks, or has two tabs open, the second click waits. It then sees the paper already moved, and stops.
+
+**Why "Waiting for" and not "With"?** Approve moves the paper to the next signatory's list at once, but the officer still carries it there. DOC-MON knows whose turn it is, not whose desk the paper is on, so it says so honestly (AUD-076).
 
 **Why does Telegram come last?** The approval is saved first, so a Telegram failure can't undo it.
 

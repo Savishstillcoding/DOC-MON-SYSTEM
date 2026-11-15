@@ -175,7 +175,7 @@ class TelegramTest extends TestCase
 
         // Approve → the officer ("next: VPSD") and the VPSD
         $this->act($this->adviser, $doc, 'approve');
-        $this->assertSentTo('100', ['Paper “Paper 1” approved by Adviser. Next: VPSD (Santos, Liza).']);
+        $this->assertSentTo('100', ['Paper “Paper 1” approved by Adviser. Next: bring the paper to VPSD (Santos, Liza) to sign.']);
         $this->assertSentTo('102', ['A paper is waiting for your signature']);
 
         // Final approval → the officer only

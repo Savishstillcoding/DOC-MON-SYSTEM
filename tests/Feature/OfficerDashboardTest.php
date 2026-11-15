@@ -193,8 +193,8 @@ class OfficerDashboardTest extends TestCase
             ->assertSeeInOrder(['Santos, Liza', 'VPSD · 1 paper', 'Back with you', '1 paper to revise, then to Adviser']);
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
-            ->assertSeeInOrder(['With Santos, Liza (VPSD): 1 paper', 'In Class · Back at 3:00 PM', 'Back with you: 1 paper to revise, then to Adviser'])
-            ->assertDontSee('Signatory: Dela Cruz, Ana');   // the old, wrong answer
+            ->assertSeeInOrder(['Waiting for Santos, Liza (VPSD): 1 paper', 'In Class · Back at 3:00 PM', 'Back with you: 1 paper to revise, then to Adviser'])
+            ->assertDontSee('Waiting for: Dela Cruz, Ana');   // the old, wrong answer
     }
 
     public function test_tickets_in_one_place_look_the_same_as_before(): void
@@ -209,7 +209,7 @@ class OfficerDashboardTest extends TestCase
             ->assertDontSee('mt-holders', false);
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
-            ->assertSee('Signatory: Dela Cruz, Ana (Adviser)')
+            ->assertSee('Waiting for: Dela Cruz, Ana (Adviser)')
             ->assertDontSee('dm-ticket-holder', false);
     }
 
