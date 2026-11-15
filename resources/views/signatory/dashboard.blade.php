@@ -138,7 +138,8 @@
             {{-- My Availability (the sidebar's "Availability" jumps here) --}}
             <section class="dm-card dm-panel" id="availability">
                 <h2 class="dm-panel-title">My Availability</h2>
-                <p class="dm-panel-sub">Officers see this on their tickets</p>
+                {{-- AUD-088: officers see when it was set too, so an old "Back at 2:00 PM" doesn't mislead --}}
+                <p class="dm-panel-sub">Officers see this on their tickets, with the time you set it{{ $account->availabilitySetAt() ? ' · last set ' . $account->availabilitySetAt() : '' }}</p>
 
                 <form method="POST" action="{{ url('/signatory/availability') }}" class="sg-availability-form">
                     @csrf

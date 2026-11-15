@@ -2,7 +2,7 @@
     DOC-MON · Student Officer · Signatories (Officer\SignatoryController)
     The organization's approval route, each signatory's live availability, and where
     THIS officer's papers are. From the controller: $organization, $signatories (in route
-    order: ->step, ->title, ->name, ->initials, ->availability, ->back_at, ->pending, ->approved, ->returned).
+    order: ->step, ->title, ->name, ->initials, ->availability, ->back_at, ->set_at, ->pending, ->approved, ->returned).
 --}}
 <x-docmon.officer-layout title="Signatories" active="Signatories" :live="true">
 
@@ -47,6 +47,7 @@
 
                 <dl class="dm-facts">
                     <div><dt>Back at</dt><dd>{{ $s->back_at ?? '—' }}</dd></div>
+                    <div><dt>Status set</dt><dd>{{ $s->set_at ?? '—' }}</dd></div>
                     <div><dt>Waiting for them</dt><dd>{{ $s->pending }}</dd></div>
                 </dl>
             </article>

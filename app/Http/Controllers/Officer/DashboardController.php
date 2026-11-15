@@ -105,7 +105,7 @@ class DashboardController extends Controller
                     'ticket' => "{$t->code} · needed {$t->date_needed->format('M j')}",
                     'waiting' => $holder ? "Waiting for {$holder->displayName()} ({$holder->pivot->title})" : null,
                     'availability' => $holder ? ($holder->availability ?? 'Available') : null,
-                    'note' => $holder?->back_at ? "Back at {$holder->back_at}" : null,
+                    'note' => $holder?->availabilityNote(),
                 ];
             });
 
@@ -130,7 +130,7 @@ class DashboardController extends Controller
             'signatory' => $signatory ? "{$signatory->displayName()} ({$signatory->pivot->title})" : 'Done: no signatory left',
             // Live availability of whoever holds the papers now (none when the ticket is finished)
             'availability' => $signatory ? ($signatory->availability ?? 'Available') : null,
-            'availability_note' => $signatory?->back_at ? "Back at {$signatory->back_at}" : null,
+            'availability_note' => $signatory?->availabilityNote(),
             // A split Batch (AUD-049): one line per place, each signatory with their own dot
             'holders' => $holders->count() > 1 ? $holders->map(fn (array $h) => $this->holderLine($h))->all() : [],
             // AUD-077: the Date Needed, and Overdue / Due Soon while papers are still moving
@@ -150,7 +150,7 @@ class DashboardController extends Controller
         return $holder['with_officer']
             ? ['text' => "Back with you: {$papers} to revise, then to {$s?->pivot->title}", 'availability' => null, 'note' => null]
             : ['text' => "Waiting for {$s?->displayName()} ({$s?->pivot->title}): {$papers}",
-                'availability' => $s?->availability ?? 'Available', 'note' => $s?->back_at ? "Back at {$s->back_at}" : null];
+                'availability' => $s?->availability ?? 'Available', 'note' => $s?->availabilityNote()];
     }
 
     /**

@@ -56,7 +56,7 @@ class OfficerDashboardTest extends TestCase
         $this->adviser->forceFill(['availability' => 'In Class', 'back_at' => '3:00 PM'])->save();
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
-            ->assertSee('In Class · 3:00 PM')
+            ->assertSee('In Class · Back at 3:00 PM')   // same words as the ticket cards (AUD-088)
             ->assertSee('Step 1 · Adviser');
     }
 

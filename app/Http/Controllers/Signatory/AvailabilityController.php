@@ -30,6 +30,8 @@ class AvailabilityController extends Controller
         // Not in $fillable, so set directly; "Available" needs no back-at time
         $user->availability = $data['availability'];
         $user->back_at = $data['availability'] === 'Available' ? null : ($data['back_at'] ?? null);
+        // Every save, even the same status again: "still in the meeting" is news too (AUD-088)
+        $user->availability_updated_at = now();
         $user->save();
 
         $after = $user->availability.($user->back_at ? " (back {$user->back_at})" : '');

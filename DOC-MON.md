@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-16:** A signatory's status now says when it was set ("In a Meeting · Back at 2:00 PM · set 9:14 AM", "set yesterday…", "set Nov 13") everywhere officers see it, so an old "Back at" can't mislead. Saving the same status again counts as fresh.
 - **2026-11-16:** My Tickets: each paper has a **History** fold-out with its whole story (submitted, every approve / return / reject / resubmit with who, when and the remark, then where it is now).
 - **2026-11-16:** Officer Dashboard opens with **To Do** (returned papers with the remark and a Resubmit button, then overdue tickets) in place of the welcome banner; the greeting moved under the title, and ticket cards are sorted most urgent first.
 - **2026-11-16:** Phones: the sidebar is now a slim top bar with a **Menu** button (the page no longer starts with a screen of menu), and status tabs wrap instead of hiding off the edge. Ticket codes, Ref Nos. and dates no longer break across lines; a signatory's status sits under their name.

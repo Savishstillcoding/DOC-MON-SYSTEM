@@ -42,6 +42,7 @@ class SignatoryController extends Controller
             'initials' => $s->initials(),
             'availability' => $s->availability ?? 'Available',
             'back_at' => $s->back_at,
+            'set_at' => $s->availabilitySetAt(),   // AUD-088: when they last set it
             'pending' => (int) ($waiting[$s->pivot->step] ?? 0),
             'approved' => (int) ($done->get($s->id)?->firstWhere('action', DocumentAction::APPROVED)?->total ?? 0),
             'returned' => (int) ($done->get($s->id)?->firstWhere('action', DocumentAction::RETURNED)?->total ?? 0),
