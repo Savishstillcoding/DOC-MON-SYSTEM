@@ -25,8 +25,20 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /** A signatory's possible statuses, shown on officers' ticket cards. */
-    public const AVAILABILITY = ['Available', 'In a Meeting', 'In Class', 'Out of Office'];
+    /**
+     * A signatory's possible statuses, shown on officers' ticket cards, and the colour of
+     * each: green = here, amber = busy for a while, red = away. The one list the form, the
+     * validation and the badge all read. Includes every option Chapter 1 (Objective 3)
+     * promises, On Lunch Break and On Leave (added 2026-11-16), plus Out of Office.
+     */
+    public const AVAILABILITY = [
+        'Available' => 'available',
+        'In a Meeting' => 'busy',
+        'In Class' => 'busy',
+        'On Lunch Break' => 'busy',
+        'On Leave' => 'away',
+        'Out of Office' => 'away',
+    ];
 
     /**
      * Account statuses and how the admin pages show them. Only "verified" can log in.

@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-16:** Signatories can also choose **On Lunch Break** and **On Leave**, so the options match Chapter 1's Objective 3; one list (`User::AVAILABILITY`) now drives the form, the validation and the badge colours.
 - **2026-11-16:** A signatory's status now says when it was set ("In a Meeting · Back at 2:00 PM · set 9:14 AM", "set yesterday…", "set Nov 13") everywhere officers see it, so an old "Back at" can't mislead. Saving the same status again counts as fresh.
 - **2026-11-16:** My Tickets: each paper has a **History** fold-out with its whole story (submitted, every approve / return / reject / resubmit with who, when and the remark, then where it is now).
 - **2026-11-16:** Officer Dashboard opens with **To Do** (returned papers with the remark and a Resubmit button, then overdue tickets) in place of the welcome banner; the greeting moved under the title, and ticket cards are sorted most urgent first.

@@ -6,12 +6,9 @@
     The availability form: PUT /signatory/availability (availability, back_at).
 --}}
 @php
-    $availabilityOptions = [
-        ['label' => 'Available',     'variant' => 'available'],
-        ['label' => 'In a Meeting',  'variant' => 'busy'],
-        ['label' => 'In Class',      'variant' => 'busy'],
-        ['label' => 'Out of Office', 'variant' => 'away'],
-    ];
+    // One list for the form and the badges (User::AVAILABILITY)
+    $availabilityOptions = collect(App\Models\User::AVAILABILITY)
+        ->map(fn ($variant, $label) => ['label' => $label, 'variant' => $variant])->values()->all();
     $account = auth()->user();
     $currentAvailability = old('availability', $account->availability ?? 'Available');
 
