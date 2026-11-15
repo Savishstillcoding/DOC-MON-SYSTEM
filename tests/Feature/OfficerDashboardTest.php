@@ -75,8 +75,8 @@ class OfficerDashboardTest extends TestCase
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
             ->assertViewHas('stats', ['total' => 3, 'pending' => 1, 'approved' => 1, 'partly' => 0, 'revision' => 1, 'rejected' => 0])
-            ->assertSee('1 ticket is waiting on signatories')
-            ->assertSee('1 needs your revision')
+            ->assertSee('Paper of REF-2')   // the returned paper is in To Do (AUD-097)
+            ->assertSee('Adviser: <q>Fix it</q>', false)
             ->assertSee("{$approved->code} · Paper of REF-1 approved by VPSD")
             ->assertSee("{$returned->code} · Paper of REF-2 returned for revision by Adviser")
             ->assertDontSee('REF-9');
@@ -123,13 +123,12 @@ class OfficerDashboardTest extends TestCase
         $this->assertSame('Asia/Manila', config('app.timezone'));
 
         // Sunday 5:30 PM in UTC is already Monday 1:30 AM in the Philippines:
-        // with the old UTC setting this page said "SUNDAY, NOVEMBER 1" and "Good evening"
+        // with the old UTC setting this page said "Sunday, November 1" and "Good evening"
         Carbon::setTestNow(Carbon::parse('2026-11-01 17:30:00', 'UTC'));
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
-            ->assertSee('MONDAY, NOVEMBER 2, 2026')
-            ->assertSee('Good morning, Secretary!')
-            ->assertDontSee('FRIDAY, OCTOBER 16, 2026');
+            ->assertSee('Good morning, Secretary · DIGITS · Monday, November 2, 2026')
+            ->assertDontSee('October 16, 2026');
     }
 
     public function test_a_new_officer_sees_empty_states(): void

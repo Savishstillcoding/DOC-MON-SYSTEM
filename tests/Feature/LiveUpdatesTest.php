@@ -97,7 +97,7 @@ class LiveUpdatesTest extends TestCase
         $stamp = $this->stamp();
 
         $pages = [
-            '/officer/dashboard' => ['data-live="hero"', 'data-live="stats"', 'data-live="columns"'],
+            '/officer/dashboard' => ['data-live="todo"', 'data-live="stats"', 'data-live="columns"'],
             '/officer/tickets' => ['data-live="tickets"', 'data-live-id='],
             '/officer/tickets/new' => ['data-live="route"'],
             '/officer/signatories' => ['data-live="signatories"'],

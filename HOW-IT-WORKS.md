@@ -41,6 +41,7 @@ flowchart LR
 - Officers of the same organization **share** its tickets, so the Deputy can carry on for the Secretary.
 - Each organization has its own **route**, the ordered list of its signatories. DIGITS uses Adviser → SSC President → ODSOA → VPSD.
 - The **last step** on the route has the final say.
+- The officer's Dashboard opens with **To Do**: papers returned for revision (with the signatory's remark and a Resubmit button), then overdue tickets and who they're waiting for. The ticket cards below come most urgent first.
 
 ---
 
