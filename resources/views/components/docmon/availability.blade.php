@@ -15,5 +15,5 @@
 
 {{-- is-live: only real "Available" statuses pulse (not "Verified" or the radio options) --}}
 <span class="dm-availability dm-availability-{{ $variant }} {{ $colored ? 'is-colored' : '' }} {{ $variant === 'available' ? 'is-live' : '' }}">
-    <span class="dm-dot"></span>{{ $status }}@if ($note) · {{ $note }}@endif
+    <span class="dm-dot"></span><span class="dm-availability-text">{{ $status }}@if ($note) · {{ $note }}@endif</span>
 </span>

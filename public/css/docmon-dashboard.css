@@ -330,6 +330,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
   white-space: nowrap;
 }
 .dm-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+/* A long status ("In a Meeting · Back at 2:00 PM · set 9:14 AM", AUD-088) wraps instead of
+   pushing the page sideways; the dot stays beside the first line */
+.dm-availability:has(.dm-availability-text) { white-space: normal; align-items: flex-start; }
+.dm-availability:has(.dm-availability-text) .dm-dot { margin-top: 5px; }
 .dm-availability-available .dm-dot { background: var(--dm-green); }
 .dm-availability-busy .dm-dot      { background: var(--dm-amber); }
 .dm-availability-away .dm-dot      { background: var(--dm-red); }

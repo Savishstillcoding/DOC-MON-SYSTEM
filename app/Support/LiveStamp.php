@@ -28,7 +28,7 @@ class LiveStamp
             ->join('users as u', 'u.id', '=', 'r.user_id')
             ->where('r.organization_id', $officer->organization_id)
             ->orderBy('r.step')
-            ->get(['r.step', 'r.title', 'u.id', 'u.first_name', 'u.last_name', 'u.availability', 'u.back_at']);
+            ->get(['r.step', 'r.title', 'u.id', 'u.first_name', 'u.last_name', 'u.availability', 'u.back_at', 'u.availability_updated_at']);
 
         $papers = DB::table('documents as d')
             ->join('tickets as t', 't.id', '=', 'd.ticket_id')

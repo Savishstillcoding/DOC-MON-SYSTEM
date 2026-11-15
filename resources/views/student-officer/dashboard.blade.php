@@ -144,7 +144,7 @@
                         @foreach ($organization->signatories as $s)
                             <x-docmon.signatory-row :badge="$s->initials()" :name="$s->displayName()"
                                                     :role="'Step ' . $s->pivot->step . ' · ' . $s->pivot->title"
-                                                    :status="$s->availability ?? 'Available'" :note="$s->back_at" />
+                                                    :status="$s->availability ?? 'Available'" :note="$s->availabilityNote()" />
                         @endforeach
                     </div>
                 @else

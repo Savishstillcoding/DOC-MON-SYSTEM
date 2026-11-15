@@ -128,7 +128,7 @@
                 <div class="dm-route dm-route-plain" data-live="route">
                     @forelse ($organization?->signatories ?? [] as $signatory)
                         <x-docmon.signatory-row :badge="$signatory->pivot->step" :name="$signatory->displayName()" :role="$signatory->pivot->title"
-                            :status="$signatory->availability ?? 'Available'" :note="$signatory->back_at" />
+                            :status="$signatory->availability ?? 'Available'" :note="$signatory->availabilityNote()" />
                     @empty
                         <p class="nt-note">No signatories yet. Ask the admin to set up your organization's approval route.</p>
                     @endforelse

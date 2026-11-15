@@ -75,7 +75,42 @@ class User extends Authenticatable
             'password' => 'hashed',
             'reviewed_at' => 'datetime',
             'privacy_accepted_at' => 'datetime',
+            'availability_updated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * When a signatory last set their availability, short (AUD-088): "9:14 AM" today,
+     * "yesterday, 4:30 PM", or "Nov 12". Null if they never changed it.
+     */
+    public function availabilitySetAt(): ?string
+    {
+        $set = $this->availability_updated_at;
+        $time = fn () => $set->format('g:i')."\u{00A0}".$set->format('A');   // no-break space: "9:14" never wraps away from "AM"
+
+        return match (true) {
+            $set === null => null,
+            $set->isToday() => $time(),
+            $set->isYesterday() => 'yesterday, '.$time(),
+            default => $set->format('M j'),
+        };
+    }
+
+    /**
+     * The words after a signatory's status, so nobody trusts "Back at 2:00 PM" at 5 PM
+     * (AUD-088): "Back at 2:00 PM · set 9:14 AM". Null for Available, which needs no note.
+     * One place, so every page that shows availability says the same thing.
+     */
+    public function availabilityNote(): ?string
+    {
+        if (($this->availability ?? 'Available') === 'Available') {
+            return null;
+        }
+
+        $set = $this->availabilitySetAt();
+
+        return collect([$this->back_at ? "Back at {$this->back_at}" : null, $set ? "set {$set}" : null])
+            ->filter()->implode(' · ') ?: null;
     }
 
     /** The organization an officer belongs to (signatories and admins have none). */
