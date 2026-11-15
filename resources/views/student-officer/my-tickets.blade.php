@@ -58,7 +58,7 @@
                             <th>Ticket</th>
                             <th>Document</th>
                             <th>Type</th>
-                            <th>Current Signatory</th>
+                            <th>Waiting For</th>
                             <th>Status</th>
                             <th>Last Update</th>
                         </tr>
@@ -128,7 +128,7 @@
                                                             @if ($doc->ref_no) Ref No. {{ $doc->ref_no }} · @endif
                                                             @switch($doc->status)
                                                                 @case(App\Models\Document::PENDING)
-                                                                    With {{ $holder?->displayName() }} ({{ $holder?->pivot->title }}), step {{ $doc->current_step }} of {{ $route->count() }}
+                                                                    Waiting for {{ $holder?->displayName() }} ({{ $holder?->pivot->title }}) to sign, step {{ $doc->current_step }} of {{ $route->count() }}
                                                                     @break
                                                                 @case(App\Models\Document::RETURNED)
                                                                     Returned by {{ $holder?->displayName() }} ({{ $holder?->pivot->title }})

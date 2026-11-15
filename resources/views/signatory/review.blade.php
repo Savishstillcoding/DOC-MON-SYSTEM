@@ -30,7 +30,7 @@
             <div class="dm-panel-head">
                 <div>
                     <h2 class="dm-panel-title">Queue</h2>
-                    <p class="dm-panel-sub">{{ $counts['All'] }} waiting · most urgent first{{ $search !== '' ? ' · matching “'.$search.'”' : '' }}</p>
+                    <p class="dm-panel-sub">{{ $counts['All'] }} waiting · most urgent first · the officer brings each paper to you{{ $search !== '' ? ' · matching “'.$search.'”' : '' }}</p>
                 </div>
             </div>
 

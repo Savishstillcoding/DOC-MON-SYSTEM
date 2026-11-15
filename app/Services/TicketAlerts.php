@@ -53,7 +53,7 @@ class TicketAlerts
 
         if ($action === 'approve') {
             $next = $route->firstWhere('pivot.step', $first->current_step);
-            $this->toOfficer($ticket, "✅ {$what} approved by {$by}. Next: {$next->pivot->title} ({$next->displayName()}).");
+            $this->toOfficer($ticket, "✅ {$what} approved by {$by}. Next: bring the paper to {$next->pivot->title} ({$next->displayName()}) to sign.");
             $this->toSignatory($next, $ticket, $documents, $this->waiting($documents));
 
             return;

@@ -11,7 +11,7 @@
     ]
     Optional (AUD-077): 'needed' => 'Oct 3, 2026' (the Date Needed), 'deadline' => 'Overdue' or 'Due Soon'
     Optional 'holders' (a split Batch, AUD-049): one line per place instead of 'signatory', e.g.
-        [['text' => 'With Reyes, Paolo (SSC President): 1 paper', 'availability' => 'Available', 'note' => null],
+        [['text' => 'Waiting for Reyes, Paolo (SSC President): 1 paper', 'availability' => 'Available', 'note' => null],
          ['text' => 'Back with you: 1 paper to revise, then to Adviser', 'availability' => null, 'note' => null]]
 --}}
 @props(['ticket'])
@@ -48,7 +48,7 @@
                 @endif
             @endforeach
         @else
-            <p>Signatory: {{ $ticket['signatory'] }}</p>
+            <p>Waiting for: {{ $ticket['signatory'] }}</p>
             {{-- No availability once every paper is done (nobody holds them anymore) --}}
             @if ($ticket['availability'] ?? null)
                 <x-docmon.availability :status="$ticket['availability']" :note="$ticket['availability_note'] ?? null" :colored="true" />
