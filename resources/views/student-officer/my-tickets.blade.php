@@ -143,6 +143,25 @@
                                                         @if (in_array($doc->status, [App\Models\Document::RETURNED, App\Models\Document::REJECTED]) && $doc->latestAction?->remarks)
                                                             <p class="mt-remarks">"{{ $doc->latestAction->remarks }}"</p>
                                                         @endif
+
+                                                        {{-- AUD-084: the paper's whole story, oldest first --}}
+                                                        @php $timeline = $doc->timeline($route, $t->officer->displayName()); @endphp
+                                                        <details class="mt-history" data-live-id="doc-{{ $doc->id }}">
+                                                            <summary>History ({{ count($timeline) }})</summary>
+                                                            <ol class="dm-activity mt-timeline">
+                                                                @foreach ($timeline as $event)
+                                                                    <li class="dm-activity-{{ $event['tone'] }}">
+                                                                        <p>{{ $event['text'] }}</p>
+                                                                        @if ($event['who'] || $event['at'])
+                                                                            <span>{{ collect([$event['who'], $event['at']?->format('M j, Y · g:i A')])->filter()->implode(' · ') }}</span>
+                                                                        @endif
+                                                                        @if ($event['remark'])
+                                                                            <q class="mt-tl-remark">{{ $event['remark'] }}</q>
+                                                                        @endif
+                                                                    </li>
+                                                                @endforeach
+                                                            </ol>
+                                                        </details>
                                                     </div>
                                                     <div class="mt-doc-side">
                                                         <x-docmon.status-badge :status="$doc->statusLabel()" />

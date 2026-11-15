@@ -29,7 +29,9 @@ class TicketController extends Controller
         // instead of one extra query per ticket (the "N+1" problem)
         $all = Ticket::visibleTo($request->user())
             ->when($search !== '', fn ($q) => $q->search($search))
-            ->with(['documents.latestAction', 'organization.signatories', 'officer'])
+            // Every action with who did it, oldest first, for each paper's History (AUD-084)
+            ->with(['documents.latestAction', 'documents.actions' => fn ($q) => $q->with('user')->oldest()->oldest('id'),
+                'organization.signatories', 'officer'])
             ->latest()
             ->get();
 

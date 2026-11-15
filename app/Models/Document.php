@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -69,6 +71,46 @@ class Document extends Model
     public function latestAction(): HasOne
     {
         return $this->hasOne(DocumentAction::class)->latestOfMany();
+    }
+
+    /**
+     * This paper's whole story for the officer's History fold-out (AUD-084), oldest first:
+     * submitted, every approve / return / reject / resubmit with who, when and the remark,
+     * then where it is now. Load ->actions (with ->user) first, or it costs a query per paper.
+     *
+     * @param  Collection<int, User>  $route  the organization's signatories, with ->pivot (step, title)
+     * @return list<array{tone: string, text: string, who: ?string, remark: ?string, at: ?Carbon}>
+     */
+    public function timeline(Collection $route, string $filedBy): array
+    {
+        $title = fn (int $step) => $route->firstWhere('pivot.step', $step)?->pivot->title ?? "step {$step}";
+        $last = $this->actions->last();
+
+        $events = [['tone' => 'dark', 'text' => 'Submitted', 'who' => $filedBy, 'remark' => null, 'at' => $this->created_at]];
+
+        foreach ($this->actions as $action) {
+            [$tone, $text] = match ($action->action) {
+                DocumentAction::APPROVED => ['green', "Approved by {$title($action->step)}"
+                    .($action === $last && $this->status === self::APPROVED ? ' (final signature)' : '')],
+                DocumentAction::RETURNED => ['blue', "Returned for revision by {$title($action->step)}"],
+                DocumentAction::REJECTED => ['red', "Rejected by {$title($action->step)}"],
+                default => ['dark', "Resubmitted to {$title($action->step)}"],
+            };
+            $events[] = ['tone' => $tone, 'text' => $text, 'who' => $action->user?->displayName(),
+                'remark' => $action->remarks, 'at' => $action->created_at];
+        }
+
+        // Where it is now; nothing to add once it's finished (approved or rejected)
+        $holder = $route->firstWhere('pivot.step', $this->current_step);
+        if ($this->status === self::PENDING) {
+            $events[] = ['tone' => 'now', 'text' => "Now waiting for {$title($this->current_step)} to sign",
+                'who' => $holder?->displayName(), 'remark' => null, 'at' => null];
+        } elseif ($this->status === self::RETURNED) {
+            $events[] = ['tone' => 'now', 'text' => "Now with you: revise it, then resubmit it to {$title($this->current_step)}",
+                'who' => null, 'remark' => null, 'at' => null];
+        }
+
+        return $events;
     }
 
     public function statusLabel(): string
