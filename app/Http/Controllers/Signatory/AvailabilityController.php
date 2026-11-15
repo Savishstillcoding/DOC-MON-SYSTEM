@@ -18,7 +18,7 @@ class AvailabilityController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'availability' => ['required', Rule::in(User::AVAILABILITY)],
+            'availability' => ['required', Rule::in(array_keys(User::AVAILABILITY))],
             'back_at' => ['nullable', 'string', 'max:30'],
         ], [
             'availability.required' => 'Choose a status.',
