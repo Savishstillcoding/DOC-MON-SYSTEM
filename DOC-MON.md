@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-16:** A fully rejected ticket frees its Ref No., so the corrected paper can be filed under the same number (Telegram and My Tickets say so). Open, returned and partly approved tickets keep theirs.
 - **2026-11-12:** Honest labels: the pages say who a paper is **waiting for** (not "With" / "Current Signatory"), and the approval Telegram tells the officer to bring the paper to the next signatory.
 - **2026-11-12 (database):** Tickets get `active_ref_no` so a fully rejected ticket's Ref No. can be used again (the screens follow in the next update), and users get `availability_updated_at` so "Back at 2:00 PM" can show when it was set. Run the migration on TiDB before merging.
 - **2026-11-12:** Easier to read and use: darker grey text (passes the WCAG AA contrast check on every page), a "Skip to content" link for keyboard users, the password rule shown under the box, no more cut-off placeholders, and a properly styled Email box on Forgot / Reset Password.

@@ -134,7 +134,7 @@
                                                                     Returned by {{ $holder?->displayName() }} ({{ $holder?->pivot->title }})
                                                                     @break
                                                                 @case(App\Models\Document::REJECTED)
-                                                                    Rejected by {{ $holder?->displayName() }} ({{ $holder?->pivot->title }}). File a new ticket for this paper.
+                                                                    Rejected by {{ $holder?->displayName() }} ({{ $holder?->pivot->title }}). File a new ticket for this paper{{ $t->active_ref_no === null ? '; you can use Ref No. ' . $t->ref_no . ' again' : '' }}.
                                                                     @break
                                                                 @default
                                                                     Fully signed. You can collect the paper.

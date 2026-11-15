@@ -66,7 +66,8 @@ class TicketController extends Controller
         $data = $request->validate([
             'ref_no' => [
                 'required', 'string', 'max:20',
-                Rule::unique('tickets')->where('organization_id', $organization->id),
+                // Among the organization's open tickets only: a fully rejected one frees its number (AUD-079)
+                Rule::unique('tickets', 'active_ref_no')->where('organization_id', $organization->id),
             ],
             'title' => ['required', 'string', 'max:255'],
             'date_needed' => ['nullable', 'date', 'after_or_equal:today'],
@@ -78,16 +79,18 @@ class TicketController extends Controller
                 'nullable', 'string', 'max:20', 'distinct',
                 // A document's own Ref No. must not repeat within the organization (AUD-032)
                 function (string $attribute, mixed $value, \Closure $fail) use ($organization) {
+                    // A rejected paper frees its own Ref No. for refiling (AUD-079)
                     $used = Document::where('ref_no', $value)
+                        ->where('status', '!=', Document::REJECTED)
                         ->whereHas('ticket', fn ($q) => $q->where('organization_id', $organization->id))
                         ->exists();
                     if ($used) {
-                        $fail('Document :position: your organization already used this Ref No.');
+                        $fail('Document :position: your organization already has an open paper with this Ref No.');
                     }
                 },
             ],
         ], [
-            'ref_no.unique' => 'Your organization already used this Ref No.',
+            'ref_no.unique' => 'Your organization already has an open ticket with this Ref No.',
             'date_needed.after_or_equal' => 'The date needed can\'t be in the past.',
             'documents.required' => 'Add at least one document.',
             'documents.*.type.in' => 'Document :position: choose a type from the list.',
@@ -115,9 +118,9 @@ class TicketController extends Controller
 
                 return $ticket;
             }), 0, fn ($e) => $e instanceof UniqueConstraintViolationException
-                && $organization->tickets()->where('ref_no', $data['ref_no'])->doesntExist());
+                && $organization->tickets()->where('active_ref_no', $data['ref_no'])->doesntExist());
         } catch (UniqueConstraintViolationException) {
-            return back()->withInput()->withErrors(['ref_no' => 'Your organization already used this Ref No.']);
+            return back()->withInput()->withErrors(['ref_no' => 'Your organization already has an open ticket with this Ref No.']);
         }
 
         $alerts->submitted($ticket);   // Telegram to the first signatory
