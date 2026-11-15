@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-16:** My Tickets: each paper has a **History** fold-out with its whole story (submitted, every approve / return / reject / resubmit with who, when and the remark, then where it is now).
 - **2026-11-16:** Officer Dashboard opens with **To Do** (returned papers with the remark and a Resubmit button, then overdue tickets) in place of the welcome banner; the greeting moved under the title, and ticket cards are sorted most urgent first.
 - **2026-11-16:** Phones: the sidebar is now a slim top bar with a **Menu** button (the page no longer starts with a screen of menu), and status tabs wrap instead of hiding off the edge. Ticket codes, Ref Nos. and dates no longer break across lines; a signatory's status sits under their name.
 - **2026-11-16:** A fully rejected ticket frees its Ref No., so the corrected paper can be filed under the same number (Telegram and My Tickets say so). Open, returned and partly approved tickets keep theirs.
