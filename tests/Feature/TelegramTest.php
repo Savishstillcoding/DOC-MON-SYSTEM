@@ -190,7 +190,7 @@ class TelegramTest extends TestCase
         $doc = $this->submit(['Resolution'])->documents->sole();
         $this->act($this->adviser, $doc, 'reject', 'Wrong organization');
 
-        $this->assertSentTo('100', ['❌ Paper “Paper 1” rejected by Adviser.', 'Remarks: Wrong organization']);
+        $this->assertSentTo('100', ['❌ Paper “Paper 1” rejected by Adviser.', 'Remarks: Wrong organization', 'You can use Ref No. REF-1 again.']);
     }
 
     public function test_approve_all_sends_one_message_not_one_per_paper(): void

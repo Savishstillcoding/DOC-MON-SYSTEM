@@ -138,6 +138,10 @@ class Document extends Model
             'remarks' => $remarks,
         ])->user()->associate($signatory)->save();
 
+        if ($action === 'reject') {
+            $this->releaseRefNoIfTicketRejected();
+        }
+
         $this->loadMissing('ticket');
         ActivityLog::record($signatory, 'tickets',
             ['approve' => $this->status === self::APPROVED ? 'Approved document (final)' : 'Approved document',
@@ -145,6 +149,23 @@ class Document extends Model
             "{$this->ticket->code} · {$this->title} · step {$step}".($remarks ? " · {$remarks}" : ''));
 
         return true;
+    }
+
+    /**
+     * AUD-079: when the LAST open paper of a ticket is rejected, the whole ticket is
+     * Rejected, so its Ref No. is freed for a new ticket (active_ref_no = NULL; the
+     * ticket keeps ref_no for its history). Locking the ticket row makes two
+     * signatories rejecting the last two papers of a Batch at once wait for each
+     * other, so the second one sees both rejections and frees the number.
+     */
+    private function releaseRefNoIfTicketRejected(): void
+    {
+        $ticket = Ticket::whereKey($this->ticket_id)->lockForUpdate()->first();
+
+        if ($ticket->documents()->where('status', '!=', self::REJECTED)->doesntExist()) {
+            $ticket->forceFill(['active_ref_no' => null])->save();
+            $this->setRelation('ticket', $ticket);
+        }
     }
 
     /**

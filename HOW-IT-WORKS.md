@@ -130,7 +130,7 @@ flowchart TD
 **Three rules to remember:**
 1. **Order is strict.** Only the signatory at the paper's current step can act on it.
 2. **Return keeps your progress.** The paper comes back to the same signatory, and earlier approvals stay valid.
-3. **Reject is final.** The officer has to file a new ticket.
+3. **Reject is final.** The officer has to file a new ticket. Once **every** paper on a ticket is rejected, its Ref No. is free again, so the corrected paper can keep the same number. A rejected paper also frees its own document Ref No. (AUD-079)
 
 ### Deadlines
 

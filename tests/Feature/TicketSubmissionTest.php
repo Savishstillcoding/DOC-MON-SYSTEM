@@ -92,7 +92,7 @@ class TicketSubmissionTest extends TestCase
 
         $this->actingAs($this->officer)
             ->post('/officer/tickets', $this->form())
-            ->assertSessionHasErrors(['ref_no' => 'Your organization already used this Ref No.']);
+            ->assertSessionHasErrors(['ref_no' => 'Your organization already has an open ticket with this Ref No.']);
 
         $this->assertSame(1, Ticket::count());
     }
@@ -139,7 +139,7 @@ class TicketSubmissionTest extends TestCase
                 ],
             ]))
             ->assertSessionHasErrors([
-                'documents.0.ref_no' => 'Document 1: your organization already used this Ref No.',
+                'documents.0.ref_no' => 'Document 1: your organization already has an open paper with this Ref No.',
                 'documents.2.ref_no' => 'Document 3: the same Ref No. is used twice in this ticket.',
             ]);
     }

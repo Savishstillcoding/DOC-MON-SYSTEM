@@ -61,7 +61,9 @@ class TicketAlerts
 
         $this->toOfficer($ticket, ($action === 'return' ? "↩️ {$what} returned for revision" : "❌ {$what} rejected")
             ." by {$by}.\nRemarks: {$remarks}"
-            .($action === 'return' ? "\nRevise it, then resubmit it on My Tickets." : "\nFile a new ticket if you still need it."));
+            .($action === 'return' ? "\nRevise it, then resubmit it on My Tickets." : "\nFile a new ticket if you still need it.")
+            // AUD-079: the whole ticket is now Rejected, so its number is free again
+            .($action === 'reject' && $ticket->active_ref_no === null ? " You can use Ref No. {$ticket->ref_no} again." : ''));
     }
 
     public function resubmitted(Document $document): void
