@@ -1,7 +1,8 @@
 {{--
     DOC-MON · Student Officer · Dashboard (Officer\DashboardController)
-    From the controller: $organization (with its route), $stats, $tab, $cards (the newest
-    tickets as <x-docmon.ticket-card> arrays), $activity (latest 5 events on my tickets).
+    From the controller: $organization (with its route), $stats, $tab, $cards (tickets as
+    <x-docmon.ticket-card> arrays, most urgent first), $todo + $todoMore (the To Do box,
+    AUD-097), $activity (latest 5 events on my tickets).
 --}}
 @php
     $hour = now()->hour;
@@ -15,7 +16,8 @@
     <header class="dm-page-header">
         <div>
             <h1 class="dm-page-title">Dashboard</h1>
-            <p class="dm-page-sub">{{ collect([$organization?->code, 'Student Officer'])->filter()->implode(' · ') }}</p>
+            {{-- The greeting lives here now; the big welcome banner made way for To Do (AUD-097) --}}
+            <p class="dm-page-sub">{{ collect([$greeting . ', ' . ($account->position ?: $account->first_name), $organization?->code, now()->format('l, F j, Y')])->filter()->implode(' · ') }}</p>
         </div>
         {{-- Search goes to My Tickets, which lists every ticket (AUD-021) --}}
         <form method="GET" action="{{ url('/officer/tickets') }}" class="dm-header-actions">
@@ -28,21 +30,64 @@
         </form>
     </header>
 
-    {{-- Welcome card --}}
-    <section class="dm-card so-hero">
-        <div>
-            <p class="so-hero-date">{{ strtoupper(now()->format('l, F j, Y')) }}</p>
-            <h2 class="so-hero-title">{{ $greeting }}, {{ $account->position ?: $account->first_name }}!</h2>
-            <p class="so-hero-text" data-live="hero">
+    {{-- To Do (AUD-097): what this officer has to act on, before anything else --}}
+    <section class="dm-card dm-panel so-todo" data-live="todo" aria-labelledby="todo-title">
+        <div class="dm-panel-head">
+            <h2 class="dm-panel-title" id="todo-title">
+                To Do @if ($todo->isNotEmpty())<span class="so-todo-count">· {{ $todo->count() + $todoMore }}</span>@endif
+            </h2>
+            @if ($todoMore > 0)
+                <a href="{{ url('/officer/tickets?status=' . urlencode('Needs Revision')) }}" class="so-todo-more">{{ $todoMore }} more on My Tickets</a>
+            @endif
+        </div>
+
+        @if ($todo->isEmpty())
+            <p class="so-todo-clear">
                 @if ($stats['total'] === 0)
                     No tickets yet. Submit your first one when your papers are ready.
                 @else
-                    {{ $stats['pending'] }} {{ Str::plural('ticket', $stats['pending']) }} {{ $stats['pending'] === 1 ? 'is' : 'are' }} waiting on signatories
-                    · {{ $stats['revision'] }} {{ $stats['revision'] === 1 ? 'needs' : 'need' }} your revision
+                    <x-docmon.icon name="check" size="18" />
+                    All clear: nothing to revise and nothing overdue.
                 @endif
             </p>
-        </div>
-        <img class="so-hero-icons" src="{{ asset('images/dashboard-hero-icons.png') }}" alt="">
+        @else
+            <ul class="so-todo-list">
+                @foreach ($todo as $item)
+                    <li class="so-todo-item">
+                        <div class="dm-badges so-todo-badges">
+                            @if ($item['kind'] === 'revision')
+                                <x-docmon.status-badge status="Needs Revision" />
+                                @if ($item['overdue'])
+                                    <x-docmon.status-badge status="Overdue" />
+                                @endif
+                            @else
+                                <x-docmon.status-badge status="Overdue" />
+                            @endif
+                        </div>
+
+                        <div class="so-todo-main">
+                            <p class="so-todo-paper">{{ $item['paper'] }}</p>
+                            <p class="so-todo-ticket">{{ $item['ticket'] }}</p>
+                            @if ($item['kind'] === 'revision')
+                                <p class="so-todo-line">
+                                    {{ $item['by'] }}@if ($item['remark']): <q>{{ $item['remark'] }}</q>@else returned it for revision.@endif
+                                </p>
+                            @elseif ($item['waiting'])
+                                <p class="so-todo-line">{{ $item['waiting'] }}</p>
+                                <x-docmon.availability :status="$item['availability']" :note="$item['note']" :colored="true" />
+                            @endif
+                        </div>
+
+                        @if ($item['kind'] === 'revision')
+                            <form method="POST" action="{{ url('/officer/documents/' . $item['document_id'] . '/resubmit') }}" class="so-todo-action">
+                                @csrf
+                                <button type="submit" class="dm-btn dm-btn-primary dm-btn-sm">Resubmit</button>
+                            </form>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </section>
 
     {{-- Numbers --}}
@@ -62,7 +107,7 @@
             <div class="dm-panel-head">
                 <div>
                     <h2 class="dm-panel-title">My Tickets</h2>
-                    <p class="dm-panel-sub">Track each document from submission to approval</p>
+                    <p class="dm-panel-sub">Most urgent first: to revise, overdue, due soon, then newest</p>
                 </div>
                 <a href="{{ url('/officer/tickets') }}" class="dm-btn dm-btn-outline dm-btn-sm">View all</a>
             </div>

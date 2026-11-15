@@ -462,18 +462,29 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-select-sm { width: auto; height: 34px; }
 
 /* ---------------- Student officer: dashboard ---------------- */
-.so-hero {
-  display: flex;
-  justify-content: space-between;
+/* To Do (AUD-097): the officer's to-do list, where the welcome banner used to be.
+   One row per thing to act on: badge | what and why | action. Hairlines, not cards in a card. */
+.so-todo-count { font-weight: 500; color: var(--dm-faint); }
+.so-todo-more { font-size: 14px; font-weight: 600; color: var(--dm-purple); white-space: nowrap; }
+.so-todo-more:hover { text-decoration: underline; text-underline-offset: 3px; }
+.so-todo-clear { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 15px; color: var(--dm-muted); }
+.so-todo-clear .dm-icon { color: var(--dm-green); }
+.so-todo-list { list-style: none; margin: 12px 0 0; padding: 0; }
+.so-todo-item {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 24px;
-  padding: 22px 40px 22px 32px;
-  min-height: 160px;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid #ececec;
 }
-.so-hero-date { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--dm-purple); }
-.so-hero-title { margin-top: 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
-.so-hero-text { margin-top: 8px; font-size: 15px; color: var(--dm-muted); }
-.so-hero-icons { width: 290px; height: auto; flex-shrink: 0; }
+.so-todo-item:last-child { padding-bottom: 2px; }
+.so-todo-badges { flex-direction: column; align-items: flex-start; }
+.so-todo-paper { font-size: 15px; font-weight: 600; }
+.so-todo-ticket { margin-top: 2px; font-size: 13px; color: var(--dm-faint); }
+.so-todo-line { margin-top: 6px; font-size: 14px; color: #333; }
+.so-todo-line q { quotes: "\201C" "\201D"; }
+.so-todo-main .dm-availability { margin-top: 6px; }
 
 .so-ticket-grid {
   display: grid;
@@ -822,7 +833,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 /* officer welcome card: faint purple glow behind the illustration */
-.so-hero { background: radial-gradient(circle at 85% 50%, #f1edff, #fff 45%); }
 
 /* inputs: soft purple ring on focus instead of only a border change */
 .dm-field input,
@@ -915,7 +925,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .sg-option:hover { background: #fafafa; border-color: #bdbdbd; }
 
   /* Welcome card illustration floats gently */
-  .so-hero-icons { animation: dm-float 6s ease-in-out infinite; }
 }
 
 @keyframes dm-enter {
@@ -923,16 +932,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   to   { opacity: 1; translate: 0 0; }
 }
 @keyframes dm-fade-in { from { opacity: 0; } }
-@keyframes dm-float {
-  0%, 100% { translate: 0 0; }
-  50%      { translate: 0 -8px; }
-}
 
 /* ---------------- Smaller screens ---------------- */
 @media (max-width: 1200px) {
   .dm-columns { grid-template-columns: minmax(0, 1fr); }   /* minmax(0, …): wide content (the tab row) scrolls instead of stretching the page (AUD-057) */
   .dm-stat-grid-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .so-hero-icons { width: 220px; }
   .pf-columns { grid-template-columns: 1fr; }
   .sl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -958,7 +962,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .dm-user-card { margin-top: 14px; }
   .dm-menu-label { margin-top: 18px; }
   .dm-logout { margin-top: 12px; }
-  .so-hero-icons { display: none; }   /* decoration only; on phones the space is worth more */
   .dm-main { padding: 20px 16px; }
   .dm-stat-grid-5,
   .dm-stat-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -967,7 +970,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .pf-grid,
   .sl-grid { grid-template-columns: 1fr; }
   .nt-two-cols { row-gap: 0; }   /* AUD-030: each field already has its own top margin */
-  .so-hero { flex-direction: column; align-items: flex-start; padding: 20px; }
+  /* To Do on phones: badge on top, then the text, then the button */
+  .so-todo-item { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .so-todo-badges { flex-direction: row; }
+  .so-todo-action { justify-self: start; }
   .dm-search { width: 100%; }
   .dm-header-actions { flex-wrap: wrap; width: 100%; }
 }
