@@ -43,7 +43,7 @@ flowchart LR
 - The **last step** on the route has the final say.
 - A signatory's status always says **when it was set** (`users.availability_updated_at`, written on every save), so "Back at 2:00 PM" at 5 PM is visibly old.
 - On My Tickets, each paper's **History** shows its whole story from the `document_actions` table, oldest first, ending with where it is now.
-- The officer's Dashboard opens with **To Do**: papers returned for revision (with the signatory's remark and a Resubmit button), then overdue tickets and who they're waiting for. The ticket cards below come most urgent first.
+- The officer's Dashboard opens with **To Do**: papers returned for revision (with the signatory's remark and a Resubmit button), then overdue tickets and who they're waiting for. Under it, one line of counts (each opens My Tickets on that tab); the ticket cards below come most urgent first.
 
 ---
 

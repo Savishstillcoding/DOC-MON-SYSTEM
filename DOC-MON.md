@@ -39,6 +39,8 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-17:** After Approve, the signatory's message only confirms it (and says when it was the final signature); it no longer tells them to pass the paper on, since the officer carries it.
+- **2026-11-17:** Cleaner look for the defense: the officer Dashboard's 5 number cards became one line of counts (coloured dots, each a link to that tab); signatories on phones get each paper as a card with full-size Approve / Revise / Reject; buttons are flat (no gradient or glow), cards no longer float, and log-in pages have plain taglines.
 - **2026-11-16:** Signatories can also choose **On Lunch Break** and **On Leave**, so the options match Chapter 1's Objective 3; one list (`User::AVAILABILITY`) now drives the form, the validation and the badge colours.
 - **2026-11-16:** A signatory's status now says when it was set ("In a Meeting · Back at 2:00 PM · set 9:14 AM", "set yesterday…", "set Nov 13") everywhere officers see it, so an old "Back at" can't mislead. Saving the same status again counts as fresh.
 - **2026-11-16:** My Tickets: each paper has a **History** fold-out with its whole story (submitted, every approve / return / reject / resubmit with who, when and the remark, then where it is now).

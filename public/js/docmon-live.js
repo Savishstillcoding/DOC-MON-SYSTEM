@@ -83,8 +83,7 @@
           keepFoldOuts(box, next);
           if (box.innerHTML === next.innerHTML) return;
 
-          box.innerHTML = next.innerHTML;
-          box.classList.add('is-live-updated'); // no "rise in" animation for swapped cards
+          box.innerHTML = next.innerHTML;   // cards no longer animate in, so a swap appears in place
           changed = true;
         });
 

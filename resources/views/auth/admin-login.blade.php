@@ -38,20 +38,20 @@
       <div class="content">
         <h1 class="title">DOC-MON<span class="sr-only"> – Admin log in</span></h1>
 
-        <p class="tagline">Welcome back, Admin!<br>Keep an eye on every document :)</p>
+        <p class="tagline">Admin log in<br>Verify accounts and manage approval routes.</p>
 
         <form class="login-card" method="POST" action="{{ url()->current() }}">
           @csrf
 
           <div class="field">
             <label for="username">Username</label>
-            <input id="username" name="username" type="text" placeholder="ex. admin" autocomplete="username" value="{{ old('username') }}" required>
+            <input id="username" name="username" type="text" placeholder="e.g. admin" autocomplete="username" value="{{ old('username') }}" required>
             @error('username')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="ex. Testpassword#1" autocomplete="current-password" required>
+            <input id="password" name="password" type="password" placeholder="Your password" autocomplete="current-password" required>
             @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 

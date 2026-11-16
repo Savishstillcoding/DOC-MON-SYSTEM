@@ -50,7 +50,9 @@ class SignatoryActionTest extends TestCase
 
         $this->act($this->adviser, $doc, 'approve')
             ->assertRedirect('/signatory/dashboard')
-            ->assertSessionHas('status', fn ($msg) => str_contains($msg, 'Reyes, Paolo (SSC President)'));
+            // Only confirms: the officer, not the signatory, carries the paper on (AUD-108)
+            ->assertSessionHas('status', fn ($msg) => str_starts_with($msg, 'Approved ')
+                && ! str_contains($msg, 'Pass the paper') && ! str_contains($msg, 'Reyes, Paolo'));
 
         $doc->refresh();
         $this->assertSame(Document::PENDING, $doc->status);
@@ -67,7 +69,7 @@ class SignatoryActionTest extends TestCase
         $this->act($this->adviser, $doc, 'approve');
         $this->act($this->ssc, $doc, 'approve');
         $this->act($this->vpsd, $doc, 'approve')
-            ->assertSessionHas('status', fn ($msg) => str_contains($msg, 'final signature'));
+            ->assertSessionHas('status', fn ($msg) => str_ends_with($msg, 'This was the final signature.'));
 
         $this->assertSame(Document::APPROVED, $doc->fresh()->status);
         $this->assertSame('Approved', $this->freshTicket($doc)->status());

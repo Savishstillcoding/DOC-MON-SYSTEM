@@ -72,8 +72,9 @@
             @if ($documents->isEmpty())
                 <p class="nt-note">Nothing to sign right now. New papers appear here when they reach your step.</p>
             @else
+            {{-- On phones each row stacks into a card so the actions are never off-screen (AUD-102) --}}
             <div class="dm-table-wrap">
-                <table class="dm-table">
+                <table class="dm-table dm-table-stack">
                     <thead>
                         <tr>
                             <th>Ticket</th>
@@ -86,8 +87,8 @@
                         @foreach ($documents as $doc)
                             @php $isMine = (int) old('document_id') === $doc->id; @endphp
                             <tr>
-                                <td>
-                                    <p class="dm-cell-main">{{ $doc->ticket->code }}</p>
+                                <td data-label="Ticket">
+                                    <p class="dm-cell-main dm-nowrap">{{ $doc->ticket->code }}</p>
                                     <p class="dm-cell-sub">Ref No. {{ $doc->ticket->ref_no }}</p>
                                     @if ($doc->ticket->date_needed)
                                         <p class="dm-cell-sub">Needed {{ $doc->ticket->date_needed->format('M j') }}</p>
@@ -96,7 +97,7 @@
                                         <x-docmon.status-badge :status="$due" />
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="Document">
                                     <p class="dm-cell-main">{{ $doc->type }}: {{ $doc->title }}</p>
                                     <p class="dm-cell-sub">
                                         {{ $doc->ticket->documents_count > 1 ? 'Batch (' . $doc->ticket->documents_count . ')' : 'Single' }}
@@ -104,11 +105,11 @@
                                         @if ($doc->ref_no) · {{ $doc->ref_no }} @endif
                                     </p>
                                 </td>
-                                <td>
+                                <td data-label="Waiting since">
                                     <p class="dm-cell-main dm-cell-regular">{{ $doc->updated_at->format('M j') }}</p>
                                     <p class="dm-cell-sub">{{ $doc->updated_at->format('g:i A') }}</p>
                                 </td>
-                                <td>
+                                <td class="dm-cell-actions">
                                     <form method="POST" action="{{ url('/signatory/documents/' . $doc->id . '/action') }}" class="sg-review-form">
                                         @csrf
                                         <input type="hidden" name="document_id" value="{{ $doc->id }}">
@@ -154,7 +155,7 @@
                         <label for="sg-back-at">Back at (optional)</label>
                         <div class="sg-time">
                             <x-docmon.icon name="clock" size="18" />
-                            <input id="sg-back-at" name="back_at" type="text" maxlength="30" placeholder="e.x. 2:00 PM" value="{{ old('back_at', $account->back_at) }}">
+                            <input id="sg-back-at" name="back_at" type="text" maxlength="30" placeholder="e.g. 2:00 PM" value="{{ old('back_at', $account->back_at) }}">
                         </div>
                         @error('back_at') <p class="dm-field-error">{{ $message }}</p> @enderror
                     </div>
