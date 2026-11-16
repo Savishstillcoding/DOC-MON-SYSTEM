@@ -54,7 +54,7 @@ class DocumentActionController extends Controller
         $label = "{$document->title} ({$document->ticket->code})";
 
         return back()->with('status', match ($data['action']) {
-            'approve' => "Approved {$label}. ".$this->nextHolder($document),
+            'approve' => "Approved {$label}.".$this->finalNote($document),
             'return' => "Returned {$label} to the officer for revision.",
             'reject' => "Rejected {$label}. The officer will see it on their tickets.",
         });
@@ -84,18 +84,16 @@ class DocumentActionController extends Controller
         $count = $approved->count();
 
         return back()->with('status',
-            "Approved {$count} ".str('document')->plural($count)." of {$ticket->code}. ".$this->nextHolder($approved->first()));
+            "Approved {$count} ".str('document')->plural($count)." of {$ticket->code}.".$this->finalNote($approved->first()));
     }
 
-    /** Where the paper goes after an approval, for the green message. */
-    private function nextHolder(Document $document): string
+    /**
+     * The green message only confirms the approval. The signatory signs the paper and
+     * updates DOC-MON; the officer carries the paper to the next signatory (their
+     * Telegram message says who), so it no longer says "Pass the paper to …" (AUD-108).
+     */
+    private function finalNote(Document $document): string
     {
-        if ($document->status === Document::APPROVED) {
-            return 'This was the final signature; the officer can collect the paper.';
-        }
-
-        $next = $document->ticket->organization->signatories->firstWhere('pivot.step', $document->current_step);
-
-        return "Pass the paper to {$next->displayName()} ({$next->pivot->title}).";
+        return $document->status === Document::APPROVED ? ' This was the final signature.' : '';
     }
 }

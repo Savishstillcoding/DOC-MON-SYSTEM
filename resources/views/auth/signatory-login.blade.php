@@ -37,7 +37,7 @@
       <div class="content">
         <h1 class="title">DOC-MON<span class="sr-only"> – Signatory log in</span></h1>
 
-        <p class="tagline">Welcome back, Sir/Ma’am!<br>Documents are waiting for your signature :)</p>
+        <p class="tagline">Signatory log in<br>See the papers waiting for your signature.</p>
 
         <form class="login-card" method="POST" action="{{ url()->current() }}">
           @csrf
@@ -45,13 +45,13 @@
 
           <div class="field">
             <label for="employee_id">Employee ID</label>
-            <input id="employee_id" name="employee_id" type="text" inputmode="numeric" placeholder="ex. 1234567" autocomplete="username" value="{{ old('employee_id') }}" required>
+            <input id="employee_id" name="employee_id" type="text" inputmode="numeric" placeholder="e.g. 1234567" autocomplete="username" value="{{ old('employee_id') }}" required>
             @error('employee_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="ex. Testpassword#1" autocomplete="current-password" required>
+            <input id="password" name="password" type="password" placeholder="Your password" autocomplete="current-password" required>
             @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 

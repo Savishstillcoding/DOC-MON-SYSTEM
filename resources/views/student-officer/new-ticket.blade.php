@@ -44,12 +44,12 @@
                 <div class="nt-two-cols">
                     <div class="dm-field">
                         <label for="nt-ref">Ref No. (Resolution No.)</label>
-                        <input id="nt-ref" name="ref_no" type="text" maxlength="20" placeholder="e.x. 2026-09-008" value="{{ old('ref_no') }}" required>
+                        <input id="nt-ref" name="ref_no" type="text" maxlength="20" placeholder="e.g. 2026-09-008" value="{{ old('ref_no') }}" required>
                         @error('ref_no') <p class="dm-field-error">{{ $message }}</p> @enderror
                     </div>
                     <div class="dm-field">
                         <label for="nt-title">Ticket Title</label>
-                        <input id="nt-title" name="title" type="text" maxlength="255" placeholder="e.x. DIGITS Week 2026 Requirements" value="{{ old('title') }}" required>
+                        <input id="nt-title" name="title" type="text" maxlength="255" placeholder="e.g. DIGITS Week 2026 Requirements" value="{{ old('title') }}" required>
                         @error('title') <p class="dm-field-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -68,7 +68,7 @@
 
                 <div class="dm-field">
                     <label for="nt-purpose">Purpose / Notes for Signatories</label>
-                    <textarea id="nt-purpose" name="purpose" rows="3" maxlength="2000" placeholder="e.x. For the approval of the DIGITS Week activities...">{{ old('purpose') }}</textarea>
+                    <textarea id="nt-purpose" name="purpose" rows="3" maxlength="2000" placeholder="e.g. For the approval of the DIGITS Week activities...">{{ old('purpose') }}</textarea>
                     @error('purpose') <p class="dm-field-error">{{ $message }}</p> @enderror
                 </div>
             </section>
@@ -104,7 +104,7 @@
                                     <option @selected($type === ($row['type'] ?? null))>{{ $type }}</option>
                                 @endforeach
                             </select>
-                            <input type="text" name="documents[{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" maxlength="255" placeholder="e.x. Program Flow" aria-label="Document title" data-field="title" required>
+                            <input type="text" name="documents[{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" maxlength="255" placeholder="e.g. Program Flow" aria-label="Document title" data-field="title" required>
                             <input type="text" name="documents[{{ $i }}][ref_no]" value="{{ $row['ref_no'] ?? '' }}" maxlength="20" placeholder="Ref No. (optional)" aria-label="Document Ref No. (optional)" data-field="ref_no">
                             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
                         </div>
@@ -157,7 +157,7 @@
                     <option>{{ $type }}</option>
                 @endforeach
             </select>
-            <input type="text" data-field="title" maxlength="255" placeholder="e.x. Program Flow" aria-label="Document title" required>
+            <input type="text" data-field="title" maxlength="255" placeholder="e.g. Program Flow" aria-label="Document title" required>
             <input type="text" data-field="ref_no" maxlength="20" placeholder="Ref No. (optional)" aria-label="Document Ref No. (optional)">
             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
         </div>

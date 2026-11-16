@@ -100,7 +100,7 @@ class OfficerDashboardTest extends TestCase
         $this->actingAs($this->officer)->get('/officer/dashboard')
             ->assertViewHas('stats', fn ($s) => $s['partly'] === 1
                 && $s['total'] === $s['pending'] + $s['approved'] + $s['partly'] + $s['revision'] + $s['rejected'])
-            ->assertSee('Fully signed · +1 partly approved')
+            ->assertSee('<b>1</b> Partly approved', false)   // its own count, only when there is one (AUD-101)
             ->assertSee('?status=Partly+Approved', false);
 
         // Its own tab finds it

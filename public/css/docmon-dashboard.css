@@ -93,14 +93,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-user-name { font-size: 14px; font-weight: 600; }
 .dm-user-sub { font-size: 12px; color: #bdbdbd; margin-top: 2px; }
 
-.dm-menu-label {
-  margin: 30px 0 10px 16px;
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: #9a9a9a;   /* on the dark sidebar: 5.9:1 (darker would be harder to read) */
-}
-
-.dm-menu { display: flex; flex-direction: column; gap: 6px; }
+.dm-menu { display: flex; flex-direction: column; gap: 6px; margin-top: 28px; }
 
 .dm-menu-item {
   position: relative;
@@ -264,13 +257,33 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ---------------- Stat cards ---------------- */
 .dm-stat-grid { display: grid; gap: 16px; }
-.dm-stat-grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .dm-stat-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
 .dm-stat-card { padding: 20px; }
 .dm-stat-label { font-size: 14px; color: var(--dm-muted); }
 .dm-stat-value { margin-top: 6px; font-size: 32px; font-weight: 700; line-height: 1.1; }
 .dm-stat-note { margin-top: 10px; font-size: 12px; color: var(--dm-faint); }
+
+/* Officer dashboard counts (AUD-101): one line of links, the dot matches that status's badge */
+.so-counts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 0 2px;
+  font-size: 14px;
+  color: var(--dm-muted);
+}
+.so-counts a { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border-radius: 4px; }
+.so-counts a:hover { color: var(--dm-text); text-decoration: underline; text-underline-offset: 3px; }
+.so-counts b { color: var(--dm-text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.so-counts-total { padding-right: 20px; border-right: 1px solid #d4d4d4; color: var(--dm-text); font-weight: 600; }
+.so-count-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.so-count-pending  { background: var(--dm-amber); }
+.so-count-revision { background: var(--dm-blue); }
+.so-count-approved { background: var(--dm-green); }
+.so-count-partial  { background: #0f766e; }
+.so-count-rejected { background: var(--dm-red); }
 
 /* ---------------- Tabs ---------------- */
 .dm-tabs {
@@ -427,6 +440,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-cell-main { font-weight: 600; }
 .dm-cell-regular { font-weight: 500; }
 .dm-cell-sub { margin-top: 2px; font-size: 13px; color: #6f6f6f; }
+.dm-nowrap { white-space: nowrap; }
 
 .dm-table-foot {
   display: flex;
@@ -820,23 +834,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
   --dm-ease: cubic-bezier(0.2, 0.8, 0.2, 1);   /* fast start, soft landing */
   --dm-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
   --dm-shadow-lg: 0 14px 28px -8px rgba(16, 24, 40, 0.14), 0 4px 10px -4px rgba(16, 24, 40, 0.06);
-  --dm-glow: 0 8px 20px -6px rgba(91, 63, 217, 0.55);
 }
 
 /* Part 1: static styling */
 .dm-card,
 .dm-ticket-card { box-shadow: var(--dm-shadow-sm); }
 
-.dm-btn-primary { background: linear-gradient(180deg, #6c52ef, var(--dm-purple)); }
-.dm-btn-primary:hover { background: linear-gradient(180deg, #5e44e3, var(--dm-purple-dark)); box-shadow: var(--dm-glow); }
-.dm-btn-success:hover { box-shadow: 0 8px 20px -6px rgba(30, 123, 58, 0.5); }
-
-/* active menu item: soft purple wash that fades into the highlight */
-.dm-menu-item.is-active {
-  background: linear-gradient(90deg, rgba(139, 116, 255, 0.22), var(--dm-sidebar-active) 65%);
-}
-
-/* officer welcome card: faint purple glow behind the illustration */
+/* AUD-103: buttons stay flat (no gradient, no coloured glow) and the active menu item is a solid
+   highlight with its purple bar; the base rules above already say so */
 
 /* inputs: soft purple ring on focus instead of only a border change */
 .dm-field input,
@@ -876,41 +881,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* Part 2: motion */
 @media (prefers-reduced-motion: no-preference) {
-  /* Entrance: page sections fade in and rise one after another.
-     Uses "translate" (not "transform") so it never blocks the hover lifts below. */
-  .dm-main > * { animation: dm-enter 0.55s var(--dm-ease) both; animation-delay: var(--dm-delay, 0ms); }
-  .dm-main > :nth-child(2) { --dm-delay: 70ms; }
-  .dm-main > :nth-child(3) { --dm-delay: 140ms; }
-  .dm-main > :nth-child(4) { --dm-delay: 210ms; }
-  .dm-main > :nth-child(5) { --dm-delay: 280ms; }
-
-  /* cards inside a section cascade in after their section starts */
-  .dm-stat-grid > *,
-  .so-ticket-grid > *,
-  .sl-grid > *,
-  .dm-side > * { animation: dm-enter 0.55s var(--dm-ease) both; }
-  .dm-stat-grid > :nth-child(1), .so-ticket-grid > :nth-child(1), .sl-grid > :nth-child(1), .dm-side > :nth-child(1) { animation-delay: calc(var(--dm-delay, 0ms) + 60ms); }
-  .dm-stat-grid > :nth-child(2), .so-ticket-grid > :nth-child(2), .sl-grid > :nth-child(2), .dm-side > :nth-child(2) { animation-delay: calc(var(--dm-delay, 0ms) + 120ms); }
-  .dm-stat-grid > :nth-child(3), .so-ticket-grid > :nth-child(3), .sl-grid > :nth-child(3) { animation-delay: calc(var(--dm-delay, 0ms) + 180ms); }
-  .dm-stat-grid > :nth-child(4), .so-ticket-grid > :nth-child(4), .sl-grid > :nth-child(4) { animation-delay: calc(var(--dm-delay, 0ms) + 240ms); }
-  .dm-stat-grid > :nth-child(5) { animation-delay: calc(var(--dm-delay, 0ms) + 300ms); }
+  /* Entrance (AUD-103): the page content rises in once, as one piece. It used to cascade
+     section by section and card by card, the same effect on everything. */
+  .dm-main { animation: dm-enter 0.4s var(--dm-ease) both; }
 
   /* the page transition now only fades: the entrance above does the rising */
   ::view-transition-new(dm-main) { animation: dm-fade-in 0.2s ease-out both; }
 
-  /* Hover lift: small cards float up with a deeper shadow */
-  .dm-ticket-card,
-  .dm-stat-card,
-  .sl-card {
-    transition: transform 0.3s var(--dm-ease), box-shadow 0.3s var(--dm-ease), border-color 0.3s;
-  }
-  .dm-ticket-card:hover,
-  .dm-stat-card:hover,
-  .sl-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--dm-shadow-lg);
-    border-color: #dcdce4;
-  }
+  /* Cards don't float on hover (AUD-103): only things you can click react to the mouse */
 
   /* Buttons: lift on hover, press down on click */
   .dm-btn,
@@ -940,7 +918,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* ---------------- Smaller screens ---------------- */
 @media (max-width: 1200px) {
   .dm-columns { grid-template-columns: minmax(0, 1fr); }   /* minmax(0, …): wide content (the tab row) scrolls instead of stretching the page (AUD-057) */
-  .dm-stat-grid-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .pf-columns { grid-template-columns: 1fr; }
   .sl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -964,10 +941,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
     display: flex; max-height: calc(100vh - 60px); overflow-y: auto; padding-bottom: 6px;
   }
   .dm-user-card { margin-top: 14px; }
-  .dm-menu-label { margin-top: 18px; }
+  .dm-menu { margin-top: 18px; }
   .dm-logout { margin-top: 12px; }
   .dm-main { padding: 20px 16px; }
-  .dm-stat-grid-5,
   .dm-stat-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .so-ticket-grid,
   .nt-two-cols,
@@ -1075,6 +1051,27 @@ p.dm-form-alert { padding-left: 16px; }
   .mt-docs > ul > li { flex-direction: column; }
   /* Status tabs wrap onto a second line instead of hiding "Approved" off the edge */
   .dm-tabs { flex-wrap: wrap; row-gap: 10px; column-gap: 18px; }
+
+  /* AUD-102: a table that stacks on phones. Each row is a card; the small label says what each
+     cell is, since the header row is hidden. The actions cell gets the full width. */
+  .dm-table-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .dm-table-stack, .dm-table-stack tbody, .dm-table-stack tr, .dm-table-stack td { display: block; width: 100%; }
+  .dm-table-stack tr { padding: 14px 0; border-bottom: 1px solid #ececec; }
+  .dm-table-stack tr:first-child { padding-top: 4px; }
+  .dm-table-stack td { padding: 4px 0; border: 0; }
+  .dm-table-stack td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--dm-faint);
+  }
+  .dm-table-stack .dm-cell-actions { padding-top: 10px; }
+  .dm-table-stack .sg-review-form { min-width: 0; }
+  .dm-table-stack .sg-review-form input[type="text"] { height: 40px; }
+  .dm-table-stack .dm-actions .dm-btn { flex: 1; min-height: 40px; }
+  .dm-table-stack tbody tr:hover { background: none; }
 }
 
 /* ---------- Signatory: For Review (rv-) and History pages ---------- */
@@ -1235,9 +1232,6 @@ p.dm-form-alert { padding-left: 16px; }
 
 /* Live updates (AUD-050, docmon-live.js) */
 .dm-stack { display: flex; flex-direction: column; gap: 24px; }
-/* cards swapped in by a live update appear in place, without the page's "rise in" animation */
-.is-live-updated:is(.dm-stat-grid, .so-ticket-grid, .sl-grid, .dm-side) > *,
-.is-live-updated :is(.dm-stat-grid, .so-ticket-grid, .sl-grid, .dm-side) > * { animation: none; }
 .dm-live-toast {
   position: fixed;
   right: 24px;

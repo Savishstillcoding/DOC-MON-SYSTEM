@@ -51,13 +51,13 @@
 
           <div class="field">
             <label for="login_id">Student ID, Employee ID or username</label>
-            <input id="login_id" name="login_id" type="text" placeholder="ex. 1234567" autocomplete="username" maxlength="30" value="{{ old('login_id') }}" required>
+            <input id="login_id" name="login_id" type="text" placeholder="e.g. 1234567" autocomplete="username" maxlength="30" value="{{ old('login_id') }}" required>
             @error('login_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="email">Email on your account</label>
-            <input id="email" name="email" type="email" placeholder="ex. juan@gmail.com" autocomplete="email" maxlength="255" value="{{ old('email') }}" required>
+            <input id="email" name="email" type="email" placeholder="e.g. juan@gmail.com" autocomplete="email" maxlength="255" value="{{ old('email') }}" required>
             @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 

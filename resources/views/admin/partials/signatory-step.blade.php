@@ -18,7 +18,7 @@
 
     <div class="dm-field">
         <label>Title / Office
-            <input type="text" name="steps[{{ $i }}][title]" maxlength="50" value="{{ $row['title'] }}" placeholder="e.x. Adviser" required>
+            <input type="text" name="steps[{{ $i }}][title]" maxlength="50" value="{{ $row['title'] }}" placeholder="e.g. Adviser" required>
         </label>
     </div>
 

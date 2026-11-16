@@ -36,7 +36,7 @@
       <div class="content">
         <h1 class="title">DOC-MON<span class="sr-only"> – Log in</span></h1>
 
-        <p class="tagline">Already back? Get ready for more!</p>
+        <p class="tagline">Log in.<br>Choose your role.</p>
 
         <div class="role-card">
           <a class="role-btn" href="{{ url('/login/officer') }}">Student Officer</a>

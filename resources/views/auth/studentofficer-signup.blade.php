@@ -37,7 +37,7 @@
       <div class="content">
         <h1 class="title">DOC-MON<span class="sr-only"> – Student Officer sign up</span></h1>
 
-        <p class="tagline">New Secretary? Welcome aboard :D</p>
+        <p class="tagline">Student Officer sign up<br>The admin checks your ID before you can log in.</p>
 
         <form class="register-card" method="POST" action="{{ url()->current() }}" enctype="multipart/form-data">
           @csrf
@@ -45,18 +45,18 @@
           <div class="field-grid">
             <div class="field">
               <label for="first_name">First Name</label>
-              <input id="first_name" name="first_name" type="text" placeholder="e.x. Juan Carlos" autocomplete="given-name" value="{{ old('first_name') }}" required>
+              <input id="first_name" name="first_name" type="text" placeholder="e.g. Juan Carlos" autocomplete="given-name" value="{{ old('first_name') }}" required>
               @error('first_name')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
               <label for="last_name">Last Name</label>
-              <input id="last_name" name="last_name" type="text" placeholder="e.x. Manalo" autocomplete="family-name" value="{{ old('last_name') }}" required>
+              <input id="last_name" name="last_name" type="text" placeholder="e.g. Manalo" autocomplete="family-name" value="{{ old('last_name') }}" required>
               @error('last_name')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
 
             <div class="field">
               <label for="student_id">Student ID</label>
-              <input id="student_id" name="student_id" type="text" inputmode="numeric" placeholder="e.x. 1234567" value="{{ old('student_id') }}" required>
+              <input id="student_id" name="student_id" type="text" inputmode="numeric" placeholder="e.g. 1234567" value="{{ old('student_id') }}" required>
               @error('student_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div class="field">
@@ -77,7 +77,7 @@
             </div>
             <div class="field">
                 <label for="phone">Phone Number (optional)</label>
-                <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" title="Enter an 11-digits number starting at 09" placeholder="e.x. 09123456789" autocomplete="tel" value="{{ old('phone') }}">
+                <input id="phone" name="phone" type="tel" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" title="Enter an 11-digits number starting at 09" placeholder="e.g. 09123456789" autocomplete="tel" value="{{ old('phone') }}">
               @error('phone')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </div>
 

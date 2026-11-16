@@ -35,13 +35,13 @@
             <div class="pf-grid">
                 <div class="dm-field">
                     <label for="og-code">Code</label>
-                    <input id="og-code" name="code" type="text" maxlength="20" pattern="[A-Za-z0-9-]+" placeholder="e.x. SSC"
+                    <input id="og-code" name="code" type="text" maxlength="20" pattern="[A-Za-z0-9-]+" placeholder="e.g. SSC"
                            value="{{ old('code', $organization->code) }}" required>
                     @error('code') <p class="dm-field-error">{{ $message }}</p> @enderror
                 </div>
                 <div class="dm-field">
                     <label for="og-name">Full Name</label>
-                    <input id="og-name" name="name" type="text" maxlength="255" placeholder="e.x. Supreme Student Council"
+                    <input id="og-name" name="name" type="text" maxlength="255" placeholder="e.g. Supreme Student Council"
                            value="{{ old('name', $organization->name) }}" required>
                     @error('name') <p class="dm-field-error">{{ $message }}</p> @enderror
                 </div>

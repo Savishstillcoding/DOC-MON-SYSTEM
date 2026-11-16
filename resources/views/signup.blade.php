@@ -37,7 +37,7 @@
 
       <div class="content">
         <h1 class="title">DOC-MON<span class="sr-only"> – Sign up</span></h1>
-        <p class="tagline">Greetings! Ready to handle the documents?</p>
+        <p class="tagline">Create an account.<br>Choose your role.</p>
 
         <div class="role-card">
           <a class="role-btn" href="{{ url('/register/officer') }}">Student Officer</a>

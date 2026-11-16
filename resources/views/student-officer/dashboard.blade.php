@@ -90,16 +90,26 @@
         @endif
     </section>
 
-    {{-- Numbers --}}
-    <section class="dm-stat-grid dm-stat-grid-5" data-live="stats">
-        <x-docmon.stat-card label="Total Tickets" :value="$stats['total']" note="All your tickets" />
-        <x-docmon.stat-card label="Pending" :value="$stats['pending']" note="Waiting for signatures" />
-        {{-- A finished Batch with some papers rejected is "Partly Approved": no card of its own, noted here (AUD-057) --}}
-        <x-docmon.stat-card label="Approved" :value="$stats['approved']"
-            :note="'Fully signed' . ($stats['partly'] ? ' · +' . $stats['partly'] . ' partly approved' : '')" />
-        <x-docmon.stat-card label="Needs Revision" :value="$stats['revision']" note="Returned to you" />
-        <x-docmon.stat-card label="Rejected" :value="$stats['rejected']" note="Not approved" />
-    </section>
+    {{-- Counts (AUD-101): one line instead of five number cards. Each count opens My Tickets on that
+         tab; the dot is the same colour as that status's badge. "Partly Approved" (a finished Batch with
+         some papers rejected, AUD-057) only shows when there is one. --}}
+    @php
+        $countLinks = collect([
+            ['Pending', 'Pending', 'pending', $stats['pending']],
+            ['Needs Revision', 'Needs revision', 'revision', $stats['revision']],
+            ['Approved', 'Approved', 'approved', $stats['approved']],
+            ['Partly Approved', 'Partly approved', 'partial', $stats['partly']],
+            ['Rejected', 'Rejected', 'rejected', $stats['rejected']],
+        ])->reject(fn ($c) => $c[0] === 'Partly Approved' && ! $c[3]);
+    @endphp
+    <nav class="so-counts" data-live="stats" aria-label="My tickets by status">
+        <a href="{{ url('/officer/tickets') }}" class="so-counts-total"><b>{{ $stats['total'] }}</b> {{ Str::plural('ticket', $stats['total']) }}</a>
+        @foreach ($countLinks as [$tabName, $label, $variant, $count])
+            <a href="{{ url('/officer/tickets?status=' . urlencode($tabName)) }}" class="so-count">
+                <span class="so-count-dot so-count-{{ $variant }}" aria-hidden="true"></span><b>{{ $count }}</b> {{ $label }}
+            </a>
+        @endforeach
+    </nav>
 
     <div class="dm-columns" data-live="columns">
         {{-- My Tickets --}}

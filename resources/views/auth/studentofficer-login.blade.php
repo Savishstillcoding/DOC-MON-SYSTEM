@@ -39,7 +39,7 @@
       <div class="content">
         <h1 class="title">DOC-MON<span class="sr-only"> – Student Officer log in</span></h1>
 
-        <p class="tagline">Welcome back, Secretary!<br>Documents can’t monitor themselves you know :)</p>
+        <p class="tagline">Student Officer log in<br>Track every paper your organization hands in.</p>
 
         <form class="login-card" method="POST" action="{{ url()->current() }}">
           @csrf
@@ -47,13 +47,13 @@
 
           <div class="field">
             <label for="student_id">Student ID</label>
-            <input id="student_id" name="student_id" type="text" inputmode="numeric" placeholder="ex. 1234567" autocomplete="username" value="{{ old('student_id') }}" required>
+            <input id="student_id" name="student_id" type="text" inputmode="numeric" placeholder="e.g. 1234567" autocomplete="username" value="{{ old('student_id') }}" required>
             @error('student_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
           <div class="field">
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="ex. Testpassword#1" autocomplete="current-password" required>
+            <input id="password" name="password" type="password" placeholder="Your password" autocomplete="current-password" required>
             @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 

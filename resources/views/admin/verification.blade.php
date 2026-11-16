@@ -140,7 +140,7 @@
 
                         <label class="rv-label" for="uv-note">Reason (if rejecting)</label>
                         <textarea id="uv-note" name="review_note" rows="3" maxlength="500"
-                                  placeholder="e.x. ID photo is blurry, please re-upload">{{ old('review_note') }}</textarea>
+                                  placeholder="e.g. ID photo is blurry, please re-upload">{{ old('review_note') }}</textarea>
                         @error('review_note') <p class="dm-field-error">{{ $message }}</p> @enderror
 
                         <div class="rv-two">

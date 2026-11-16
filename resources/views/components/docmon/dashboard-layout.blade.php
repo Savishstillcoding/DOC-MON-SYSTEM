@@ -70,8 +70,8 @@
             </div>
         </div>
 
-        <p class="dm-menu-label">MENU</p>
-        <nav class="dm-menu">
+        {{-- No "MENU" label above it (AUD-103): the links speak for themselves --}}
+        <nav class="dm-menu" aria-label="Main menu">
             @foreach ($menu as $item)
                 <a href="{{ $item['href'] ?? '#' }}" class="dm-menu-item {{ $item['label'] === $active ? 'is-active' : '' }}">
                     @if ($item['label'] === $active)
