@@ -1,5 +1,5 @@
 # No Node/npm build step: every page uses the plain CSS and JS in public/css and public/js
-# (the unused Tailwind/Vite setup was removed, AUD-026)
+# (the unused Tailwind/Vite setup was removed)
 FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
-# Upload limits, written down on purpose (AUD-040): ID uploads are max 2 MB.
+# Upload limits, written down on purpose: ID uploads are max 2 MB.
 # These match PHP's defaults; change them together with public/js/register.js.
 RUN printf 'upload_max_filesize=2M\npost_max_size=8M\n' > /usr/local/etc/php/conf.d/uploads.ini
 

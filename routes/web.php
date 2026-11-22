@@ -1,5 +1,15 @@
 <?php
 
+/*
+| READING GUIDE 1/15: routes/web.php
+|
+| WHAT: the route list: every web address (URL) in DOC-MON.
+| USED FOR: telling Laravel which code runs when someone opens a page or sends
+|           a form.
+| KEY IDEA: 'auth' = must be logged in, 'role:officer' = must be that role,
+|           'throttle' = limits how many tries (stops password guessing).
+*/
+
 use App\Http\Controllers\Account\PasswordController;
 use App\Http\Controllers\Account\TelegramController;
 use App\Http\Controllers\Admin\ActivityLogController;
@@ -30,14 +40,17 @@ Route::get('/', function () {
     return view('landingpage');
 });
 
-// ---------- Guests only (logged-in users are sent to their dashboard) ----------
+// ---------- Pages for people who are NOT logged in yet ----------
+// ('guest': someone who is already logged in is sent to their own dashboard instead)
 Route::middleware('guest')->group(function () {
     Route::get('/signup', function () {
         return view('signup');
     });
 
-    // Sign-up (AUD-044): saves a pending account with its ID photo. Throttled because
-    // anyone can post 2 MB files here without logging in: 5 sign-ups per 10 minutes per IP.
+    // Sign-up: saves a new account as "pending" (waiting for the admin) together with a
+    // photo of the person's ID. throttle:5,10 = at most 5 sign-ups per 10 minutes from one
+    // internet address, because anyone can upload a 2 MB file here without logging in, and
+    // a bot could otherwise fill up our database.
     Route::get('/register/{role}', [RegisterController::class, 'create'])->whereIn('role', ['officer', 'signatory']);
     Route::post('/register/{role}', [RegisterController::class, 'store'])
         ->whereIn('role', ['officer', 'signatory'])
@@ -56,30 +69,37 @@ Route::middleware('guest')->group(function () {
         return view('auth.admin-login');
     });
 
-    // Real log-in: checks the ID + password + role, and only lets verified accounts in.
-    // throttle:login = 5 tries a minute per IP and 10 per account (AppServiceProvider, AUD-073)
+    // The pages above only SHOW the log-in forms; this one actually logs you in. It checks
+    // the ID, password and role, and only lets in accounts the admin has verified.
+    // throttle:login = at most 5 tries per minute from one internet address and 10 per
+    // account, so nobody can guess a password by trying thousands of times.
+    // (The limits are set in app/Providers/AppServiceProvider.php)
     Route::post('/login/{role}', [LoginController::class, 'store'])
         ->whereIn('role', ['officer', 'signatory', 'admin'])
         ->middleware('throttle:login');
 
-    // Forgot password (AUD-008): emailed one-time link. Throttled so nobody can
-    // flood someone's inbox (Laravel also allows one email per account per minute).
+    // Forgot password: emails a link that works only once. throttle:5,10 = at most 5
+    // requests per 10 minutes, so nobody can flood someone's inbox with reset emails
+    // (Laravel also sends at most one email per account per minute).
     Route::get('/forgot-password', [PasswordResetController::class, 'create']);
     Route::post('/forgot-password', [PasswordResetController::class, 'store'])->middleware('throttle:5,10');
-    // Named: the reset email builds its link from this name
+    // ->name('password.reset') gives this URL a name; the reset email uses that name to build its link
     Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
     Route::post('/reset-password', [PasswordResetController::class, 'update'])->middleware('throttle:5,1');
 });
 
+// Log-out is a form (POST), not a link, so another website can't log you out with a hidden link
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 
-// Privacy notice (AUD-078): public, and the page existing accounts accept once
+// Privacy notice: anyone can read it at /privacy; a logged-in user presses Accept once.
 Route::get('/privacy', [PrivacyController::class, 'show']);
 Route::post('/privacy/accept', [PrivacyController::class, 'accept'])->middleware('auth');
 
-// ---------- Dashboards: logged in AND the right role ----------
-// 'auth' sends guests to /login; 'role:x' answers 403 to other roles;
-// 'privacy' sends anyone who hasn't accepted the privacy notice to /privacy first.
+// ---------- Dashboards: you must be logged in AND have the right role ----------
+// 'auth'    not logged in? Go to /login.
+// 'role:x'  logged in as a different role? "403 Forbidden".
+// 'privacy' haven't accepted the privacy notice yet? Go to /privacy first.
+// prefix('officer'): every URL in the group starts with /officer, e.g. '/tickets' = /officer/tickets.
 Route::middleware(['auth', 'role:officer', 'privacy'])->prefix('officer')->group(function () {
     Route::get('/dashboard', [OfficerDashboardController::class, 'index']);
     Route::get('/tickets', [TicketController::class, 'index']);
@@ -90,10 +110,11 @@ Route::middleware(['auth', 'role:officer', 'privacy'])->prefix('officer')->group
     Route::get('/live', OfficerLiveController::class);
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::put('/profile', [ProfileController::class, 'update']);
-    // Throttled like log-in: this form also checks a password, so it must not allow guessing
+    // throttle:5,1 = at most 5 tries per minute: this form asks for the current password,
+    // so like the log-in page it must not allow guessing
     Route::put('/profile/password', [PasswordController::class, 'update'])->middleware('throttle:5,1');
     Route::post('/telegram/connect', [TelegramController::class, 'connect']);
-    // Throttled: each click asks Telegram's servers
+    // throttle:10,1 = at most 10 clicks per minute: each click sends a request to Telegram's servers
     Route::post('/telegram/check', [TelegramController::class, 'check'])->middleware('throttle:10,1');
     Route::delete('/telegram', [TelegramController::class, 'disconnect']);
 });
@@ -134,8 +155,8 @@ Route::middleware(['auth', 'role:admin', 'privacy'])->prefix('admin')->group(fun
     Route::put('/signatory-lists/{organization}', [SignatoryListController::class, 'update']);
 });
 
-// Dev-only reference page showing every dashboard component.
-// Registered only on a developer's laptop (APP_ENV=local), so the live site answers 404.
+// A page only for us developers that shows every dashboard part (cards, badges, buttons).
+// It only exists on a developer's laptop (APP_ENV=local); on the live site this URL gives 404.
 if (app()->environment('local')) {
     Route::get('/dev/components', function () {
         return view('docmon-dev.components-preview');

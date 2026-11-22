@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * When a signatory last changed their availability (AUD-088), so "Back at 2:00 PM" can
+ * When a signatory last changed their availability, so "Back at 2:00 PM" can
  * say when it was set and nobody trusts it at 5 PM. Empty = never changed.
  */
 return new class extends Migration

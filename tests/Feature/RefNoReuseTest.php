@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * AUD-079: a fully rejected ticket frees its Ref No., so the officer can file the
+ * a fully rejected ticket frees its Ref No., so the officer can file the
  * corrected paper under the same number. Anything still open (pending, returned,
  * partly approved) keeps it. A rejected paper also frees its own document Ref No.
  */

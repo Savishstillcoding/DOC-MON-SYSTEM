@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * The privacy notice (AUD-078, Data Privacy Act of 2012). Public, so anyone can read it
+ * The privacy notice (Data Privacy Act of 2012). Public, so anyone can read it
  * before signing up. Someone logged in who hasn't accepted also gets the Accept button.
  */
 class PrivacyController extends Controller

@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
 
-        // Anti-clickjacking, nosniff, referrer and (live) HSTS headers on every page (AUD-069)
+        // Anti-clickjacking, nosniff, referrer and (live) HSTS headers on every page
         $middleware->web(append: [SecurityHeaders::class]);
 
         // 'role:officer' etc. in routes/web.php

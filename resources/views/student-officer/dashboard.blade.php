@@ -1,8 +1,7 @@
 {{--
     DOC-MON · Student Officer · Dashboard (Officer\DashboardController)
     From the controller: $organization (with its route), $stats, $tab, $cards (tickets as
-    <x-docmon.ticket-card> arrays, most urgent first), $todo + $todoMore (the To Do box,
-    AUD-097), $activity (latest 5 events on my tickets).
+    <x-docmon.ticket-card> arrays, most urgent first), $todo + $todoMore (the To Do box), $activity (latest 5 events on my tickets).
 --}}
 @php
     $hour = now()->hour;
@@ -16,10 +15,10 @@
     <header class="dm-page-header">
         <div>
             <h1 class="dm-page-title">Dashboard</h1>
-            {{-- The greeting lives here now; the big welcome banner made way for To Do (AUD-097) --}}
+            {{-- The greeting lives here now; the big welcome banner made way for To Do --}}
             <p class="dm-page-sub">{{ collect([$greeting . ', ' . ($account->position ?: $account->first_name), $organization?->code, now()->format('l, F j, Y')])->filter()->implode(' · ') }}</p>
         </div>
-        {{-- Search goes to My Tickets, which lists every ticket (AUD-021) --}}
+        {{-- Search goes to My Tickets, which lists every ticket --}}
         <form method="GET" action="{{ url('/officer/tickets') }}" class="dm-header-actions">
             <label class="dm-search">
                 <x-docmon.icon name="search" size="18" />
@@ -30,7 +29,7 @@
         </form>
     </header>
 
-    {{-- To Do (AUD-097): what this officer has to act on, before anything else --}}
+    {{-- To Do: what this officer has to act on, before anything else --}}
     <section class="dm-card dm-panel so-todo" data-live="todo" aria-labelledby="todo-title">
         <div class="dm-panel-head">
             <h2 class="dm-panel-title" id="todo-title">
@@ -90,9 +89,9 @@
         @endif
     </section>
 
-    {{-- Counts (AUD-101): one line instead of five number cards. Each count opens My Tickets on that
+    {{-- Counts: one line instead of five number cards. Each count opens My Tickets on that
          tab; the dot is the same colour as that status's badge. "Partly Approved" (a finished Batch with
-         some papers rejected, AUD-057) only shows when there is one. --}}
+         some papers rejected) only shows when there is one. --}}
     @php
         $countLinks = collect([
             ['Pending', 'Pending', 'pending', $stats['pending']],

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * The ID photo or PDF a user uploaded at sign-up (stored in the database, AUD-012).
+ * The ID photo or PDF a user uploaded at sign-up (stored in the database).
  * Only the admin can open it, and it is deleted once the account is verified or rejected.
  */
 class IdDocument extends Model

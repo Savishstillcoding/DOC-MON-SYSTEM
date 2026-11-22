@@ -2,6 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+/*
+| READING GUIDE 9/15: LoginController
+|
+| WHAT: a controller: the log-in forms and the log-out button.
+| USED FOR: letting users in and out.
+| KEY IDEA: right ID + password + role AND a verified account → let in.
+|           Any mistake → one message ("Wrong ID or password"), so it reveals nothing.
+*/
+
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\User;
@@ -10,20 +19,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * Logs users in and out. Each role has its own log-in page, and each page
- * names its ID field differently, but they all match users.login_id.
+ * LoginController = logging in and out.
+ * Each role has its own log-in page, but all of them check the same login_id column.
  */
 class LoginController extends Controller
 {
-    /**
-     * The ID field on each role's log-in form (resources/views/auth/*-login.blade.php).
-     */
+    /** ID_FIELDS = the name of the ID box on each log-in page: student ID, employee ID, or username. */
     private const ID_FIELDS = [
         'officer' => 'student_id',
         'signatory' => 'employee_id',
         'admin' => 'username',
     ];
 
+    /**
+     * store() = what happens when someone presses Log In.
+     * How it works:
+     *   1. Check the ID + password + role. Wrong → "Wrong ID or password." (logged)
+     *   2. Right, but the account isn't verified → log them out again and say why
+     *      (waiting for the admin / rejected with the reason / deactivated).
+     *   3. Verified → give a new session ID, log it, and open their dashboard.
+     */
     public function store(Request $request, string $role): RedirectResponse
     {
         $idField = self::ID_FIELDS[$role];
@@ -71,7 +86,8 @@ class LoginController extends Controller
             return back()->withErrors([$idField => $message])->onlyInput($idField);
         }
 
-        // New session ID after logging in, so an old (possibly stolen) session ID is useless
+        // A session ID is the browser's "you're logged in" ticket. Give a brand-new one now,
+        // so an old (possibly stolen) session ID is useless
         $request->session()->regenerate();
         ActivityLog::record($account, 'logins', 'Logged in', $this->where($request, $role));
 
@@ -80,9 +96,8 @@ class LoginController extends Controller
     }
 
     /**
-     * A failed log-in, so password guessing shows up in the Activity Log (AUD-071).
-     * The typed password is never stored, and neither is an unknown ID: people
-     * sometimes type their password into the ID box by mistake.
+     * recordFailure() = writes a failed log-in into the Activity Log, so the admin can
+     * spot password guessing. The typed password is never saved.
      */
     private function recordFailure(Request $request, string $role, string $loginId): void
     {
@@ -93,17 +108,19 @@ class LoginController extends Controller
             : 'Unknown ID').' · '.$this->where($request, $role));
     }
 
-    /** "Officer log-in page · IP 203.0.113.5" */
+    /** where() = which page and internet address the log-in came from: "Officer log-in page · IP 203.0.113.5". */
     private function where(Request $request, string $role): string
     {
         return (User::ROLE_LABELS[$role] ?? ucfirst($role))." log-in page · IP {$request->ip()}";
     }
 
+    /** destroy() = Log Out: ends the session completely and goes back to /login. */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::logout();
 
-        // Throw away the session and its CSRF token completely
+        // Throw away the session completely, and make a new CSRF token (the secret code
+        // every form carries, so other websites can't send forms in your name)
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

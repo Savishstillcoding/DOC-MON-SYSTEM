@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Live updates (AUD-050): the officer's pages carry a fingerprint, and GET /officer/live
+ * Live updates: the officer's pages carry a fingerprint, and GET /officer/live
  * says when it changed, so docmon-live.js knows when to refresh the page's live boxes.
  */
 class LiveUpdatesTest extends TestCase

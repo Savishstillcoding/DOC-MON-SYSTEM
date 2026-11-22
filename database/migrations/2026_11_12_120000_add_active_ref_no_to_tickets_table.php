@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Lets a fully rejected ticket's Ref No. be used again (AUD-079).
+ * Lets a fully rejected ticket's Ref No. be used again.
  *
  * The old rule: a Ref No. once per organization, forever. The new rule: once per
  * organization among LIVE tickets. Status isn't stored (it's worked out from the

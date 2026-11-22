@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Show / hide password (AUD-056): every page with a password box loads the eye button.
+ * Show / hide password: every page with a password box loads the eye button.
  * (Clicking it is checked in a browser: PHPUnit can't run JavaScript.)
  */
 class PasswordToggleTest extends TestCase

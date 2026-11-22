@@ -31,7 +31,7 @@ class PasswordController extends Controller
         $user = $request->user();
         $user->forceFill(['password' => $data['password'], 'remember_token' => Str::random(60)])->save();
 
-        // Sign out every OTHER device (AUD-068): if someone else knew the old password,
+        // Sign out every OTHER device: if someone else knew the old password,
         // their session ends now. This browser gets a fresh session ID and stays logged in
         $request->session()->regenerate();
         if (config('session.driver') === 'database') {

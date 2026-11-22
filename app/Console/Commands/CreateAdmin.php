@@ -14,7 +14,7 @@ use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
 /**
- * Adds an admin account (AUD-091). Admins can't sign up, and the seeder refuses to run
+ * Adds an admin account. Admins can't sign up, and the seeder refuses to run
  * on the live site, so this is the only way to add a second admin (one admin = one
  * forgotten password away from nobody being able to verify accounts).
  *

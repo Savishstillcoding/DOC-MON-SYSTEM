@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 /**
- * The officer's Profile forms and the signatory's availability form (AUD-018).
+ * The officer's Profile forms and the signatory's availability form.
  */
 class ProfileAndAvailabilityTest extends TestCase
 {

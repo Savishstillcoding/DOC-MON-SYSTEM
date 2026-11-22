@@ -2,27 +2,35 @@
 
 namespace App\Services;
 
+/*
+| READING GUIDE 13/15: TicketAlerts
+|
+| WHAT: a service (a helper class for one job): the Telegram message planner.
+| USED FOR: deciding who gets which Telegram message when a paper moves.
+| KEY IDEA: sent only after saving, so a slow Telegram never blocks anything.
+*/
+
 use App\Models\Document;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
 /**
- * The Telegram messages sent when papers move (Increment 7: notifications).
- *   officer submits     → step-1 signatory: a paper is waiting
- *   signatory approves  → officers: approved (or fully approved); next signatory: a paper is waiting
+ * TicketAlerts = decides who gets which Telegram message when a paper moves.
+ *   officer submits     → first signatory: "a paper is waiting for your signature"
+ *   signatory approves  → officers: approved (or fully approved)
+ *                         next signatory: "a paper is waiting for your signature"
  *   signatory returns   → officers: returned, with the remarks
  *   signatory rejects   → officers: rejected, with the remarks
- *   officer resubmits   → the same signatory: the revised paper is back
- * "officers" = every verified officer of the ticket's organization (shared tickets, AUD-075),
- * so a returned paper isn't missed when the one who filed it is away or has left.
- * Users who haven't connected Telegram (no telegram_chat_id) are skipped.
- * Called after the database work is saved, so a slow Telegram never holds a lock.
+ *   officer resubmits   → the same signatory: "the revised paper is back"
+ * "officers" = every verified officer of the org (not only the one who filed it).
+ * Users who haven't linked Telegram are skipped.
  */
 class TicketAlerts
 {
     public function __construct(private Telegram $telegram) {}
 
+    /** submitted() = a new ticket was filed: tell the first signatory. */
     public function submitted(Ticket $ticket): void
     {
         $ticket->loadMissing('documents', 'officer', 'organization.signatories');
@@ -32,8 +40,8 @@ class TicketAlerts
     }
 
     /**
-     * One signatory acted on one or more papers of the same ticket ("Approve all"
-     * sends them together), so each officer gets one message, not one per paper.
+     * acted() = a signatory approved, returned or rejected one or more papers of a ticket.
+     * Each officer gets ONE message, even for "Approve all".
      *
      * @param  Collection<int, Document>  $documents
      */
@@ -62,10 +70,11 @@ class TicketAlerts
         $this->toOfficer($ticket, ($action === 'return' ? "↩️ {$what} returned for revision" : "❌ {$what} rejected")
             ." by {$by}.\nRemarks: {$remarks}"
             .($action === 'return' ? "\nRevise it, then resubmit it on My Tickets." : "\nFile a new ticket if you still need it.")
-            // AUD-079: the whole ticket is now Rejected, so its number is free again
+            // If the whole ticket is now Rejected, tell them its Ref No. can be used again
             .($action === 'reject' && $ticket->active_ref_no === null ? " You can use Ref No. {$ticket->ref_no} again." : ''));
     }
 
+    /** resubmitted() = the officer fixed a returned paper: tell the same signatory it's back. */
     public function resubmitted(Document $document): void
     {
         $ticket = $document->ticket->loadMissing('officer', 'organization.signatories');
@@ -74,9 +83,10 @@ class TicketAlerts
         $this->toSignatory($signatory, $ticket, collect([$document]), 'Revised paper is back for your signature');
     }
 
+    /** toOfficer() = sends the message to every verified officer of the org who linked Telegram. */
     private function toOfficer(Ticket $ticket, string $line): void
     {
-        // unique(): someone with two accounts on one Telegram gets it once
+        // unique(): if one person linked two accounts to the same Telegram, they get the message once, not twice
         $chats = User::where('role', 'officer')->where('status', 'verified')
             ->where('organization_id', $ticket->organization_id)
             ->whereNotNull('telegram_chat_id')
@@ -87,7 +97,11 @@ class TicketAlerts
         }
     }
 
-    /** @param  Collection<int, Document>  $documents */
+    /**
+     * toSignatory() = sends one message to one signatory, listing the papers.
+     *
+     * @param  Collection<int, Document>  $documents
+     */
     private function toSignatory(?User $signatory, Ticket $ticket, Collection $documents, string $line): void
     {
         $this->telegram->send($signatory?->telegram_chat_id,
@@ -97,7 +111,7 @@ class TicketAlerts
     }
 
     /**
-     * "Paper “Budget Plan”" for one paper, "3 papers" for several.
+     * papers() = how the papers are named in a message: 'Paper "Budget Plan"' or "3 papers".
      *
      * @param  Collection<int, Document>  $documents
      */
@@ -108,7 +122,11 @@ class TicketAlerts
         return $count === 1 ? "Paper “{$documents->first()->title}”" : "{$count} papers";
     }
 
-    /** @param  Collection<int, Document>  $documents */
+    /**
+     * waiting() = "A paper is waiting for your signature" or "3 papers are waiting ...".
+     *
+     * @param  Collection<int, Document>  $documents
+     */
     private function waiting(Collection $documents): string
     {
         $count = $documents->count();

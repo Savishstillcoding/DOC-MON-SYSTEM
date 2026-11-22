@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Whole-app UI critique, 2026-11-17 (AUD-101 to AUD-104):
+ * Whole-app UI critique, 2026-11-17:
  * the officer's five number cards became one line of counts, the signatory's review table
  * stacks on phones, the gradient/glow/float effects are gone, and the log-in taglines are plain.
  * How it looks is checked in a real browser; these tests pin the markup and the CSS rules.
@@ -63,7 +63,7 @@ class UiCritiqueFixesTest extends TestCase
                 '<td data-label="Waiting since">', '<td class="dm-cell-actions">', 'value="approve"'], false);
 
         $css = file_get_contents(public_path('css/docmon-dashboard.css'));
-        $phone = substr($css, strpos($css, 'AUD-102: a table that stacks on phones'));
+        $phone = substr($css, strpos($css, 'a table that stacks on phones'));
         $this->assertStringContainsString('.dm-table-stack thead { position: absolute;', $phone);
         $this->assertStringContainsString('content: attr(data-label);', $phone);
     }

@@ -6,9 +6,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Live updates (AUD-050): a short fingerprint of everything an officer's pages show
+ * Live updates: a short fingerprint of everything an officer's pages show
  * that OTHER people can change: the approval route, each signatory's availability,
- * and where each of the organization's papers is (shared tickets, AUD-075).
+ * and where each of the organization's papers is (shared tickets).
  *
  * The page carries the fingerprint it was drawn with; docmon-live.js asks for the
  * current one every 20 s and only re-downloads the page when the two differ.

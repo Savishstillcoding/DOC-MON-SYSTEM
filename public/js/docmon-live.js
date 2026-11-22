@@ -1,4 +1,4 @@
-// Live updates (AUD-050): availability dots, statuses and counts change without a reload.
+// Live updates: availability dots, statuses and counts change without a reload.
 //
 // How it works:
 // 1. The page carries a fingerprint of its data (<meta name="docmon-live" data-stamp>).

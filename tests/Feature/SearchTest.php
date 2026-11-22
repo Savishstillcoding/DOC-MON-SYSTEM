@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * The search boxes (AUD-021): the Dashboards' boxes did nothing; now the officer's
+ * The search boxes: the Dashboards' boxes did nothing; now the officer's
  * searches My Tickets and the signatory's searches For Review, and both of those
  * pages have their own box.
  */

@@ -138,7 +138,7 @@
             {{-- Notifications info --}}
             <section class="dm-card dm-panel">
                 <h2 class="dm-panel-title">Notifications</h2>
-                {{-- AUD-058: only promise what exists (Telegram, and only once connected) --}}
+                {{-- only promise what exists (Telegram, and only once connected) --}}
                 @if (auth()->user()->telegram_chat_id)
                     <p class="nt-note">You'll get a Telegram message every time a signatory approves, returns, or rejects a paper of this ticket.</p>
                 @else

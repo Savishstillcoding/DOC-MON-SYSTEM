@@ -28,7 +28,7 @@
 
     @error('user') <p class="dm-form-alert" role="alert">{{ $message }}</p> @enderror
 
-    {{-- Yearly review promised in the privacy notice (AUD-078): turn off accounts no longer needed --}}
+    {{-- Yearly review promised in the privacy notice: turn off accounts no longer needed --}}
     @if ($review)
         <p class="dm-form-note">Showing active accounts older than {{ \App\Models\User::RETENTION_YEARS }} years. Deactivate the ones no longer needed. <a href="{{ $query(['review' => null, 'page' => null]) }}">Show everyone</a></p>
     @elseif ($pastRetention > 0)

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Submitting a ticket (New Ticket form) and seeing it on My Tickets (AUD-018).
+ * Submitting a ticket (New Ticket form) and seeing it on My Tickets.
  */
 class TicketSubmissionTest extends TestCase
 {

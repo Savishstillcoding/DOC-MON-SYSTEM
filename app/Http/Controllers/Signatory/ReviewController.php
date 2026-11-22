@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * For Review: the signatory's queue, one card per ticket (most urgent first, AUD-077), and a
+ * For Review: the signatory's queue, one card per ticket (most urgent first), and a
  * panel for the selected ticket where each waiting document is approved,
  * returned, or rejected on its own (Batch rule), or all approved at once.
  */
@@ -26,12 +26,12 @@ class ReviewController extends Controller
         $waiting = Document::atStepOf($signatory)
             ->where('status', Document::PENDING)
             ->when($search !== '', fn ($q) => $q->whereHas('ticket', fn ($t) => $t->search($search)))
-            // documents: every paper of the ticket, for its status and so its deadline badge (AUD-077)
+            // documents: every paper of the ticket, for its status and so its deadline badge
             ->with(['ticket' => fn ($q) => $q->withCount('documents')->with('documents', 'officer', 'organization.signatories')])
             ->oldest('updated_at')
             ->get();
 
-        // Most urgent first (AUD-077): soonest Date Needed, then no date. The sort is
+        // Most urgent first: soonest Date Needed, then no date. The sort is
         // stable, so tickets with the same date keep the oldest-first order from above
         $queue = $waiting->groupBy('ticket_id')->map(fn ($documents) => (object) [
             'ticket' => $documents->first()->ticket,

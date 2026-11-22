@@ -1,4 +1,4 @@
-{{-- Consent checkbox on both sign-up forms (AUD-078). Opens the notice in a new tab, so the form isn't lost. --}}
+{{-- Consent checkbox on both sign-up forms. Opens the notice in a new tab, so the form isn't lost. --}}
 <div class="field">
   <label class="privacy-check">
     <input type="checkbox" name="privacy_accepted" value="1" @checked(old('privacy_accepted')) required>

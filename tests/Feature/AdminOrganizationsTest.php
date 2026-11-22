@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Admin: Organizations page (AUD-053): add, rename, delete only when empty.
+ * Admin: Organizations page: add, rename, delete only when empty.
  */
 class AdminOrganizationsTest extends TestCase
 {

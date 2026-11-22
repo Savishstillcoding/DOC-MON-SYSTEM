@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Security headers on every page (AUD-069).
+ * Security headers on every page.
  *
  *  - No framing: another site can't show DOC-MON inside an invisible frame and trick a
  *    signatory into clicking "Approve" (clickjacking). X-Frame-Options for old browsers,

@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 /**
- * The privacy notice and consent (AUD-078, Data Privacy Act): a public notice, consent
+ * The privacy notice and consent (Data Privacy Act): a public notice, consent
  * at sign-up, existing accounts asked once, and the admin's yearly review of old accounts.
  */
 class PrivacyTest extends TestCase

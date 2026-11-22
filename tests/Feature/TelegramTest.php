@@ -207,7 +207,7 @@ class TelegramTest extends TestCase
 
     public function test_every_verified_officer_of_the_organization_hears_about_a_ticket(): void
     {
-        // AUD-075 + AUD-089: shared tickets, so the Deputy hears too; a deactivated officer doesn't,
+        // shared tickets, so the Deputy hears too; a deactivated officer doesn't,
         // nor does anyone from another organization, and one Telegram gets each message once
         $this->makeUser('officer', '2202222', ['organization_id' => $this->digits->id, 'telegram_chat_id' => '200']);
         $this->makeUser('officer', '2202223', ['organization_id' => $this->digits->id, 'telegram_chat_id' => '100']);
@@ -251,7 +251,7 @@ class TelegramTest extends TestCase
 
     public function test_the_new_ticket_page_only_promises_telegram_when_connected(): void
     {
-        // AUD-058: it promised "an SMS and Telegram message" before either existed
+        // it promised "an SMS and Telegram message" before either existed
         $this->actingAs($this->officer)->get('/officer/tickets/new')
             ->assertSee("You'll get a Telegram message every time", false)
             ->assertDontSee('SMS');
@@ -262,7 +262,7 @@ class TelegramTest extends TestCase
             ->assertDontSee("You'll get a Telegram message", false);
     }
 
-    // ---------- The 🔔 in page headers (AUD-059) ----------
+    // ---------- The 🔔 in page headers ----------
 
     public static function bellPages(): array
     {

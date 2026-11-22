@@ -28,7 +28,7 @@ class UserController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
         $orgId = (int) $request->query('org');
-        $review = $request->boolean('review');   // the yearly review of old accounts (AUD-078)
+        $review = $request->boolean('review');   // the yearly review of old accounts
 
         $base = fn () => User::query()
             ->when($review, fn (Builder $q) => $q->pastRetention())

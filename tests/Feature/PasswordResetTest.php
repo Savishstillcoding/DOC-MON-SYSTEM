@@ -18,7 +18,7 @@ use Symfony\Component\Mailer\Bridge\Brevo\Transport\BrevoApiTransport;
 use Tests\TestCase;
 
 /**
- * "Forgot password?" (AUD-008): reset link by email, through Brevo on the live site.
+ * "Forgot password?": reset link by email, through Brevo on the live site.
  * Email is faked here: nothing is really sent.
  */
 class PasswordResetTest extends TestCase

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Accounts that existed before the privacy notice never saw it (AUD-078), so they
+ * Accounts that existed before the privacy notice never saw it, so they
  * are asked once: until they accept, every dashboard page sends them to /privacy.
  * Used in routes/web.php as 'privacy'.
  */

@@ -1,5 +1,5 @@
 {{--
-    DOC-MON · Forgot password (AUD-008) → POST /forgot-password (PasswordResetController@store)
+    DOC-MON · Forgot password → POST /forgot-password (PasswordResetController@store)
     The user types their log-in ID and the email on their account; a one-time reset link
     is emailed if both match a verified account. The answer is the same either way.
 --}}

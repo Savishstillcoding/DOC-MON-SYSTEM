@@ -34,7 +34,7 @@
           <a href="{{ url('/login') }}">Log-In</a>
           <a href="{{ url('/signup') }}">Sign-Up</a>
         @endguest
-        {{-- Already logged in (AUD-045): straight to your dashboard, or log out.
+        {{-- Already logged in: straight to your dashboard, or log out.
              Log out is a POST form with a CSRF token, like the sidebar's, so no link
              or image elsewhere can log someone out without them clicking it --}}
         @auth

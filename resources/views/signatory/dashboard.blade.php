@@ -27,7 +27,7 @@
                 @endif
             </p>
         </div>
-        {{-- Search goes to For Review, which lists everything waiting for you (AUD-021) --}}
+        {{-- Search goes to For Review, which lists everything waiting for you --}}
         <form method="GET" action="{{ url('/signatory/review') }}" class="dm-header-actions">
             @php $pillVariant = collect($availabilityOptions)->firstWhere('label', $account->availability ?? 'Available')['variant'] ?? 'available'; @endphp
             <span class="sg-status-pill is-{{ $pillVariant }}">
@@ -72,7 +72,7 @@
             @if ($documents->isEmpty())
                 <p class="nt-note">Nothing to sign right now. New papers appear here when they reach your step.</p>
             @else
-            {{-- On phones each row stacks into a card so the actions are never off-screen (AUD-102) --}}
+            {{-- On phones each row stacks into a card so the actions are never off-screen --}}
             <div class="dm-table-wrap">
                 <table class="dm-table dm-table-stack">
                     <thead>
@@ -136,7 +136,7 @@
             {{-- My Availability (the sidebar's "Availability" jumps here) --}}
             <section class="dm-card dm-panel" id="availability">
                 <h2 class="dm-panel-title">My Availability</h2>
-                {{-- AUD-088: officers see when it was set too, so an old "Back at 2:00 PM" doesn't mislead --}}
+                {{-- officers see when it was set too, so an old "Back at 2:00 PM" doesn't mislead --}}
                 <p class="dm-panel-sub">Officers see this on their tickets, with the time you set it{{ $account->availabilitySetAt() ? ' · last set ' . $account->availabilitySetAt() : '' }}</p>
 
                 <form method="POST" action="{{ url('/signatory/availability') }}" class="sg-availability-form">

@@ -1,9 +1,9 @@
 {{--
     The dashboard layout with the student officer menu, so the menu is defined once
-    for every officer page (instead of being copied into each view, see AUD-019).
+    for every officer page (instead of being copied into each view).
 
     Usage: <x-docmon.officer-layout title="My Tickets" active="My Tickets" :live="true"> ... </x-docmon.officer-layout>
-    live = refresh the page's data-live boxes when the data changes (AUD-050)
+    live = refresh the page's data-live boxes when the data changes
 --}}
 @props(['title', 'active', 'live' => false])
 

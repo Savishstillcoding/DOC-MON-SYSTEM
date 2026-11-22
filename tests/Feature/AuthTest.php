@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 /**
- * Real log-in, log-out and role protection (AUD-017).
+ * Real log-in, log-out and role protection.
  */
 class AuthTest extends TestCase
 {
@@ -158,7 +158,7 @@ class AuthTest extends TestCase
         $this->get('/officer/dashboard')->assertRedirect('/login');
     }
 
-    // ---------- Landing page (AUD-045) ----------
+    // ---------- Landing page ----------
 
     public function test_the_landing_page_offers_log_in_and_sign_up_to_guests(): void
     {

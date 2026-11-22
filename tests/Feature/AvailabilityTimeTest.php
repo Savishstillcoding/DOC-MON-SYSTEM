@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 /**
- * AUD-088: "Back at 2:00 PM" is free text with no expiry, so every page that shows a
+ * "Back at 2:00 PM" is free text with no expiry, so every page that shows a
  * signatory's status also says when they set it: "Back at 2:00 PM · set 9:14 AM".
  */
 class AvailabilityTimeTest extends TestCase

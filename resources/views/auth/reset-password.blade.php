@@ -1,5 +1,5 @@
 {{--
-    DOC-MON · Choose a new password (AUD-008), opened from the emailed link
+    DOC-MON · Choose a new password, opened from the emailed link
     /reset-password/{token}?email=... → POST /reset-password (PasswordResetController@update)
     Same password rules as the Profile page (Password::defaults()).
 --}}

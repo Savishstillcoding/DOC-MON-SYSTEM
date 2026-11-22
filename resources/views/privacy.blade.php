@@ -1,5 +1,5 @@
 {{--
-    DOC-MON · Privacy Notice (AUD-078), from PrivacyController@show:
+    DOC-MON · Privacy Notice, from PrivacyController@show:
     $account (the logged-in user, or null), $contactEmail, $years.
     Describes what DOC-MON really does, so change it when that changes.
     Someone logged in who hasn't accepted yet gets the Accept button → POST /privacy/accept.

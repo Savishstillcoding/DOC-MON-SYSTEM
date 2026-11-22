@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * AUD-075: an organization's officers share its tickets, so the Deputy can carry on
+ * an organization's officers share its tickets, so the Deputy can carry on
  * when the Secretary is away or has graduated. The filer stays on record, the history
  * says who did what, and other organizations still see nothing.
  */

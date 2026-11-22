@@ -61,7 +61,7 @@
   border-radius: 8px;
 }
 .field input::placeholder {
-  color: #767676;   /* 4.5:1 on white (AUD-092) */
+  color: #767676;   /* 4.5:1 on white */
 }
 .field select:invalid { color: #767676; }   /* "Choose your ..." looks like a placeholder */
 .field select option { color: #1e1e1e; }
@@ -113,7 +113,7 @@
 .upload-text.has-file {
   color: #1e1e1e;
 }
-/* Rule shown under a box while typing (AUD-065: placeholders vanish and got cut off) */
+/* Rule shown under a box while typing (placeholders vanish and got cut off) */
 .field-hint { font-size: 14px; line-height: 20px; color: #5f5f5f; }
 .field-note {
   font-size: 16px;
@@ -151,8 +151,8 @@
   }
 }
 
-/* Upload error (AUD-040), same red as the log-in errors */
-/* Privacy consent at sign-up (AUD-078) */
+/* Upload error, same red as the log-in errors */
+/* Privacy consent at sign-up */
 .privacy-check {
   display: flex;
   align-items: flex-start;

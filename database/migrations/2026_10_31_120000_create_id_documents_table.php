@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * The ID photo (or PDF) uploaded at sign-up, stored INSIDE the database (AUD-012):
+ * The ID photo (or PDF) uploaded at sign-up, stored INSIDE the database:
  * Render wipes the container's disk on every deploy, so files saved there would vanish.
  * A separate table (not a column on users) keeps loading a user fast: the 2 MB
  * file is only read when the admin opens it. Deleted once the admin decides.

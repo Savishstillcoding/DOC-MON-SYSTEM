@@ -133,7 +133,7 @@ flowchart TD
 **Three rules to remember:**
 1. **Order is strict.** Only the signatory at the paper's current step can act on it.
 2. **Return keeps your progress.** The paper comes back to the same signatory, and earlier approvals stay valid.
-3. **Reject is final.** The officer has to file a new ticket. Once **every** paper on a ticket is rejected, its Ref No. is free again, so the corrected paper can keep the same number. A rejected paper also frees its own document Ref No. (AUD-079)
+3. **Reject is final.** The officer has to file a new ticket. Once **every** paper on a ticket is rejected, its Ref No. is free again, so the corrected paper can keep the same number. A rejected paper also frees its own document Ref No.
 
 ### Deadlines
 
@@ -198,7 +198,7 @@ sequenceDiagram
 
 **Why the lock?** If someone double-clicks, or has two tabs open, the second click waits. It then sees the paper already moved, and stops.
 
-**Why "Waiting for" and not "With"?** Approve moves the paper to the next signatory's list at once, but the officer still carries it there. DOC-MON knows whose turn it is, not whose desk the paper is on, so it says so honestly (AUD-076).
+**Why "Waiting for" and not "With"?** Approve moves the paper to the next signatory's list at once, but the officer still carries it there. DOC-MON knows whose turn it is, not whose desk the paper is on, so it says so honestly.
 
 **Why does Telegram come last?** The approval is saved first, so a Telegram failure can't undo it.
 

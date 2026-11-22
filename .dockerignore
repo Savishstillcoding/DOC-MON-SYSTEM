@@ -1,6 +1,6 @@
 .git
 .env
-# leftovers from the removed Tailwind/Vite setup (AUD-026) that may still sit on a laptop
+# leftovers from the removed Tailwind/Vite setup that may still sit on a laptop
 node_modules
 public/build
 public/hot

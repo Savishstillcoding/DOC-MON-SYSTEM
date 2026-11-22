@@ -16,7 +16,7 @@
   --dm-border: #e6e6e6;
   --dm-text: #1a1a1a;
   --dm-muted: #5f5f5f;
-  /* AUD-092: was #9a9a9a (2.8:1). 5.3:1 on white, 4.9:1 on the page background */
+  /* was #9a9a9a (2.8:1). 5.3:1 on white, 4.9:1 on the page background */
   --dm-faint: #6b6b6b;
   --dm-purple: #5b3fd9;
   --dm-purple-dark: #4a31bf;
@@ -170,7 +170,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: #fff;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  color: #6b6b6b;   /* AUD-092: was #8a8a8a (3.4:1) */
+  color: #6b6b6b;   /* was #8a8a8a (3.4:1) */
 }
 .dm-search input { border: 0; outline: 0; width: 100%; background: transparent; color: var(--dm-text); }
 .dm-search:focus-within { border-color: var(--dm-purple); }
@@ -186,7 +186,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   cursor: pointer;
 }
 .dm-icon-btn:hover { background: #fafafa; }
-/* 🔔 header link to Profile → Telegram (AUD-059); a green dot = notifications are on */
+/* 🔔 header link to Profile → Telegram; a green dot = notifications are on */
 .dm-bell { position: relative; color: inherit; }
 .dm-bell-dot {
   position: absolute;
@@ -264,7 +264,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-stat-value { margin-top: 6px; font-size: 32px; font-weight: 700; line-height: 1.1; }
 .dm-stat-note { margin-top: 10px; font-size: 12px; color: var(--dm-faint); }
 
-/* Officer dashboard counts (AUD-101): one line of links, the dot matches that status's badge */
+/* Officer dashboard counts: one line of links, the dot matches that status's badge */
 .so-counts {
   display: flex;
   flex-wrap: wrap;
@@ -292,12 +292,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
   margin: 18px 0 16px;
   border-bottom: 1px solid var(--dm-border);
   overflow-x: auto;
-  overflow-y: hidden;   /* AUD-066: no tiny ▲▼ arrows (overflow-x alone turns vertical scrolling on too) */
+  overflow-y: hidden;   /* no tiny ▲▼ arrows (overflow-x alone turns vertical scrolling on too) */
 }
 .dm-tab {
   padding-bottom: 12px;
   font-size: 15px;
-  color: #6b6b6b;   /* AUD-092: was #8a8a8a (3.4:1) */
+  color: #6b6b6b;   /* was #8a8a8a (3.4:1) */
   white-space: nowrap;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
@@ -328,7 +328,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-badge-rejected { background: var(--dm-red-bg);   color: var(--dm-red); }
 .dm-badge-revision { background: var(--dm-blue-bg);  color: var(--dm-blue); }
 .dm-badge-review   { background: #eeeeee;            color: #2c2c2c; }
-/* Deadline badges (AUD-077): solid red so Overdue stands out from a Rejected pill */
+/* Deadline badges: solid red so Overdue stands out from a Rejected pill */
 .dm-badge-overdue  { background: var(--dm-red);      color: #fff; }
 .dm-badge-due      { background: #ffe8d6;            color: #9a3412; }
 .dm-badges { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
@@ -343,7 +343,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   white-space: nowrap;
 }
 .dm-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-/* A long status ("In a Meeting · Back at 2:00 PM · set 9:14 AM", AUD-088) wraps instead of
+/* A long status ("In a Meeting · Back at 2:00 PM · set 9:14 AM") wraps instead of
    pushing the page sideways; the dot stays beside the first line */
 .dm-availability:has(.dm-availability-text) { white-space: normal; align-items: flex-start; }
 .dm-availability:has(.dm-availability-text) .dm-dot { margin-top: 5px; }
@@ -382,7 +382,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-signatory-info { flex: 1; min-width: 0; }
 .dm-signatory-status { margin-top: 6px; }
 .dm-signatory-name { font-size: 15px; font-weight: 600; }
-.dm-signatory-role { font-size: 13px; color: #666; margin-top: 2px; }   /* AUD-092: was #777 */
+.dm-signatory-role { font-size: 13px; color: #666; margin-top: 2px; }   /* was #777 */
 
 /* connector line between steps (availability timeline only) */
 .dm-route:not(.dm-route-plain) .dm-signatory-row:not(:last-child)::after {
@@ -474,13 +474,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-field textarea:focus,
 .dm-select:focus,
 .nt-doc-row input:focus { border-color: var(--dm-purple); }
-::placeholder { color: #767676; }   /* 4.5:1 on white (AUD-092) */
+::placeholder { color: #767676; }   /* 4.5:1 on white */
 
 .dm-select { cursor: pointer; }
 .dm-select-sm { width: auto; height: 34px; }
 
 /* ---------------- Student officer: dashboard ---------------- */
-/* To Do (AUD-097): the officer's to-do list, where the welcome banner used to be.
+/* To Do: the officer's to-do list, where the welcome banner used to be.
    One row per thing to act on: badge | what and why | action. Hairlines, not cards in a card. */
 .so-todo-count { font-weight: 500; color: var(--dm-faint); }
 .so-todo-more { font-size: 14px; font-weight: 600; color: var(--dm-purple); white-space: nowrap; }
@@ -524,7 +524,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-ticket-title { font-size: 16px; font-weight: 600; }
 .dm-ticket-type { margin-top: 4px; font-size: 14px; color: #666; }
 .dm-ticket-people p { font-size: 14px; margin-bottom: 8px; color: #333; }
-/* split Batch (AUD-049): a little air before the next holder's line */
+/* split Batch: a little air before the next holder's line */
 .dm-ticket-people .dm-availability + .dm-ticket-holder { margin-top: 12px; }
 .dm-ticket-foot {
   display: flex;
@@ -576,7 +576,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .nt-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: -4px; }
 .nt-note { margin-top: 16px; font-size: 14px; line-height: 1.6; color: var(--dm-muted); }
 
-/* Phones (AUD-028): five columns don't fit, so each document becomes a small stacked block:
+/* Phones: five columns don't fit, so each document becomes a small stacked block:
    [#] [Type] [x] / Title / Ref No. The column headers no longer line up, so they're hidden
    (each field still has its aria-label, and Ref No. says what it is in its placeholder). */
 @media (max-width: 640px) {
@@ -642,7 +642,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding: 0 12px;
   border: 1px solid #d4d4d4;
   border-radius: 6px;
-  color: #6b6b6b;   /* AUD-092: was #8a8a8a (3.4:1) */
+  color: #6b6b6b;   /* was #8a8a8a (3.4:1) */
   margin-bottom: 16px;
 }
 .sg-time input { border: 0 !important; height: auto !important; padding: 0 !important; }
@@ -840,7 +840,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dm-card,
 .dm-ticket-card { box-shadow: var(--dm-shadow-sm); }
 
-/* AUD-103: buttons stay flat (no gradient, no coloured glow) and the active menu item is a solid
+/* buttons stay flat (no gradient, no coloured glow) and the active menu item is a solid
    highlight with its purple bar; the base rules above already say so */
 
 /* inputs: soft purple ring on focus instead of only a border change */
@@ -881,14 +881,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* Part 2: motion */
 @media (prefers-reduced-motion: no-preference) {
-  /* Entrance (AUD-103): the page content rises in once, as one piece. It used to cascade
+  /* Entrance: the page content rises in once, as one piece. It used to cascade
      section by section and card by card, the same effect on everything. */
   .dm-main { animation: dm-enter 0.4s var(--dm-ease) both; }
 
   /* the page transition now only fades: the entrance above does the rising */
   ::view-transition-new(dm-main) { animation: dm-fade-in 0.2s ease-out both; }
 
-  /* Cards don't float on hover (AUD-103): only things you can click react to the mouse */
+  /* Cards don't float on hover: only things you can click react to the mouse */
 
   /* Buttons: lift on hover, press down on click */
   .dm-btn,
@@ -917,7 +917,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ---------------- Smaller screens ---------------- */
 @media (max-width: 1200px) {
-  .dm-columns { grid-template-columns: minmax(0, 1fr); }   /* minmax(0, …): wide content (the tab row) scrolls instead of stretching the page (AUD-057) */
+  .dm-columns { grid-template-columns: minmax(0, 1fr); }   /* minmax(0, …): wide content (the tab row) scrolls instead of stretching the page */
   .pf-columns { grid-template-columns: 1fr; }
   .sl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -949,7 +949,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .nt-two-cols,
   .pf-grid,
   .sl-grid { grid-template-columns: 1fr; }
-  .nt-two-cols { row-gap: 0; }   /* AUD-030: each field already has its own top margin */
+  .nt-two-cols { row-gap: 0; }   /* each field already has its own top margin */
   /* To Do on phones: badge on top, then the text, then the button */
   .so-todo-item { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .so-todo-badges { flex-direction: row; }
@@ -958,7 +958,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .dm-header-actions { flex-wrap: wrap; width: 100%; }
 }
 
-/* ---------- Form feedback (AUD-018) ---------- */
+/* ---------- Form feedback ---------- */
 /* Green bar after a successful save: session('status') in the layout */
 .dm-flash {
   display: flex;
@@ -972,7 +972,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-weight: 600;
 }
 /* Red message under a field, and red box for form-wide errors */
-.dm-field-hint { margin-top: 6px; font-size: 13px; color: var(--dm-muted); }   /* rule under a box (AUD-065) */
+.dm-field-hint { margin-top: 6px; font-size: 13px; color: var(--dm-muted); }   /* rule under a box */
 .dm-field-error { margin-top: 6px; font-size: 13px; color: var(--dm-red); }
 .dm-form-alert {
   margin: 0 0 16px;
@@ -995,7 +995,7 @@ p.dm-form-alert { padding-left: 16px; }
 }
 .dm-form-note a { color: inherit; font-weight: 600; text-decoration: underline; }
 
-/* ---------- Signatory actions and document fold-out (AUD-046) ---------- */
+/* ---------- Signatory actions and document fold-out ---------- */
 /* A finished Batch where some papers were approved and some rejected */
 .dm-badge-partial { background: #e6f4f1; color: #0f766e; }
 
@@ -1026,9 +1026,9 @@ p.dm-form-alert { padding-left: 16px; }
 }
 .mt-doc-side { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .mt-remarks { margin-top: 4px; font-size: 13px; font-style: italic; color: var(--dm-text); }
-/* My Tickets, split Batch (AUD-049): one name + detail pair per place */
+/* My Tickets, split Batch: one name + detail pair per place */
 .mt-holders .dm-cell-sub + .dm-cell-main { margin-top: 8px; }
-/* A paper's History (AUD-084): the Recent Activity list, with a line joining the dots */
+/* A paper's History: the Recent Activity list, with a line joining the dots */
 .mt-history { margin-top: 8px; }
 .mt-history summary { font-size: 13px; font-weight: 600; color: var(--dm-purple); }
 .mt-timeline { margin: 10px 0 2px; padding: 0; gap: 14px; }
@@ -1052,7 +1052,7 @@ p.dm-form-alert { padding-left: 16px; }
   /* Status tabs wrap onto a second line instead of hiding "Approved" off the edge */
   .dm-tabs { flex-wrap: wrap; row-gap: 10px; column-gap: 18px; }
 
-  /* AUD-102: a table that stacks on phones. Each row is a card; the small label says what each
+  /* a table that stacks on phones. Each row is a card; the small label says what each
      cell is, since the header row is hidden. The actions cell gets the full width. */
   .dm-table-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .dm-table-stack, .dm-table-stack tbody, .dm-table-stack tr, .dm-table-stack td { display: block; width: 100%; }
@@ -1230,7 +1230,7 @@ p.dm-form-alert { padding-left: 16px; }
 /* Activity Logs: the date range dropdown stays compact, like the design */
 .al-range { width: auto; min-width: 150px; }
 
-/* Live updates (AUD-050, docmon-live.js) */
+/* Live updates (docmon-live.js) */
 .dm-stack { display: flex; flex-direction: column; gap: 24px; }
 .dm-live-toast {
   position: fixed;
@@ -1251,7 +1251,7 @@ p.dm-form-alert { padding-left: 16px; }
 }
 .dm-live-toast.is-shown { opacity: 1; translate: 0 0; }
 
-/* "Skip to content" (AUD-093): hidden until a keyboard user presses Tab, so they don't
+/* "Skip to content": hidden until a keyboard user presses Tab, so they don't
    have to Tab through the whole sidebar on every page */
 .dm-skip {
   position: absolute;

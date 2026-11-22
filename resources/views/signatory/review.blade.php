@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="rv-item-side">
                                     <span class="dm-cell-sub">{{ $item->since->format('M j') }}</span>
-                                    {{-- AUD-077: Overdue / Due Soon replaces the plain pill when the date is close --}}
+                                    {{-- Overdue / Due Soon replaces the plain pill when the date is close --}}
                                     <x-docmon.status-badge :status="$t->deadlineStatus() ?? 'For Review'" />
                                 </div>
                             </a>

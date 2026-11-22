@@ -2,6 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+/*
+| READING GUIDE 10/15: VerificationController
+|
+| WHAT: a controller: the admin's User Verification page.
+| USED FOR: checking new accounts against their ID photo, then verifying or
+|           rejecting them (with a reason).
+| KEY IDEA: the ID photo is deleted after the decision (keep only what we need).
+*/
+
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\User;
@@ -13,16 +22,20 @@ use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * User Verification: the admin opens a pending account's uploaded ID, ticks the
- * checklist, then approves it, or rejects it with a reason the person will see.
- * After the decision the ID file is deleted (decided 2026-10-31, data minimization);
- * reviewed_at, reviewed_by and review_note remain as the record.
+ * VerificationController = the admin's User Verification page.
+ * The admin opens a pending account's ID photo, ticks the checklist, then verifies it
+ * or rejects it with a reason. After the decision the ID photo is deleted (we keep
+ * only what we need); the record of who decided, when, and why stays.
  */
 class VerificationController extends Controller
 {
-    /** Tab label => role shown (null = both). */
+    /** TABS = the tabs on the page and which accounts each shows (All, Student Officers, Signatories). */
     private const TABS = ['All' => null, 'Student Officers' => 'officer', 'Signatories' => 'signatory'];
 
+    /**
+     * index() = the list of accounts waiting for verification.
+     * Oldest first (whoever waited longest), 5 per page, with tabs and a search box.
+     */
     public function index(Request $request): View
     {
         $search = trim((string) $request->query('q', ''));
@@ -53,13 +66,17 @@ class VerificationController extends Controller
         return view('admin.verification', compact('requests', 'counts', 'tab', 'search', 'selected'));
     }
 
-    /** Opens the uploaded ID in the browser (also used as the <img> in the panel). Admin-only. */
+    /**
+     * showId() = shows one ID photo to the admin.
+     * Every view is written in the Activity Log, and the browser is told not to keep a copy.
+     */
     public function showId(User $user): Response
     {
         $document = $user->idDocument;
         abort_if($document === null, 404);
 
-        // Personal data: every view is on record, who and whose (AUD-072)
+        // An ID photo is personal data, so every time the admin opens one it is written in
+        // the Activity Log: who looked, and at whose ID.
         ActivityLog::record(request()->user(), 'verification', 'Viewed ID', "{$user->displayName()} ({$user->login_id})");
 
         $extension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'application/pdf' => 'pdf'][$document->mime] ?? 'bin';
@@ -67,15 +84,20 @@ class VerificationController extends Controller
         return response($document->data, 200, [
             'Content-Type' => $document->mime,
             'Content-Disposition' => "inline; filename=\"id-{$user->id}.{$extension}\"",
-            // Personal data: never cached by the browser or a proxy, never guessed as another type
+            // Tell the browser: don't keep a saved copy of this photo (no-store), and
+            // don't try to guess the file type (nosniff)
             'Cache-Control' => 'no-store, private',
             'X-Content-Type-Options' => 'nosniff',
         ]);
     }
 
     /**
-     * Approve (all three checklist items ticked) or reject (a reason is required,
-     * shown to the person at log-in).
+     * review() = what happens when the admin presses Verify or Reject.
+     * How it works:
+     *   1. Verify needs all 3 checklist boxes ticked; Reject needs a reason.
+     *   2. Lock the account (so two admins can't decide at the same time).
+     *   3. Save the decision (who, when, reason) and DELETE the ID photo.
+     *   4. Log it, then go back to the list.
      */
     public function review(Request $request, User $user): RedirectResponse
     {
@@ -128,6 +150,7 @@ class VerificationController extends Controller
             : "Rejected {$decided->displayName()}. Their ID was deleted; they will see your reason when they try to log in.");
     }
 
+    /** findPending() = finds one pending account by its id (for a link to a specific person). */
     private function findPending(int $id): ?User
     {
         return User::where('status', 'pending')->whereIn('role', ['officer', 'signatory'])

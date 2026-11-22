@@ -2,6 +2,16 @@
 
 namespace App\Http\Controllers\Signatory;
 
+/*
+| READING GUIDE 12/15: DocumentActionController
+|
+| WHAT: a controller: the signatory's Approve / Return / Reject / Approve all
+|       buttons.
+| USED FOR: handling a signatory's decision on a paper.
+| KEY IDEA: it locks the paper, then calls Document::applyAction(), so a double click
+|           can't approve twice.
+*/
+
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\Ticket;
@@ -12,17 +22,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
- * A signatory approves, returns, or rejects documents (DFD process 4.0).
- * The rules themselves live in Document::applyAction():
- * - only the signatory at the document's current step may act, in route order;
- * - approve moves it to the next step, or makes it Approved after the last step;
- * - return sends it to the officer; after resubmitting it comes back to the SAME step;
- * - reject is final; the officer files a new ticket.
- * Return and reject need remarks, so the officer knows why.
+ * DocumentActionController = the signatory's Approve / Return / Reject / Approve all buttons.
+ * The actual rules are in Document::applyAction(); this file only handles the click.
+ * Return and Reject need remarks, so the officer knows why.
  */
 class DocumentActionController extends Controller
 {
-    /** One document: the buttons on the dashboard and the For Review page. */
+    /**
+     * store() = a click on Approve, Return or Reject for ONE paper.
+     * How it works:
+     *   1. Check the action, and that Return/Reject have remarks.
+     *   2. Lock the paper, then run Document::applyAction().
+     *   3. Not this signatory's turn (or already done)? Show an error.
+     *   4. Done → send Telegram and show a green message.
+     */
     public function store(Request $request, Document $document, TicketAlerts $alerts): RedirectResponse
     {
         $signatory = $request->user();
@@ -61,9 +74,8 @@ class DocumentActionController extends Controller
     }
 
     /**
-     * "Approve all": every document of this ticket that is waiting for this
-     * signatory, approved together. Each one is still checked and recorded
-     * separately, exactly as if its own Approve button was clicked.
+     * approveAll() = approves every paper of one ticket that is waiting for this signatory.
+     * Each paper is still checked and recorded on its own, as if each was clicked.
      */
     public function approveAll(Request $request, Ticket $ticket, TicketAlerts $alerts): RedirectResponse
     {
@@ -88,9 +100,8 @@ class DocumentActionController extends Controller
     }
 
     /**
-     * The green message only confirms the approval. The signatory signs the paper and
-     * updates DOC-MON; the officer carries the paper to the next signatory (their
-     * Telegram message says who), so it no longer says "Pass the paper to …" (AUD-108).
+     * finalNote() = adds " This was the final signature." to the green message when
+     * the last signatory approved.
      */
     private function finalNote(Document $document): string
     {
