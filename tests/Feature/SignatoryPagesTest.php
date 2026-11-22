@@ -80,7 +80,7 @@ class SignatoryPagesTest extends TestCase
         $this->actingAs($this->adviser)->from('/signatory/review')
             ->post("/signatory/tickets/{$batch->id}/approve-all")
             ->assertRedirect('/signatory/review')
-            ->assertSessionHas('status', fn ($msg) => $msg === "Approved 2 documents of {$batch->code}.");   // no "Pass the paper" (AUD-108)
+            ->assertSessionHas('status', fn ($msg) => $msg === "Approved 2 documents of {$batch->code}.");   // no "Pass the paper"
 
         $this->assertSame([2, 2], [$first->fresh()->current_step, $second->fresh()->current_step]);
         $this->assertSame(Document::RETURNED, $third->fresh()->status);   // untouched

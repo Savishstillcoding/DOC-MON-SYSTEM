@@ -1,5 +1,5 @@
 {{--
-    🔔 in a page header: a link to Profile → Telegram Notifications (AUD-059).
+    🔔 in a page header: a link to Profile → Telegram Notifications.
     A green dot shows that this user's Telegram is connected, so notifications are on.
     Usage: <x-docmon.notify-bell />
 --}}

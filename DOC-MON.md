@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-23:** Reading guides: the 15 core files (routes, the role guard, the 5 models, sign-up, log-in, verification, tickets, signatory actions, Telegram, availability) start with a short WHAT / USED FOR / KEY IDEA guide, and every comment in them is rewritten in plain words (name = what it is, then how it works step by step). Audit-log numbers (AUD-0xx) are removed from all code and docs, since the audit log stays on our laptops. Comments only; no behaviour changed.
 - **2026-11-17:** After Approve, the signatory's message only confirms it (and says when it was the final signature); it no longer tells them to pass the paper on, since the officer carries it.
 - **2026-11-17:** Cleaner look for the defense: the officer Dashboard's 5 number cards became one line of counts (coloured dots, each a link to that tab); signatories on phones get each paper as a card with full-size Approve / Revise / Reject; buttons are flat (no gradient or glow), cards no longer float, and log-in pages have plain taglines.
 - **2026-11-16:** Signatories can also choose **On Lunch Break** and **On Leave**, so the options match Chapter 1's Objective 3; one list (`User::AVAILABILITY`) now drives the form, the validation and the badge colours.

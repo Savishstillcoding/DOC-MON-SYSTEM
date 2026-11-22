@@ -1,7 +1,7 @@
 {{--
     DOC-MON · Student Officer · My Tickets
     The real tickets of the officer's organization (TicketController@index), shared by its
-    officers so the Deputy can carry on for the Secretary (AUD-075); each shows who filed it.
+    officers so the Deputy can carry on for the Secretary; each shows who filed it.
     From the controller: $tickets (filtered by the tab and the search), $counts (per tab), $tab (the active tab),
     $search (the search box, ?q=; also used by the Dashboard's search box)
     Under each ticket, a fold-out list of its documents: status, where each paper is,
@@ -84,7 +84,7 @@
                                         <p class="dm-cell-main">{{ $holders[0]['signatory']?->displayName() }}</p>
                                         <p class="dm-cell-sub">{{ $holders[0]['signatory']?->pivot->title }}</p>
                                     @else
-                                        {{-- A split Batch (AUD-049): every place a paper is, with how many --}}
+                                        {{-- A split Batch: every place a paper is, with how many --}}
                                         <div class="mt-holders">
                                             @foreach ($holders as $h)
                                                 @php $papers = $h['papers'] . ' ' . Str::plural('paper', $h['papers']); @endphp
@@ -100,7 +100,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{-- AUD-077: Overdue / Due Soon next to the status while papers are still moving --}}
+                                    {{-- Overdue / Due Soon next to the status while papers are still moving --}}
                                     <div class="dm-badges">
                                         <x-docmon.status-badge :status="$t->status()" />
                                         @if ($due = $t->deadlineStatus())
@@ -144,7 +144,7 @@
                                                             <p class="mt-remarks">"{{ $doc->latestAction->remarks }}"</p>
                                                         @endif
 
-                                                        {{-- AUD-084: the paper's whole story, oldest first --}}
+                                                        {{-- the paper's whole story, oldest first --}}
                                                         @php $timeline = $doc->timeline($route, $t->officer->displayName()); @endphp
                                                         <details class="mt-history" data-live-id="doc-{{ $doc->id }}">
                                                             <summary>History ({{ count($timeline) }})</summary>

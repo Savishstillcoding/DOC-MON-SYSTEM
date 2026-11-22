@@ -8,10 +8,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Visual fixes that PHPUnit can see: the skip link (AUD-093), the password rule shown
- * under the box instead of a cut-off placeholder (AUD-065), the phone menu button and the
- * signatory status under the name (dashboard critique, 2026-11-16). The colours
- * (AUD-092), the Email box (AUD-064) and the tab arrows (AUD-066) are CSS, checked in
+ * Visual fixes that PHPUnit can see: the skip link, the password rule shown
+ * under the box instead of a cut-off placeholder, the phone menu button and the
+ * signatory status under the name (dashboard critique, 2026-11-16). The colours,
+ * the Email box and the tab arrows are CSS, checked in
  * a real browser with axe-core.
  */
 class VisualFixesTest extends TestCase

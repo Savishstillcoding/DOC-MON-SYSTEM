@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * AUD-097: the To Do box at the top of the officer Dashboard lists what the officer has to
+ * the To Do box at the top of the officer Dashboard lists what the officer has to
  * act on (returned papers with the signatory's remark and a Resubmit button, then overdue
  * tickets and who they're waiting for), and the ticket cards come most urgent first.
  */

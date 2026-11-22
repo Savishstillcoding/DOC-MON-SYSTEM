@@ -16,7 +16,7 @@ use Illuminate\View\View;
 use Throwable;
 
 /**
- * "Forgot password?" (AUD-008), using Laravel's password broker:
+ * "Forgot password?", using Laravel's password broker:
  *   1. create/store: the user types their ID and email; if they match a verified
  *      account, a one-time link is emailed (through Brevo). The page answers the
  *      same either way, so it can't be used to find out which IDs or emails exist.

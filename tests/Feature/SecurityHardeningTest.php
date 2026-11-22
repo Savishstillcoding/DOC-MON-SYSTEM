@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
- * Batch 1 security fixes: password rule (AUD-067), sign out other devices (AUD-068),
- * security headers (AUD-069), log-ins and ID views on record (AUD-071, AUD-072),
- * per-account log-in limit (AUD-073), docmon:create-admin (AUD-091).
+ * Batch 1 security fixes: password rule, sign out other devices,
+ * security headers, log-ins and ID views on record,
+ * per-account log-in limit, docmon:create-admin.
  */
 class SecurityHardeningTest extends TestCase
 {
@@ -28,7 +28,7 @@ class SecurityHardeningTest extends TestCase
         $this->officer = User::factory()->create(['role' => 'officer', 'status' => 'verified', 'login_id' => '2201234']);
     }
 
-    // ---------- AUD-067: password rule ----------
+    // ---------- password rule ----------
 
     public function test_passwords_need_letters_and_numbers(): void
     {
@@ -62,7 +62,7 @@ class SecurityHardeningTest extends TestCase
         $this->assertTrue(Hash::check('Bagong2026', $this->officer->fresh()->password));
     }
 
-    // ---------- AUD-068: other devices signed out ----------
+    // ---------- other devices signed out ----------
 
     public function test_changing_the_password_signs_out_other_devices_only(): void
     {
@@ -84,7 +84,7 @@ class SecurityHardeningTest extends TestCase
         $this->assertAuthenticatedAs($this->officer);   // this browser stays logged in
     }
 
-    // ---------- AUD-069: security headers ----------
+    // ---------- security headers ----------
 
     public function test_pages_send_the_security_headers(): void
     {
@@ -100,7 +100,7 @@ class SecurityHardeningTest extends TestCase
         $this->actingAs($this->officer)->get('/officer/dashboard')->assertHeader('X-Frame-Options', 'DENY');
     }
 
-    // ---------- AUD-071: log-ins on record ----------
+    // ---------- log-ins on record ----------
 
     public function test_log_ins_are_recorded_without_the_password(): void
     {
@@ -132,7 +132,7 @@ class SecurityHardeningTest extends TestCase
         $this->assertStringContainsString('Unverified', $log->details);
     }
 
-    // ---------- AUD-072: ID views on record ----------
+    // ---------- ID views on record ----------
 
     public function test_viewing_an_id_is_recorded(): void
     {
@@ -149,7 +149,7 @@ class SecurityHardeningTest extends TestCase
         $this->assertStringContainsString("({$pending->login_id})", $log->details);
     }
 
-    // ---------- AUD-073: per-account log-in limit ----------
+    // ---------- per-account log-in limit ----------
 
     public function test_switching_ip_addresses_does_not_allow_endless_guessing(): void
     {
@@ -175,7 +175,7 @@ class SecurityHardeningTest extends TestCase
             ->assertRedirect('/officer/dashboard');
     }
 
-    // ---------- AUD-091: docmon:create-admin ----------
+    // ---------- docmon:create-admin ----------
 
     public function test_the_command_creates_an_admin_who_can_log_in(): void
     {

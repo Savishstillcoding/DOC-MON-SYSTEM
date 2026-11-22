@@ -31,7 +31,7 @@
   line-height: 22px;
 }
 .field input[type="text"],
-.field input[type="email"],   /* Forgot / Reset Password (AUD-064) */
+.field input[type="email"],   /* Forgot / Reset Password */
 .field input[type="password"] {
   height: 40px;
   padding: 0 16px;
@@ -42,7 +42,7 @@
   border: 1px solid #d9d9d9;
   border-radius: 8px;
 }
-.field input::placeholder { color: #767676; }   /* 4.5:1 on white (AUD-092) */
+.field input::placeholder { color: #767676; }   /* 4.5:1 on white */
 .field input:focus-visible {
   outline: 2px solid #2c2c2c;
   outline-offset: 1px;
@@ -77,7 +77,7 @@
 }
 
 /* "Wrong ID or password." etc., shown under the field by @error */
-/* Rule shown under a box while typing (AUD-065) */
+/* Rule shown under a box while typing */
 .field-hint { font-size: 14px; line-height: 20px; color: #5f5f5f; }
 .form-error {
   font-size: 14px;

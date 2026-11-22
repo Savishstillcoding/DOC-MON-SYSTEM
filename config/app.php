@@ -66,7 +66,7 @@ return [
     */
 
     // DOC-MON is used in the Philippines: times on tickets, "Submitted 12:40 PM",
-    // the dashboard greeting and "Signed This Week" all follow Philippine time (AUD-051)
+    // the dashboard greeting and "Signed This Week" all follow Philippine time
     'timezone' => 'Asia/Manila',
 
     /*

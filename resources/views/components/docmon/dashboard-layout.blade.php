@@ -12,7 +12,7 @@
     $user = ['name' => 'Labastida, MJ Bryan', 'initials' => 'MJ', 'subtitle' => 'Secretary · DIGITS']
     session('status') (e.g. "Profile saved.") is shown as a green bar above the content.
 
-    Live updates (AUD-050): pass :live="true" and mark boxes with data-live="name".
+    Live updates: pass :live="true" and mark boxes with data-live="name".
     docmon-live.js then refreshes those boxes when the data behind them changes.
 --}}
 @props(['title' => 'DOC-MON', 'user' => null, 'menu' => [], 'active' => '', 'live' => false])
@@ -42,7 +42,7 @@
     @endif
 </head>
 <body class="dm-body">
-    {{-- AUD-093: first thing a keyboard user reaches; jumps past the sidebar --}}
+    {{-- first thing a keyboard user reaches; jumps past the sidebar --}}
     <a href="#main" class="dm-skip">Skip to content</a>
 
     <aside class="dm-sidebar">
@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        {{-- No "MENU" label above it (AUD-103): the links speak for themselves --}}
+        {{-- No "MENU" label above it: the links speak for themselves --}}
         <nav class="dm-menu" aria-label="Main menu">
             @foreach ($menu as $item)
                 <a href="{{ $item['href'] ?? '#' }}" class="dm-menu-item {{ $item['label'] === $active ? 'is-active' : '' }}">

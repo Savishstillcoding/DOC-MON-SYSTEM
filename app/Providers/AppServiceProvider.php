@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // The leaked-password check (AUD-067) waits at most 5 seconds instead of Laravel's 30.
+        // The leaked-password check waits at most 5 seconds instead of Laravel's 30.
         // If haveibeenpwned.com can't be reached, Laravel lets the password through, so a
         // slow or offline service never blocks sign-up. Only the first 5 characters of the
         // password's SHA-1 hash are sent, never the password itself.
@@ -40,11 +40,11 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // One password rule for sign-up, Profile, the reset link and docmon:reset-password
-        // (AUD-067): 8+ characters with letters and numbers, and not in a known data leak.
+        // = 8+ characters with letters and numbers, and not in a known data leak.
         // Existing passwords keep working; the rule applies when a password is set
         Password::defaults(fn () => Password::min(8)->letters()->numbers()->uncompromised());
 
-        // Log-in limits (AUD-073): 5 tries a minute per IP address, as before, plus 10 a
+        // Log-in limits: 5 tries a minute per IP address, as before, plus 10 a
         // minute per account, so switching IP addresses doesn't allow endless guessing.
         // Kept to one minute, so a stranger can't keep someone locked out for long
         RateLimiter::for('login', function (Request $request) {

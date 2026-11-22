@@ -80,7 +80,7 @@ body {
 .nav a:hover {
     text-decoration: underline;
 }
-/* Logged in (AUD-045): "Dashboard" is wider than the fixed 80px, and Log out is a
+/* Logged in: "Dashboard" is wider than the fixed 80px, and Log out is a
    form button that should look exactly like the links */
 .nav .nav-auto { width: auto; min-width: 80px; }
 .nav form { display: flex; }

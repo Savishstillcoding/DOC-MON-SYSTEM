@@ -1,4 +1,4 @@
-// Show / hide password (AUD-056): an eye button inside every password box, so people
+// Show / hide password: an eye button inside every password box, so people
 // can double-check what they typed. Used on the log-in, sign-up and profile pages.
 //
 // - The password starts hidden; it is only shown while the person asks for it.

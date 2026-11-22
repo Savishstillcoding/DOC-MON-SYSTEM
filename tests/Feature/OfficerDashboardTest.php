@@ -10,8 +10,8 @@ use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 /**
- * The officer's Dashboard and Signatories page show real data (AUD-038),
- * in Philippine time (AUD-051).
+ * The officer's Dashboard and Signatories page show real data,
+ * in Philippine time.
  */
 class OfficerDashboardTest extends TestCase
 {
@@ -56,7 +56,7 @@ class OfficerDashboardTest extends TestCase
         $this->adviser->forceFill(['availability' => 'In Class', 'back_at' => '3:00 PM'])->save();
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
-            ->assertSee('In Class · Back at 3:00 PM')   // same words as the ticket cards (AUD-088)
+            ->assertSee('In Class · Back at 3:00 PM')   // same words as the ticket cards
             ->assertSee('Step 1 · Adviser');
     }
 
@@ -75,7 +75,7 @@ class OfficerDashboardTest extends TestCase
 
         $this->actingAs($this->officer)->get('/officer/dashboard')
             ->assertViewHas('stats', ['total' => 3, 'pending' => 1, 'approved' => 1, 'partly' => 0, 'revision' => 1, 'rejected' => 0])
-            ->assertSee('Paper of REF-2')   // the returned paper is in To Do (AUD-097)
+            ->assertSee('Paper of REF-2')   // the returned paper is in To Do
             ->assertSee('Adviser: <q>Fix it</q>', false)
             ->assertSee("{$approved->code} · Paper of REF-1 approved by VPSD")
             ->assertSee("{$returned->code} · Paper of REF-2 returned for revision by Adviser")
@@ -88,7 +88,7 @@ class OfficerDashboardTest extends TestCase
 
     public function test_a_partly_approved_ticket_does_not_vanish_from_the_dashboard(): void
     {
-        // AUD-057: a finished Batch with one paper approved and one rejected is "Partly Approved".
+        // a finished Batch with one paper approved and one rejected is "Partly Approved".
         // It was only under "All" and in Total, so the cards didn't add up
         $ticket = $this->ticket('REF-1');
         [$a, $b] = [$ticket->documents[0], $ticket->documents()->create(['type' => 'Budget', 'title' => 'Paper B'])];
@@ -100,7 +100,7 @@ class OfficerDashboardTest extends TestCase
         $this->actingAs($this->officer)->get('/officer/dashboard')
             ->assertViewHas('stats', fn ($s) => $s['partly'] === 1
                 && $s['total'] === $s['pending'] + $s['approved'] + $s['partly'] + $s['revision'] + $s['rejected'])
-            ->assertSee('<b>1</b> Partly approved', false)   // its own count, only when there is one (AUD-101)
+            ->assertSee('<b>1</b> Partly approved', false)   // its own count, only when there is one
             ->assertSee('?status=Partly+Approved', false);
 
         // Its own tab finds it
@@ -170,7 +170,7 @@ class OfficerDashboardTest extends TestCase
 
     // ---------- Helpers ----------
 
-    // ---------- A split Batch (AUD-049) ----------
+    // ---------- A split Batch ----------
 
     public function test_a_split_batch_shows_every_place_its_papers_are(): void
     {

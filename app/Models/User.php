@@ -2,6 +2,17 @@
 
 namespace App\Models;
 
+/*
+| READING GUIDE 3/15: User
+|
+| WHAT: the model for the `users` table. One row = one account.
+| USED FOR: every account: officers, signatories and the admin (the `role`
+|           column says which).
+| KEY IDEA: role = what you are; status = can you log in (only "verified" can).
+|           role and status are NOT fillable, so a sign-up form can't make itself an admin.
+|           Passwords are saved as hashes, never as readable text.
+*/
+
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
@@ -16,8 +27,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-// role and status are left out on purpose: only the app (or an admin) may set
-// them, so a sign-up form can't sneak in "role=admin" or "status=verified".
+// FILLABLE = the fields a form is allowed to fill in.
+// How it works:
+//   1. Someone sends the sign-up form.
+//   2. Laravel copies ONLY the fields in this list into the new account.
+//   3. Anything else the form sends (like "role=admin") is thrown away.
+// role and status are left out on purpose: only our code sets them, so nobody can
+// make themselves an admin or skip the admin's verification.
+// HIDDEN = never shown when the account is turned into data (the password hash).
 #[Fillable(['first_name', 'last_name', 'login_id', 'email', 'phone', 'position', 'organization_id', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -26,10 +43,12 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * A signatory's possible statuses, shown on officers' ticket cards, and the colour of
-     * each: green = here, amber = busy for a while, red = away. The one list the form, the
-     * validation and the badge all read. Includes every option Chapter 1 (Objective 3)
-     * promises, On Lunch Break and On Leave (added 2026-11-16), plus Out of Office.
+     * AVAILABILITY = the statuses a signatory can pick, and each one's badge colour.
+     * How it works:
+     *   1. The signatory picks one on their page (the dropdown shows this list).
+     *   2. The server checks the choice is in this list.
+     *   3. Officers see it as a badge: green = here, amber = busy, red = away.
+     * One list for all three, so they always match.
      */
     public const AVAILABILITY = [
         'Available' => 'available',
@@ -41,8 +60,12 @@ class User extends Authenticatable
     ];
 
     /**
-     * Account statuses and how the admin pages show them. Only "verified" can log in.
-     * "deactivated" = turned off by the admin (e.g. graduated); can be reactivated.
+     * STATUS_LABELS = the 4 account statuses, and the word shown on screen for each.
+     * How an account moves:
+     *   1. pending:     just signed up, waiting for the admin ("Unverified")
+     *   2. verified:    the admin checked the ID; the ONLY status that can log in
+     *      or rejected: the admin said no, with a reason
+     *   3. deactivated: the admin turned it off later (e.g. graduated); can be turned back on
      */
     public const STATUS_LABELS = [
         'pending' => 'Unverified',
@@ -51,22 +74,26 @@ class User extends Authenticatable
         'deactivated' => 'Deactivated',
     ];
 
-    /** How each role is called on screen. */
+    /** ROLE_LABELS = the name shown on screen for each role (officer → "Student Officer"). */
     public const ROLE_LABELS = [
         'officer' => 'Student Officer',
         'signatory' => 'Signatory',
         'admin' => 'Administrator',
     ];
 
-    /** Accounts are reviewed after this many years; the privacy notice promises it (AUD-078). */
+    /**
+     * RETENTION_YEARS = how long we keep an account before the admin reviews it.
+     * After 4 years (e.g. the student graduated) the admin checks if it's still needed,
+     * as the privacy notice promises.
+     */
     public const RETENTION_YEARS = 4;
 
-    /** The officer positions that may file tickets. */
+    /** OFFICER_POSITIONS = the only officer positions that can sign up and file tickets. */
     public const OFFICER_POSITIONS = ['Secretary', 'Deputy Secretary'];
 
     /**
-     * Same defaults as the database, so a brand-new user has them right away
-     * (otherwise $user->role is empty until the row is reloaded).
+     * $attributes = the starting values of a brand-new account:
+     * every new account starts as an officer that is pending (not yet verified).
      *
      * @var array<string, string>
      */
@@ -76,7 +103,11 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * casts() = automatic conversions when a column is saved or read.
+     * How it works:
+     *   - 'hashed': the password is scrambled (bcrypt) BEFORE it is saved, so the
+     *     database never holds the real password.
+     *   - 'datetime': the column becomes a real date, so it can be shown as "Nov 12".
      *
      * @return array<string, string>
      */
@@ -92,13 +123,18 @@ class User extends Authenticatable
     }
 
     /**
-     * When a signatory last set their availability, short (AUD-088): "9:14 AM" today,
-     * "yesterday, 4:30 PM", or "Nov 12". Null if they never changed it.
+     * availabilitySetAt() = WHEN the signatory last set their status, written short.
+     * How it works:
+     *   - set today      → "9:14 AM"
+     *   - set yesterday  → "yesterday, 4:30 PM"
+     *   - older          → "Nov 12"
+     *   - never set      → nothing
      */
     public function availabilitySetAt(): ?string
     {
         $set = $this->availability_updated_at;
-        $time = fn () => $set->format('g:i')."\u{00A0}".$set->format('A');   // no-break space: "9:14" never wraps away from "AM"
+        // \u{00A0} is a space that never breaks a line, so "9:14" and "AM" always stay together
+        $time = fn () => $set->format('g:i')."\u{00A0}".$set->format('A');
 
         return match (true) {
             $set === null => null,
@@ -109,9 +145,13 @@ class User extends Authenticatable
     }
 
     /**
-     * The words after a signatory's status, so nobody trusts "Back at 2:00 PM" at 5 PM
-     * (AUD-088): "Back at 2:00 PM · set 9:14 AM". Null for Available, which needs no note.
-     * One place, so every page that shows availability says the same thing.
+     * availabilityNote() = the small text after a signatory's status.
+     * How it works:
+     *   1. Available? Show nothing.
+     *   2. Otherwise join the "back at" time and when it was set:
+     *      "Back at 2:00 PM · set 9:14 AM"
+     * Why: the "set" time shows how old the status is, so nobody trusts
+     * "Back at 2:00 PM" at 5 PM.
      */
     public function availabilityNote(): ?string
     {
@@ -125,15 +165,21 @@ class User extends Authenticatable
             ->filter()->implode(' · ') ?: null;
     }
 
-    /** The organization an officer belongs to (signatories and admins have none). */
+    /*
+     * RELATIONSHIPS: how an account connects to other tables.
+     * Each one lets the code write $user->organization, $user->tickets, ...
+     * instead of writing a database query by hand.
+     */
+
+    /** organization() = the org an OFFICER belongs to (e.g. DIGITS). */
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
 
     /**
-     * The organizations a signatory signs for, with their step and title in each
-     * route (e.g. DIGITS, step 1, "Adviser"). The same person can be on several routes.
+     * signatoryOrganizations() = the orgs a SIGNATORY signs for, with their step and
+     * title in each (e.g. DIGITS, step 1, "Adviser"). One person can sign for several orgs.
      */
     public function signatoryOrganizations(): BelongsToMany
     {
@@ -143,35 +189,41 @@ class User extends Authenticatable
             ->orderBy('code');
     }
 
-    /** The ID photo uploaded at sign-up; gone once the admin has decided. */
+    /** idDocument() = the ID photo from sign-up. Deleted once the admin decides. */
     public function idDocument(): HasOne
     {
         return $this->hasOne(IdDocument::class);
     }
 
-    /** The admin who verified or rejected this account. */
+    /** reviewer() = the admin who verified or rejected this account. */
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
-    /** Tickets this officer filed. */
+    /** tickets() = the tickets this officer filed. */
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'officer_id');
     }
 
+    /** statusLabel() = the account status in screen words ("pending" → "Unverified"). */
     public function statusLabel(): string
     {
         return self::STATUS_LABELS[$this->status] ?? ucfirst((string) $this->status);
     }
 
+    /** roleLabel() = the role in screen words ("officer" → "Student Officer"). */
     public function roleLabel(): string
     {
         return self::ROLE_LABELS[$this->role] ?? ucfirst((string) $this->role);
     }
 
-    /** Active accounts past the retention period, for the admin's yearly review (AUD-078). */
+    /**
+     * pastRetention() = a search filter: verified officer and signatory accounts
+     * older than 4 years, for the admin's yearly clean-up.
+     * Used as User::pastRetention()->get().
+     */
     public function scopePastRetention(Builder $query): void
     {
         $query->where('status', 'verified')
@@ -179,24 +231,31 @@ class User extends Authenticatable
             ->where('created_at', '<=', now()->subYears(self::RETENTION_YEARS));
     }
 
-    /** "Forgot password?" sends DOC-MON's own wording of the reset email (AUD-008). */
+    /**
+     * sendPasswordResetNotification() = sends the "Forgot password?" email.
+     * It uses OUR version (DOC-MON's wording) instead of Laravel's default.
+     */
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token));
     }
 
-    /** "Labastida, MJ Bryan", the way names are listed across DOC-MON. */
+    /** displayName() = the name as shown everywhere: "Labastida, MJ Bryan". */
     public function displayName(): string
     {
         return trim("{$this->last_name}, {$this->first_name}", ', ');
     }
 
+    /** initials() = first letters of first + last name, for the round avatar ("ML"). */
     public function initials(): string
     {
         return strtoupper(mb_substr($this->first_name ?? '', 0, 1).mb_substr($this->last_name ?? '', 0, 1));
     }
 
-    /** The line under the name in the sidebar, e.g. "Secretary · DIGITS" or "Adviser · DIGITS". */
+    /**
+     * subtitle() = the line under the name in the sidebar.
+     *   admin → "Administrator"; officer → "Secretary · DIGITS"; signatory → "Adviser · DIGITS"
+     */
     public function subtitle(): string
     {
         if ($this->role === 'admin') {

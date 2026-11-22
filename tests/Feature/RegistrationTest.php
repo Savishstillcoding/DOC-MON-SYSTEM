@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 /**
- * Sign-up for officers and signatories (AUD-044, AUD-012, AUD-013, AUD-004).
+ * Sign-up for officers and signatories.
  */
 class RegistrationTest extends TestCase
 {

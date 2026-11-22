@@ -22,7 +22,7 @@ class DashboardController extends Controller
     {
         $signatory = $request->user();
 
-        // Most urgent first (AUD-077): soonest Date Needed, then no date; ties oldest
+        // Most urgent first: soonest Date Needed, then no date; ties oldest
         // first (updated_at is when the paper reached this step: moved here by an
         // approval, or resubmitted after a revision). The sort is stable
         $waiting = Document::atStepOf($signatory)

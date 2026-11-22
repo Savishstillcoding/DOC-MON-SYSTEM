@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * AUD-076: DOC-MON knows whose signature is NEXT, not who physically holds the paper
+ * DOC-MON knows whose signature is NEXT, not who physically holds the paper
  * (the officer carries it). So the pages say "Waiting for", never "With" or "Signatory".
  */
 class HonestLabelTest extends TestCase

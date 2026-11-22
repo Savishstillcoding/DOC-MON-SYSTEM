@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 /**
  * Signatories approving, returning and rejecting documents, officers
- * resubmitting returned ones, and the ticket status that follows (AUD-046).
+ * resubmitting returned ones, and the ticket status that follows.
  */
 class SignatoryActionTest extends TestCase
 {
@@ -50,7 +50,7 @@ class SignatoryActionTest extends TestCase
 
         $this->act($this->adviser, $doc, 'approve')
             ->assertRedirect('/signatory/dashboard')
-            // Only confirms: the officer, not the signatory, carries the paper on (AUD-108)
+            // Only confirms: the officer, not the signatory, carries the paper on
             ->assertSessionHas('status', fn ($msg) => str_starts_with($msg, 'Approved ')
                 && ! str_contains($msg, 'Pass the paper') && ! str_contains($msg, 'Reyes, Paolo'));
 

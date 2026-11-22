@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /**
- * AUD-084: each paper on My Tickets has a History fold-out with its whole story, oldest
+ * each paper on My Tickets has a History fold-out with its whole story, oldest
  * first (submitted, every approve / return / reject / resubmit with who, when and the
  * remark, then where it is now), loaded without one query per paper.
  */

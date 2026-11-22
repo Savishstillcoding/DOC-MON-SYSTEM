@@ -11,15 +11,15 @@ use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 /**
- * The officer's dashboard (AUD-038): their organization's real tickets and numbers
- * (shared, AUD-075), the live availability of its signatories, and what happened recently.
+ * The officer's dashboard: their organization's real tickets and numbers
+ * (shared), the live availability of its signatories, and what happened recently.
  */
 class DashboardController extends Controller
 {
     /** How many ticket cards the dashboard shows. */
     private const CARDS = 4;
 
-    /** How many To Do lines the dashboard shows; the rest are a link away (AUD-097). */
+    /** How many To Do lines the dashboard shows; the rest are a link away. */
     private const TODO = 5;
 
     public function index(Request $request): View
@@ -36,7 +36,7 @@ class DashboardController extends Controller
 
         $tab = in_array($request->query('status'), Ticket::STATUS_TABS, true) ? $request->query('status') : 'All';
         $shown = $tab === 'All' ? $tickets : $tickets->filter(fn (Ticket $t) => $t->status() === $tab);
-        // Most urgent first (AUD-097): what needs the officer, then late, then soon; newest first within each.
+        // Most urgent first: what needs the officer, then late, then soon; newest first within each.
         // sortBy keeps the order of equal keys, so "newest first" survives inside each group
         $shown = $shown->sortBy(fn (Ticket $t) => match (true) {
             $t->status() === 'Needs Revision' => 0,
@@ -66,7 +66,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * The To Do box (AUD-097): what this officer has to act on, most pressing first.
+     * The To Do box: what this officer has to act on, most pressing first.
      *   1. Papers returned for revision: the signatory's remark and a Resubmit button.
      *   2. Overdue tickets still waiting on a signatory: who to go and see.
      * Tickets that are only "Due Soon" stay on the cards, so the box stays short.
@@ -131,9 +131,9 @@ class DashboardController extends Controller
             // Live availability of whoever holds the papers now (none when the ticket is finished)
             'availability' => $signatory ? ($signatory->availability ?? 'Available') : null,
             'availability_note' => $signatory?->availabilityNote(),
-            // A split Batch (AUD-049): one line per place, each signatory with their own dot
+            // A split Batch: one line per place, each signatory with their own dot
             'holders' => $holders->count() > 1 ? $holders->map(fn (array $h) => $this->holderLine($h))->all() : [],
-            // AUD-077: the Date Needed, and Overdue / Due Soon while papers are still moving
+            // the Date Needed, and Overdue / Due Soon while papers are still moving
             'needed' => $ticket->date_needed?->format('M j, Y'),
             'deadline' => $ticket->deadlineStatus(),
             'submitted' => $ticket->created_at->format('M j, Y'),

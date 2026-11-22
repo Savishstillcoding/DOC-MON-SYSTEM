@@ -1,6 +1,6 @@
 // School/Employee ID upload box:
 // - shows the chosen file's name, so the user can see their upload worked
-// - enforces the 2 MB limit (AUD-040): PHP silently drops bigger uploads, and
+// - enforces the 2 MB limit: PHP silently drops bigger uploads, and
 //   phone photos are often 3-5 MB, so big photos are shrunk here first.
 //   Big PDFs can't be shrunk, so they get a clear message instead.
 // This is only a convenience: the server must still check the size (Milestone 2).

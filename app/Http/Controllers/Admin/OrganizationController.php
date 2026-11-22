@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
- * Organizations (AUD-053): the student organizations using DOC-MON. The admin adds
+ * Organizations: the student organizations using DOC-MON. The admin adds
  * and renames them; the approval route itself is set on Signatory Lists.
  * Delete only when the organization is empty (decided 2026-11-01), so no officer,
  * ticket or route is ever lost.

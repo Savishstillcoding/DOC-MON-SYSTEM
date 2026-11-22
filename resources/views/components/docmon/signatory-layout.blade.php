@@ -1,6 +1,6 @@
 {{--
     The dashboard layout with the signatory menu, so the menu is defined once
-    for every signatory page (instead of being copied into each view, see AUD-019).
+    for every signatory page (instead of being copied into each view).
 
     Usage: <x-docmon.signatory-layout title="History" active="History"> ... </x-docmon.signatory-layout>
 --}}

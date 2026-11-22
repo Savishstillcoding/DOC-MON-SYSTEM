@@ -215,7 +215,7 @@ class DatabaseRulesTest extends TestCase
         return DB::table('tickets')->insertGetId([
             'code' => 'DM-TEST-'.$number,
             'ref_no' => $refNo,
-            'active_ref_no' => $refNo,   // what Ticket::creating does for every app-made ticket (AUD-079)
+            'active_ref_no' => $refNo,   // what Ticket::creating does for every app-made ticket
             'organization_id' => $organizationId,
             'officer_id' => $officer->id,
             'title' => 'Test ticket',

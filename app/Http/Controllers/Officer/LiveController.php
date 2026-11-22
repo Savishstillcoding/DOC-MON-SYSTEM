@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * GET /officer/live: the current fingerprint of the officer's pages (AUD-050).
+ * GET /officer/live: the current fingerprint of the officer's pages.
  * Tiny on purpose: it is asked every 20 s by every open officer tab.
  */
 class LiveController extends Controller

@@ -2,7 +2,7 @@
     Colored status pill.
     Usage: <x-docmon.status-badge status="Pending" />
     Statuses: Pending, Approved, Partly Approved, Rejected, Needs Revision, Verified, For Review, Unverified, Deactivated, Connected,
-    and the deadline badges from Ticket::deadlineStatus(): Overdue, Due Soon (AUD-077)
+    and the deadline badges from Ticket::deadlineStatus(): Overdue, Due Soon
 --}}
 @props(['status'])
 

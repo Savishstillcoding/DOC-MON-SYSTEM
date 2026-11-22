@@ -25,7 +25,7 @@ class DocumentController extends Controller
         $document = DB::transaction(function () use ($document, $officer) {
             $document = Document::with('ticket.organization.signatories')->lockForUpdate()->findOrFail($document->id);
 
-            // Any officer of the ticket's organization (AUD-075), and only while it is returned.
+            // Any officer of the ticket's organization, and only while it is returned.
             // The action below records who actually resubmitted it
             if (! $document->ticket->isVisibleTo($officer) || $document->status !== Document::RETURNED) {
                 return null;

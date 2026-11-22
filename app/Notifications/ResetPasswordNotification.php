@@ -6,7 +6,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
- * The "Reset your password" email (AUD-008). Laravel's built-in reset email,
+ * The "Reset your password" email. Laravel's built-in reset email,
  * reworded for DOC-MON. The link opens /reset-password/{token} and works once,
  * for 60 minutes (config/auth.php → passwords.users.expire).
  */

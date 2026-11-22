@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 /**
  * Batch 3 database changes: the Ref No. unique rule that frees a fully rejected
- * ticket's number (AUD-079) and the availability time stamp (AUD-088). These check the
+ * ticket's number and the availability time stamp. These check the
  * DATABASE rules directly; the pages that use them come in Batch 4.
  */
 class Batch3MigrationsTest extends TestCase

@@ -2,6 +2,19 @@
 
 namespace App\Models;
 
+/*
+| READING GUIDE 6/15: Document
+|
+| WHAT: the model for the `documents` table. One row = one physical paper.
+| USED FOR: tracking where each paper is (current_step) and its status, and
+|           moving it with applyAction().
+| KEY IDEA: applyAction() is the rulebook:
+|             approve → next signatory (or Approved after the last one)
+|             return  → back to the officer, then to the SAME signatory
+|             reject  → closed for good
+|           Only the signatory at the paper's current step can act.
+*/
+
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,17 +26,22 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * One physical paper inside a ticket. Each document is approved separately,
- * so it has its own status and current step.
+ * Document = one physical paper inside a ticket.
+ * Each paper is approved on its own, so it has its own status and current step.
  */
-// status and current_step are left out on purpose: a new document always starts
-// pending at step 1 (database defaults), and only signatory actions move it
+// FILLABLE = the fields the New Ticket form may fill in for each paper.
+// How it works:
+//   1. The officer adds papers in the New Ticket form.
+//   2. Laravel copies ONLY type, title and ref_no into each paper.
+//   3. Anything else the form sends is thrown away.
+// status and current_step are left out on purpose: every new paper starts as pending
+// at step 1, and only a signatory's Approve / Return / Reject (applyAction) moves it.
 #[Fillable(['type', 'title', 'ref_no'])]
 class Document extends Model
 {
     /**
-     * The documents student organizations submit (confirmed list, 2026-10-22).
-     * "Other (specify)" is the fallback: the document title then says what it is.
+     * TYPES = the kinds of papers an officer can choose in the New Ticket form.
+     * "Other (specify)" is for anything else; the paper's title then says what it is.
      */
     public const TYPES = [
         'Resolution',
@@ -35,17 +53,18 @@ class Document extends Model
         'Other (specify)',
     ];
 
-    // The only values documents.status may hold. Use these constants instead of
-    // typing the words, so a typo can't create a status nothing else understands.
+    // The only 4 values documents.status can have. The code writes Document::PENDING
+    // instead of typing 'pending', so a typo (like 'pendng') becomes an error right away
+    // instead of a status that nothing understands.
     public const PENDING = 'pending';     // waiting for the signatory at current_step
 
-    public const RETURNED = 'returned';   // sent back to the officer; returns to the same step
+    public const RETURNED = 'returned';   // sent back to the officer to fix; then goes back to the SAME signatory
 
-    public const APPROVED = 'approved';   // the last signatory approved it (final)
+    public const APPROVED = 'approved';   // the last signatory approved it (finished)
 
-    public const REJECTED = 'rejected';   // closed; the officer files a new ticket (final)
+    public const REJECTED = 'rejected';   // closed for good; the officer files a new ticket (finished)
 
-    /** What officers and signatories see for each status (labels of <x-docmon.status-badge>). */
+    /** STATUS_LABELS = the word shown on the coloured badge for each status ("returned" → "Needs Revision"). */
     public const STATUS_LABELS = [
         self::PENDING => 'Pending',
         self::RETURNED => 'Needs Revision',
@@ -53,7 +72,7 @@ class Document extends Model
         self::REJECTED => 'Rejected',
     ];
 
-    // Any change to a document also bumps its ticket's updated_at ("Last Update")
+    // $touches: whenever a paper changes, its ticket's "Last Update" time (updated_at) changes too
     protected $touches = ['ticket'];
 
     public function ticket(): BelongsTo
@@ -61,22 +80,24 @@ class Document extends Model
         return $this->belongsTo(Ticket::class);
     }
 
-    /** Permanent history: every approve, return, reject and resubmit. */
+    /** actions() = this paper's history rows: every approve, return, reject and resubmit. */
     public function actions(): HasMany
     {
         return $this->hasMany(DocumentAction::class);
     }
 
-    /** The newest action, e.g. to show why the document was returned. */
+    /** latestAction() = the newest history row, e.g. to show WHY it was returned. */
     public function latestAction(): HasOne
     {
         return $this->hasOne(DocumentAction::class)->latestOfMany();
     }
 
     /**
-     * This paper's whole story for the officer's History fold-out (AUD-084), oldest first:
-     * submitted, every approve / return / reject / resubmit with who, when and the remark,
-     * then where it is now. Load ->actions (with ->user) first, or it costs a query per paper.
+     * timeline() = this paper's story for the officer's History fold-out.
+     * How it works:
+     *   1. Start with "Submitted".
+     *   2. Add every approve / return / reject / resubmit: who, when, and the remark.
+     *   3. End with where it is now ("Now waiting for the SSC President to sign").
      *
      * @param  Collection<int, User>  $route  the organization's signatories, with ->pivot (step, title)
      * @return list<array{tone: string, text: string, who: ?string, remark: ?string, at: ?Carbon}>
@@ -119,12 +140,14 @@ class Document extends Model
     }
 
     /**
-     * Documents sitting at this signatory's step: the signatory is on the route of
-     * the ticket's organization, at exactly the step the document has reached.
-     * Combine with a status, e.g. ->where('status', Document::PENDING).
+     * atStepOf() = a search filter: the papers sitting at THIS signatory's step.
+     * A paper matches if, in its organization's route, this signatory is at the
+     * step the paper has reached. Used as Document::atStepOf($signatory).
      */
     public function scopeAtStepOf(Builder $query, User $signatory): void
     {
+        // In words: keep a document only if the route table has a row with
+        // the ticket's organization + the document's current step + this signatory.
         $query->whereHas('ticket', fn (Builder $ticket) => $ticket->whereExists(fn ($route) => $route
             ->from('organization_signatory')
             ->whereColumn('organization_signatory.organization_id', 'tickets.organization_id')
@@ -133,8 +156,8 @@ class Document extends Model
     }
 
     /**
-     * Can this signatory act on the document right now?
-     * Only if it is pending and they are the signatory at its current step.
+     * isWaitingFor() = the bouncer: may this signatory act on this paper right now?
+     * YES only if the paper is pending AND this signatory is at its current step.
      */
     public function isWaitingFor(User $signatory): bool
     {
@@ -143,33 +166,47 @@ class Document extends Model
     }
 
     /**
-     * A signatory approves, returns, or rejects this document, and the action is
-     * recorded permanently. Returns false (and changes nothing) when the document
-     * is not waiting for this signatory.
-     *
-     * Call it inside DB::transaction() on a row loaded with lockForUpdate(), so two
-     * clicks at the same moment can't both act on the same document.
+     * applyAction() = what happens when a signatory clicks Approve, Return or Reject.
+     * How it works:
+     *   1. Check isWaitingFor(). Not their turn? Stop, change nothing (returns false).
+     *   2. Move the paper:
+     *        approve → next signatory's step, or "approved" after the last one
+     *        return  → "returned" (stays at the same step, comes back to them)
+     *        reject  → "rejected" (closed for good)
+     *   3. Save a history row (who, what, which step, remarks).
+     *   4. If rejected: maybe free the ticket's Ref No. (see below).
+     *   5. Write it in the admin's Activity Log.
+     * The controller runs this with the paper LOCKED, so a double click can't act twice.
      *
      * @param  'approve'|'return'|'reject'  $action
      */
     public function applyAction(User $signatory, string $action, ?string $remarks = null): bool
     {
+        // 1. Bouncer: not your turn, or already handled? Change nothing.
         if (! $this->isWaitingFor($signatory)) {
             return false;
         }
 
+        // Remember the step BEFORE moving, for the history row
         $step = $this->current_step;
 
+        // 2. Move the paper
         if ($action === 'approve') {
-            // Next signatory, or Approved for good after the last one
+            // Is there a next signatory? Yes: move to their step. No (this was the last
+            // one, the VPSD): the paper is Approved for good.
+            // (Read "a ? b : c" as "if a then b, else c".)
             $next = $this->nextStep();
             $next === null ? $this->status = self::APPROVED : $this->current_step = $next;
         } else {
-            // A returned document keeps its step, so it comes back to this signatory
+            // Return or reject. current_step does NOT change, so a returned paper
+            // comes back to this same signatory after the officer fixes it
             $this->status = $action === 'return' ? self::RETURNED : self::REJECTED;
         }
 
         $this->save();
+
+        // 3. Permanent history: build a new DocumentAction for this paper, set who
+        //    did it (associate = fill in user_id), and save it
         $this->actions()->make([
             'step' => $step,
             'action' => [
@@ -180,10 +217,12 @@ class Document extends Model
             'remarks' => $remarks,
         ])->user()->associate($signatory)->save();
 
+        // 4. A rejection may free the ticket's Ref No. (see below)
         if ($action === 'reject') {
             $this->releaseRefNoIfTicketRejected();
         }
 
+        // 5. The admin's Activity Log
         $this->loadMissing('ticket');
         ActivityLog::record($signatory, 'tickets',
             ['approve' => $this->status === self::APPROVED ? 'Approved document (final)' : 'Approved document',
@@ -194,11 +233,11 @@ class Document extends Model
     }
 
     /**
-     * AUD-079: when the LAST open paper of a ticket is rejected, the whole ticket is
-     * Rejected, so its Ref No. is freed for a new ticket (active_ref_no = NULL; the
-     * ticket keeps ref_no for its history). Locking the ticket row makes two
-     * signatories rejecting the last two papers of a Batch at once wait for each
-     * other, so the second one sees both rejections and frees the number.
+     * releaseRefNoIfTicketRejected() = frees the Ref No. when the whole ticket is rejected.
+     * How it works:
+     *   1. Lock the ticket (so two signatories rejecting at once take turns).
+     *   2. Are ALL its papers rejected now?
+     *   3. Yes → empty active_ref_no, so the same Ref No. can be filed again.
      */
     private function releaseRefNoIfTicketRejected(): void
     {
@@ -211,8 +250,8 @@ class Document extends Model
     }
 
     /**
-     * The step after the current one in the organization's route, or null when
-     * the current signatory is the last one (their approval is final).
+     * nextStep() = the next step in the organization's route
+     * (e.g. 1 → 2), or nothing if this was the last signatory (their approval is final).
      */
     public function nextStep(): ?int
     {

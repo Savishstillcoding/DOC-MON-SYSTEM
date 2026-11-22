@@ -2,6 +2,15 @@
 
 namespace App\Http\Controllers\Officer;
 
+/*
+| READING GUIDE 11/15: TicketController
+|
+| WHAT: a controller: the officer's My Tickets page and New Ticket form.
+| USED FOR: listing tickets and filing a new one (store()).
+| KEY IDEA: the ticket and all its papers are saved together or not at all,
+|           and the organization comes from the logged-in officer, never from the form.
+*/
+
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Document;
@@ -16,11 +25,15 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
- * An officer's tickets: the list (My Tickets), the New Ticket form, and submitting it.
+ * TicketController = the officer's My Tickets page, the New Ticket form, and submitting it.
  * The organization always comes from the logged-in officer, never from the form.
  */
 class TicketController extends Controller
 {
+    /**
+     * index() = My Tickets: every ticket of the officer's organization, newest first,
+     * with the status tabs and the search box.
+     */
     public function index(Request $request): View
     {
         $search = trim((string) $request->query('q', ''));
@@ -29,7 +42,7 @@ class TicketController extends Controller
         // instead of one extra query per ticket (the "N+1" problem)
         $all = Ticket::visibleTo($request->user())
             ->when($search !== '', fn ($q) => $q->search($search))
-            // Every action with who did it, oldest first, for each paper's History (AUD-084)
+            // Every action with who did it, oldest first, for each paper's History
             ->with(['documents.latestAction', 'documents.actions' => fn ($q) => $q->with('user')->oldest()->oldest('id'),
                 'organization.signatories', 'officer'])
             ->latest()
@@ -45,6 +58,7 @@ class TicketController extends Controller
         return view('student-officer.my-tickets', compact('tickets', 'counts', 'tab', 'search'));
     }
 
+    /** create() = shows the New Ticket form (with the org's route and the paper types). */
     public function create(Request $request): View
     {
         return view('student-officer.new-ticket', [
@@ -53,6 +67,17 @@ class TicketController extends Controller
         ]);
     }
 
+    /**
+     * store() = what happens when the officer presses Submit.
+     * How it works:
+     *   1. No approval route yet? Stop (the papers would have nowhere to go).
+     *   2. Check the form: Ref No. not used by another open ticket, 1 to 20 papers,
+     *      each with a type and a title.
+     *   3. Save the ticket AND all its papers together (all or nothing), with a new
+     *      code (DM-2026-00001) and the officer's own organization.
+     *   4. Send Telegram to the first signatory.
+     *   5. Show "Ticket ... submitted. Hand the papers to ..."
+     */
     public function store(Request $request, TicketAlerts $alerts): RedirectResponse
     {
         $officer = $request->user();
@@ -68,7 +93,8 @@ class TicketController extends Controller
         $data = $request->validate([
             'ref_no' => [
                 'required', 'string', 'max:20',
-                // Among the organization's open tickets only: a fully rejected one frees its number (AUD-079)
+                // unique: no other OPEN ticket of this organization may use this Ref No.
+                // A fully rejected ticket gives its number back
                 Rule::unique('tickets', 'active_ref_no')->where('organization_id', $organization->id),
             ],
             'title' => ['required', 'string', 'max:255'],
@@ -79,9 +105,11 @@ class TicketController extends Controller
             'documents.*.title' => ['required', 'string', 'max:255'],
             'documents.*.ref_no' => [
                 'nullable', 'string', 'max:20', 'distinct',
-                // A document's own Ref No. must not repeat within the organization (AUD-032)
+                // 'distinct' = no two papers in THIS ticket may share a Ref No.
+                // The function below = no OPEN paper of the whole organization may have it
+                // either. $fail(...) shows the error message.
                 function (string $attribute, mixed $value, \Closure $fail) use ($organization) {
-                    // A rejected paper frees its own Ref No. for refiling (AUD-079)
+                    // Rejected papers don't count: they give their Ref No. back
                     $used = Document::where('ref_no', $value)
                         ->where('status', '!=', Document::REJECTED)
                         ->whereHas('ticket', fn ($q) => $q->where('organization_id', $organization->id))

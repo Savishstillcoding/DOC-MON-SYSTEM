@@ -9,8 +9,8 @@
         'availability' => 'In a Meeting', 'availability_note' => 'Back at 2:00 PM',
         'submitted' => 'Sep 27, 2026', 'updated' => 'Sep 27, 12:40',
     ]
-    Optional (AUD-077): 'needed' => 'Oct 3, 2026' (the Date Needed), 'deadline' => 'Overdue' or 'Due Soon'
-    Optional 'holders' (a split Batch, AUD-049): one line per place instead of 'signatory', e.g.
+    Optional: 'needed' => 'Oct 3, 2026' (the Date Needed), 'deadline' => 'Overdue' or 'Due Soon'
+    Optional 'holders' (a split Batch): one line per place instead of 'signatory', e.g.
         [['text' => 'Waiting for Reyes, Paolo (SSC President): 1 paper', 'availability' => 'Available', 'note' => null],
          ['text' => 'Back with you: 1 paper to revise, then to Adviser', 'availability' => null, 'note' => null]]
 --}}

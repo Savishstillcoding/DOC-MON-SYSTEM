@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * AUD-077: the Date Needed is shown to officers, tickets get Overdue / Due Soon badges
+ * the Date Needed is shown to officers, tickets get Overdue / Due Soon badges
  * while papers are still moving, and the signatory's queue puts the most urgent first.
  */
 class DeadlineTest extends TestCase
