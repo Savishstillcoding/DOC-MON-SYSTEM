@@ -124,7 +124,7 @@ body {
 /* ---------- Role picker card ---------- */
 .role-card {
   view-transition-name: choices;
-  margin-top: clamp(32px, 12.5vh, 121px);
+  margin-top: clamp(24px, 7vh, 72px);   /* higher, so the 3-button Log in card fits a laptop screen without scrolling */
   width: min(440px, 100%);
   background: #fff;
   border-radius: 6px;

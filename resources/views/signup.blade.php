@@ -42,7 +42,10 @@
         <div class="role-card">
           <a class="role-btn" href="{{ url('/register/officer') }}">Student Officer</a>
           <a class="role-btn" href="{{ url('/register/signatory') }}">Signatory</a>
-          {{-- No Admin option: admins are created by hand, never through public sign-up --}}
+          {{-- No Admin option: admins are created by hand, never through public sign-up.
+               This is only a picture of Log in's Admin button: it shows ONLY when you come
+               from Log in, folds away, and can't be clicked (transitions.css) --}}
+          <span class="role-btn role-btn-admin role-btn-leaving" aria-hidden="true">Admin</span>
         </div>
       </div>
 

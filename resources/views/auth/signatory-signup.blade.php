@@ -110,5 +110,6 @@
 
   <script src="{{ asset_v('js/register.js') }}"></script>
   <script src="{{ asset_v('js/password-toggle.js') }}"></script>
+  <script src="{{ asset_v('js/privacy-dialog.js') }}"></script>
 </body>
 </html>

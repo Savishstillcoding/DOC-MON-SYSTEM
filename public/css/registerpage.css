@@ -169,3 +169,80 @@
   line-height: 20px;
   color: #b42318;
 }
+
+/* ---------- Privacy Notice pop-up (partials/privacy-consent) ----------
+   White box over the dimmed form; the text scrolls inside it, the title
+   and Close button stay put. Same near-black as the rest of the forms. */
+.pv-dialog {
+  margin: auto;   /* the page reset removes the browser's centering, so put it back */
+  width: min(640px, calc(100% - 32px));
+  max-height: min(85vh, 760px);
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: #fff;
+  color: #1e1e1e;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+.pv-dialog[open] { display: flex; flex-direction: column; }
+.pv-dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+
+.pv-dialog-head,
+.pv-dialog-foot {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  flex-shrink: 0;
+}
+.pv-dialog-head { justify-content: space-between; border-bottom: 1px solid #e2e2e2; }
+.pv-dialog-foot { justify-content: flex-end; border-top: 1px solid #e2e2e2; }
+.pv-dialog-head h2 { margin: 0; font-size: 20px; }
+
+.pv-dialog-x {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: #1e1e1e;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.pv-dialog-x:hover { background: #f0f0f0; }
+.pv-dialog-close {
+  height: 44px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 6px;
+  background: #2c2c2c;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pv-dialog-close:hover { background: #000; }
+.pv-dialog-x:focus-visible,
+.pv-dialog-close:focus-visible,
+.pv-dialog-body a:focus-visible { outline: 2px solid #1a1a1a; outline-offset: 2px; }
+
+/* The notice text: same look as the /privacy page */
+.pv-dialog-body {
+  overflow-y: auto;
+  padding: 16px 20px 20px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.pv-dialog-body h2 {
+  margin: 24px 0 6px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e2e2;
+  font-size: 16px;
+}
+.pv-dialog-body p { margin: 0 0 10px; }
+.pv-dialog-body ul { margin: 0 0 10px; padding-left: 20px; }
+.pv-dialog-body li { margin-bottom: 5px; }
+.pv-dialog-body p,
+.pv-dialog-body li { text-wrap: pretty; }
+.pv-dialog-body a { color: inherit; text-underline-offset: 3px; }
