@@ -39,7 +39,7 @@
       @include('partials.wires')
 
       <nav class="nav" aria-label="Main">
-        <a href="{{ url('/login') }}">Log-In</a>
+        <a href="{{ url('/login') }}">Log in</a>
       </nav>
 
       <div class="content">

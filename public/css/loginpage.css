@@ -18,7 +18,7 @@ body {
 /* ---------- LEFT: icon grid that moves down forever (same as landing page) ---------- */
 .left {
   view-transition-name: icons;
-  flex: 0 0 51.85%;
+  flex: 0 0 38%;   /* slimmer icon panel: smaller icons, more room for the dark side */
   background: #fff;
   /* "two-way elevator": the icons panel stays on screen (one screen tall)
      while a long right side (e.g. a sign-up form) scrolls past it */
@@ -68,20 +68,29 @@ body {
 .nav {
   align-self: flex-end;
   display: flex;
-  gap: 40px;
+  gap: 12px;
   padding: clamp(20px, 6.8vh, 66px) 49px 0 0;
 }
-/* Every link gets the same fixed-width slot, so the links sit in the
-   same spots on every page (keep in sync with the other pages) */
+/* Top links are real buttons: a 44px-tall tap target on phones, and the same fixed
+   96px slot on every page so the links sit in the same spots as you move between pages.
+   .nav-primary (the landing page's "Log in") is the filled one. */
 .nav a {
-  width: 80px;
-  text-align: center;
+  width: 96px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 8px;
   color: #fff;
   text-decoration: none;
   font-weight: 600;
   font-size: 16px;
+  transition: background 0.15s, border-color 0.15s;
 }
-.nav a:hover { text-decoration: underline; }
+.nav a:hover { background: rgba(255, 255, 255, 0.08); border-color: #fff; }
+.nav a.nav-primary { background: #fff; border-color: #fff; color: #1a1a1a; }
+.nav a.nav-primary:hover { background: #e6e6e6; border-color: #e6e6e6; }
 
 /* Title sits about 19% down the screen, like the Figma design */
 .content {
@@ -122,17 +131,20 @@ body {
   padding: clamp(20px, 3.8vh, 37px) 25px;
   display: flex;
   flex-direction: column;
-  gap: clamp(24px, 5vh, 49px);
+  gap: clamp(16px, 3.4vh, 40px);   /* a little tighter so the taller buttons still fit short laptop screens */
 }
 
 .role-btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;   /* easier to tap on phones */
   background: #2c2c2c;
   color: #fff;
   text-align: center;
   text-decoration: none;
   font-size: 17px;
-  padding: 10px;
+  padding: 0 10px;
   border-radius: 6px;
   transition: background 0.15s;
 }

@@ -31,7 +31,7 @@
 
       <nav class="nav" aria-label="Main">
         <a href="{{ url('/login') }}">Back</a>
-        <a href="{{ url('/signup') }}">Sign-Up</a>
+        <a href="{{ url('/signup') }}">Sign up</a>
       </nav>
 
       <div class="content">
@@ -55,7 +55,7 @@
             @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
           </div>
 
-          <button class="submit-btn" type="submit">Sign In</button>
+          <button class="submit-btn" type="submit">Log in</button>
 
           <a class="forgot-link" href="{{ url('/forgot-password') }}">Forgot password?</a>
         </form>
