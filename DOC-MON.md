@@ -39,6 +39,7 @@ Live site: <https://doc-mon-system.onrender.com>
 
 Newest first, important things only.
 
+- **2026-11-23:** My Tickets looks tidier: a ticket and its documents read as one block (no line between them), hovering lights up the whole ticket, the fold-out is a purple "View 1 document" text button with a turning arrow lined up under the title (History is a quieter grey one), and a finished ticket says "All signed" or "Closed" instead of "Done".
 - **2026-11-23:** New Ticket asks for the Ref No. once: the per-paper "Ref No. (if any)" box is gone, since the ticket's Ref No. (Resolution No.) already identifies the papers. Older papers that have one still show it.
 - **2026-11-23:** Reading guides: the 15 core files (routes, the role guard, the 5 models, sign-up, log-in, verification, tickets, signatory actions, Telegram, availability) start with a short WHAT / USED FOR / KEY IDEA guide, and every comment in them is rewritten in plain words (name = what it is, then how it works step by step). Audit-log numbers (AUD-0xx) are removed from all code and docs, since the audit log stays on our laptops. Comments only; no behaviour changed.
 - **2026-11-17:** After Approve, the signatory's message only confirms it (and says when it was the final signature); it no longer tells them to pass the paper on, since the officer carries it.

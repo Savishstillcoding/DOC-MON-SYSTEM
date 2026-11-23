@@ -57,7 +57,10 @@ class TimelineTest extends TestCase
                 'Approved by Adviser', 'Dela Cruz, Ana',
                 'Approved by VPSD (final signature)', 'Cruz, Ramon',
             ])
-            ->assertDontSee('Now waiting for');
+            ->assertDontSee('Now waiting for')
+            // the row says who it's waiting for in words: nobody, it's all signed
+            ->assertSee('All signed')
+            ->assertSee('<span class="mt-show">View</span><span class="mt-hide">Hide</span> 1 document', false);
     }
 
     public function test_an_unfinished_paper_ends_with_where_it_is_now(): void
@@ -84,6 +87,7 @@ class TimelineTest extends TestCase
 
         $this->actingAs($this->officer)->get('/officer/tickets')
             ->assertSeeInOrder(['History (2)', 'Rejected by Adviser', 'Not allowed this term'])
+            ->assertSee('Closed')
             ->assertDontSee('Now waiting for')
             ->assertDontSee('Now with you');
     }
