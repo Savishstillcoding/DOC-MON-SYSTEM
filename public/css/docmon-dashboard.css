@@ -855,7 +855,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* keyboard users get a clear outline on links and buttons */
 .dm-body a:focus-visible,
-.dm-body button:focus-visible { outline: 2px solid var(--dm-purple); outline-offset: 2px; }
+.dm-body button:focus-visible,
+.dm-body summary:focus-visible { outline: 2px solid var(--dm-purple); outline-offset: 2px; }
 
 /* table rows highlight under the mouse */
 .dm-table tbody tr { transition: background 0.2s; }
@@ -1010,9 +1011,53 @@ p.dm-form-alert { padding-left: 16px; }
 .sg-review-form .dm-field-error { margin-top: 0; }
 
 /* My Tickets: each ticket's documents, folded under its row */
-.mt-docs-row td { padding-top: 0; border-top: none; }
-.mt-docs summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--dm-muted); }
-.mt-docs > ul { list-style: none; margin: 8px 0 4px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+/* The ticket row and its documents row read as ONE block: no line between them */
+.mt-ticket-row td { border-bottom: none; padding-bottom: 6px; }
+.mt-docs-row td { padding-top: 0; padding-bottom: 14px; border-top: none; }
+/* Hover lights up the WHOLE ticket (its row and its documents row), not half of it */
+.dm-table .mt-ticket:hover > tr { background: #fafafc; }
+/* "View 1 document" and "History (2)" are plain text buttons with a turning chevron, so
+   they can't be mistaken for the status pills next to them. The documents toggle is purple
+   (the main one); History, inside a document, is quieter grey and turns purple on hover.
+   ">" = only that fold-out's OWN summary, so each keeps its own open / closed arrow. */
+.mt-docs > summary,
+.mt-history > summary {
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 2px 4px 2px 2px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+.mt-docs > summary { color: var(--dm-purple); }
+.mt-history > summary { color: var(--dm-muted); }
+.mt-docs > summary:hover,
+.mt-history > summary:hover { color: var(--dm-purple); text-decoration: underline; }
+.mt-docs > summary::-webkit-details-marker,
+.mt-history > summary::-webkit-details-marker { display: none; }
+.mt-docs > summary::before,
+.mt-history > summary::before {
+  content: "";
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  margin: 0 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);   /* › closed */
+  transition: transform 0.2s;
+}
+.mt-docs[open] > summary::before,
+.mt-history[open] > summary::before { transform: rotate(45deg) translate(-1px, -1px); }   /* ⌄ open */
+.mt-docs[open] > summary .mt-show,
+.mt-docs:not([open]) > summary .mt-hide { display: none; }
+.mt-docs > ul { list-style: none; margin: 10px 0 4px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .mt-docs > ul > li {
   display: flex;
   justify-content: space-between;
@@ -1028,7 +1073,6 @@ p.dm-form-alert { padding-left: 16px; }
 .mt-holders .dm-cell-sub + .dm-cell-main { margin-top: 8px; }
 /* A paper's History: the Recent Activity list, with a line joining the dots */
 .mt-history { margin-top: 8px; }
-.mt-history summary { font-size: 13px; font-weight: 600; color: var(--dm-purple); }
 .mt-timeline { margin: 10px 0 2px; padding: 0; gap: 14px; }
 .mt-timeline li:not(:last-child)::after {
   content: "";

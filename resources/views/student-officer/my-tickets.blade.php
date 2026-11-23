@@ -63,10 +63,11 @@
                             <th>Last Update</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach ($tickets as $t)
+                    {{-- One <tbody> per ticket: its row and its documents row are one block (hover, border) --}}
+                    @foreach ($tickets as $t)
+                        <tbody class="mt-ticket">
                             @php $holders = $t->holders(); @endphp
-                            <tr>
+                            <tr class="mt-ticket-row">
                                 <td class="dm-strong">{{ $t->code }}</td>
                                 <td>
                                     <p class="dm-cell-main">{{ $t->title }}</p>
@@ -78,7 +79,8 @@
                                 <td>{{ $t->typeLabel() }}</td>
                                 <td>
                                     @if ($holders->isEmpty())
-                                        <p class="dm-cell-sub">Done</p>
+                                        {{-- Nobody: every paper is finished --}}
+                                        <p class="dm-cell-sub">{{ ['Approved' => 'All signed', 'Rejected' => 'Closed'][$t->status()] ?? 'Finished' }}</p>
                                     @elseif ($holders->count() === 1)
                                         {{-- All unfinished papers in one place: same as always --}}
                                         <p class="dm-cell-main">{{ $holders[0]['signatory']?->displayName() }}</p>
@@ -114,10 +116,13 @@
                                 </td>
                             </tr>
                             <tr class="mt-docs-row">
-                                <td colspan="6">
+                                {{-- empty under "Ticket", so the documents line up with the ticket's title --}}
+                                <td></td>
+                                <td colspan="5">
                                     @php $route = $t->organization->signatories; @endphp
                                     <details class="mt-docs" data-live-id="{{ $t->id }}" @if ($t->status() === 'Needs Revision') open @endif>
-                                        <summary>{{ Str::plural('Document', $t->documents->count()) }} ({{ $t->documents->count() }})</summary>
+                                        {{-- "View 1 document" when closed, "Hide 1 document" when open (CSS swaps the word) --}}
+                                        <summary><span class="mt-show">View</span><span class="mt-hide">Hide</span> {{ $t->documents->count() }} {{ Str::plural('document', $t->documents->count()) }}</summary>
                                         <ul>
                                             @foreach ($t->documents as $doc)
                                                 @php $holder = $route->firstWhere('pivot.step', $doc->current_step); @endphp
@@ -178,8 +183,8 @@
                                     </details>
                                 </td>
                             </tr>
-                        @endforeach
-                    </tbody>
+                        </tbody>
+                    @endforeach
                 </table>
             </div>
 
