@@ -30,7 +30,7 @@
       @include('partials.wires')
 
       <nav class="nav" aria-label="Main">
-        <a href="{{ url('/login') }}">Log-In</a>
+        <a href="{{ url('/login') }}">Log in</a>
         <a href="{{ url('/signup') }}">Back</a>
       </nav>
 
@@ -100,7 +100,7 @@
 
           @include('partials.privacy-consent')
 
-          <button class="submit-btn" type="submit">Sign Up</button>
+          <button class="submit-btn" type="submit">Sign up</button>
         </form>
       </div>
 

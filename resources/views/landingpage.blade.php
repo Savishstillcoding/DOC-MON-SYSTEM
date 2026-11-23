@@ -31,8 +31,8 @@
 
       <nav class="nav" aria-label="Main">
         @guest
-          <a href="{{ url('/login') }}">Log-In</a>
-          <a href="{{ url('/signup') }}">Sign-Up</a>
+          <a href="{{ url('/login') }}" class="nav-primary">Log in</a>
+          <a href="{{ url('/signup') }}">Sign up</a>
         @endguest
         {{-- Already logged in: straight to your dashboard, or log out.
              Log out is a POST form with a CSRF token, like the sidebar's, so no link
@@ -49,10 +49,8 @@
       <div class="content">
         <h1 class="title">DOC-MON</h1>
 
-        <p class="tagline">
-          The system made for student secretaries<br>
-          Created for Student Organizations of LNU
-        </p>
+        <p class="tagline">Track every paper on its way to signature, and see if your signatory is in before you walk over.</p>
+        <p class="tagline-sub">For the student organizations of LNU</p>
 
         <div class="logo-circle">
           <img src="{{ asset('images/logo.png') }}" alt="DOC-MON logo">

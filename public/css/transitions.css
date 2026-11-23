@@ -6,6 +6,7 @@
    Each page marks the parts that should animate with a
    view-transition-name (see landingpage.css / signuppage.css):
      landing-tagline / signup-tagline  -> text under the title
+     landing-tagline-sub               -> the small line under it (landing)
      logo                              -> DOC-MON logo circle (landing)
      login-tagline                     -> text under the title (login)
      choices                           -> role buttons (signup AND login)
@@ -67,6 +68,7 @@
 
 /* ---------- Text under the title: old slides out left, new slides in from the right ---------- */
 ::view-transition-old(landing-tagline),
+::view-transition-old(landing-tagline-sub),
 ::view-transition-old(signup-tagline),
 ::view-transition-old(login-tagline),
 ::view-transition-old(register-tagline),
@@ -74,6 +76,7 @@
   animation: tagline-out 300ms ease-in both;
 }
 ::view-transition-new(landing-tagline),
+::view-transition-new(landing-tagline-sub),
 ::view-transition-new(signup-tagline),
 ::view-transition-new(login-tagline),
 ::view-transition-new(register-tagline),

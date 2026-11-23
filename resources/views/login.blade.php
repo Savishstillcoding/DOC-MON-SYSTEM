@@ -30,7 +30,7 @@
 
       <nav class="nav" aria-label="Main">
         <a href="{{ url('/') }}">Back</a>
-        <a href="{{ url('/signup') }}">Sign-Up</a>
+        <a href="{{ url('/signup') }}">Sign up</a>
       </nav>
 
       <div class="content">
