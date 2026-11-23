@@ -127,6 +127,35 @@
   animation: none;
 }
 
+/* ---------- Signup <-> login: the Admin button opens and folds ----------
+   Log in has an Admin button, Sign up doesn't. Moving between them:
+     Sign up -> Log in : Admin slides open under Signatory
+     Log in -> Sign up : a look-alike Admin (not a link) folds away
+   The negative margin also closes the gap above the button, so the card
+   ends at the right height. Only runs with .keep-choices (page-transitions.js). */
+.role-btn-leaving {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root.keep-choices .role-btn-admin {
+    overflow: hidden;
+    animation: admin-open 350ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms both;
+  }
+  :root.keep-choices .role-btn-leaving {
+    display: flex;
+    overflow: hidden;
+    pointer-events: none;
+    animation: admin-fold 300ms ease-in both;
+  }
+}
+
+@keyframes admin-open {
+  from { height: 0; opacity: 0; margin-top: calc(-1 * clamp(16px, 3.4vh, 40px)); }
+}
+@keyframes admin-fold {
+  to { height: 0; opacity: 0; margin-top: calc(-1 * clamp(16px, 3.4vh, 40px)); }
+}
+
 /* ---------- "made by" note: slides to its new spot ----------
    It has the same name on every page, so the browser moves it from where
    it was to where it is on the new page. On a longer page (a sign-up

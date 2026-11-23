@@ -81,6 +81,10 @@ class PrivacyTest extends TestCase
             ->assertSee('name="privacy_accepted"', false)
             ->assertSee('href="'.url('/privacy').'" target="_blank"', false)
             ->assertSee('Phone Number (optional)')
+            // the pop-up holds the same notice text as /privacy
+            ->assertSee('id="privacy-dialog"', false)
+            ->assertSee('data-privacy-open', false)
+            ->assertSee('Republic Act No. 10173')
             ->getContent();
 
         preg_match('/<input id="phone"[^>]*>/', $html, $phone);

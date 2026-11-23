@@ -1,58 +1,83 @@
 /* ==========================================================
    DOC-MON – Privacy Notice page
+   Looks like the rest of DOC-MON: the dark strip with the logo
+   (like the log-in pages), then plain readable text on white.
+   No floating card, no extra colour: links and buttons are the
+   same near-black as the role buttons.
    ========================================================== */
 :root {
-  --pv-bg: #f5f5f5;
-  --pv-card: #ffffff;
+  --pv-dark: #1a1a1a;     /* same as the landing / log-in background */
+  --pv-btn: #2c2c2c;      /* same as the role buttons */
   --pv-text: #1e1e1e;
   --pv-muted: #5f5f5f;
   --pv-line: #e2e2e2;
-  --pv-accent: #5b45e0;
-  --pv-ask-bg: #edeafc;
 }
 
 body {
   margin: 0;
-  padding: 32px 16px;
-  background: var(--pv-bg);
+  background: #fff;
   color: var(--pv-text);
   font-family: 'Inter', sans-serif;
   line-height: 1.6;
 }
 
+::selection { background: var(--pv-dark); color: #fff; }
+
+/* ---------- Dark strip with the logo ---------- */
+.pv-top {
+  background: var(--pv-dark);
+  padding: 14px 24px;
+}
+.pv-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  text-decoration: none;
+}
+.pv-brand img { border-radius: 50%; background: #fff; }
+
+/* ---------- The notice: one readable column ---------- */
 .pv-page {
-  max-width: 720px;
+  max-width: 600px;   /* about 70 letters a line, easy to read */
   margin: 0 auto;
-  padding: 32px;
-  background: var(--pv-card);
-  border: 1px solid var(--pv-line);
-  border-radius: 14px;
-  box-sizing: border-box;
+  padding: 40px 20px 56px;
 }
 
-h1 { margin: 0; font-size: 28px; }
-h2 { margin: 28px 0 8px; font-size: 18px; }
+h1 { margin: 0; font-size: 30px; line-height: 1.2; }
+h2 {
+  margin: 36px 0 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--pv-line);
+  font-size: 18px;
+}
 p { margin: 0 0 12px; }
 ul { margin: 0 0 12px; padding-left: 20px; }
 li { margin-bottom: 6px; }
-a { color: var(--pv-accent); }
+p, li { text-wrap: pretty; }   /* no single word left alone on the last line */
+a { color: var(--pv-text); text-underline-offset: 3px; }
+a:hover { color: #000; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--pv-dark); outline-offset: 3px; border-radius: 2px; }
 
-.pv-sub { color: var(--pv-muted); font-size: 14px; }
-.pv-ask { padding: 12px 16px; border-radius: 10px; background: var(--pv-ask-bg); font-weight: 600; }
+.pv-sub { margin: 6px 0 20px; color: var(--pv-muted); font-size: 14px; }
+.pv-ask { padding: 12px 16px; border: 1px solid var(--pv-text); border-radius: 6px; font-weight: 600; }
 .pv-accept { margin-top: 12px; }
-.pv-back { margin-top: 24px; }
+.pv-back { margin-top: 32px; }
 
 .pv-btn {
   width: 100%;
-  padding: 12px 16px;
+  height: 48px;
   border: 0;
-  border-radius: 8px;
-  background: var(--pv-accent);
+  border-radius: 6px;
+  background: var(--pv-btn);
   color: #fff;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
 }
+.pv-btn:hover { background: #000; }
 .pv-link {
   padding: 0;
   border: 0;
@@ -60,9 +85,11 @@ a { color: var(--pv-accent); }
   color: var(--pv-muted);
   font: inherit;
   text-decoration: underline;
+  text-underline-offset: 3px;
   cursor: pointer;
 }
 
 @media (max-width: 640px) {
-  .pv-page { padding: 20px; }
+  .pv-page { padding: 28px 18px 40px; }
+  h1 { font-size: 26px; }
 }

@@ -41,7 +41,8 @@
         <div class="role-card">
           <a class="role-btn" href="{{ url('/login/officer') }}">Student Officer</a>
           <a class="role-btn" href="{{ url('/login/signatory') }}">Signatory</a>
-          <a class="role-btn" href="{{ url('/login/admin') }}">Admin</a>
+          {{-- role-btn-admin: slides open when you come here from Sign up (transitions.css) --}}
+          <a class="role-btn role-btn-admin" href="{{ url('/login/admin') }}">Admin</a>
         </div>
       </div>
 
