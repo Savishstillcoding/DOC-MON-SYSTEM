@@ -103,29 +103,14 @@ class TicketController extends Controller
             'documents' => ['required', 'array', 'min:1', 'max:20'],
             'documents.*.type' => ['required', Rule::in(Document::TYPES)],
             'documents.*.title' => ['required', 'string', 'max:255'],
-            'documents.*.ref_no' => [
-                'nullable', 'string', 'max:20', 'distinct',
-                // 'distinct' = no two papers in THIS ticket may share a Ref No.
-                // The function below = no OPEN paper of the whole organization may have it
-                // either. $fail(...) shows the error message.
-                function (string $attribute, mixed $value, \Closure $fail) use ($organization) {
-                    // Rejected papers don't count: they give their Ref No. back
-                    $used = Document::where('ref_no', $value)
-                        ->where('status', '!=', Document::REJECTED)
-                        ->whereHas('ticket', fn ($q) => $q->where('organization_id', $organization->id))
-                        ->exists();
-                    if ($used) {
-                        $fail('Document :position: your organization already has an open paper with this Ref No.');
-                    }
-                },
-            ],
+            // Papers have no Ref No. of their own: the ticket's Ref No. (Resolution No.) is
+            // the one number. Anything else sent for a paper is dropped (see Document's Fillable).
         ], [
             'ref_no.unique' => 'Your organization already has an open ticket with this Ref No.',
             'date_needed.after_or_equal' => 'The date needed can\'t be in the past.',
             'documents.required' => 'Add at least one document.',
             'documents.*.type.in' => 'Document :position: choose a type from the list.',
             'documents.*.title.required' => 'Document :position needs a title.',
-            'documents.*.ref_no.distinct' => 'Document :position: the same Ref No. is used twice in this ticket.',
         ]);
 
         try {

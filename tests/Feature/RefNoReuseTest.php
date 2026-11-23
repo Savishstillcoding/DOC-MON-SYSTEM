@@ -12,7 +12,7 @@ use Tests\TestCase;
 /**
  * a fully rejected ticket frees its Ref No., so the officer can file the
  * corrected paper under the same number. Anything still open (pending, returned,
- * partly approved) keeps it. A rejected paper also frees its own document Ref No.
+ * partly approved) keeps it.
  */
 class RefNoReuseTest extends TestCase
 {
@@ -88,29 +88,13 @@ class RefNoReuseTest extends TestCase
         $this->assertSame('2026-11-001', $ticket->fresh()->active_ref_no);
     }
 
-    public function test_a_rejected_paper_frees_its_own_document_ref_no(): void
-    {
-        $ticket = $this->submit(docRefs: ['AP-01', 'B-01']);
-        $this->act($this->adviser, $ticket->documents[0], 'reject');   // AP-01 rejected, B-01 still pending
-
-        $this->actingAs($this->officer)->post('/officer/tickets', $this->form([
-            'ref_no' => '2026-11-002',
-            'documents' => [['type' => 'Activity Proposal', 'title' => 'Fixed proposal', 'ref_no' => 'AP-01']],
-        ]))->assertSessionHasNoErrors();
-
-        $this->actingAs($this->officer)->post('/officer/tickets', $this->form([
-            'ref_no' => '2026-11-003',
-            'documents' => [['type' => 'Budgetary', 'title' => 'Budget again', 'ref_no' => 'B-01']],
-        ]))->assertSessionHasErrors(['documents.0.ref_no']);
-    }
-
     // ---------- helpers ----------
 
-    private function submit(int $papers = 1, array $docRefs = []): Ticket
+    private function submit(int $papers = 1): Ticket
     {
         $docs = [];
-        for ($i = 0; $i < max($papers, count($docRefs)); $i++) {
-            $docs[] = ['type' => 'Activity Proposal', 'title' => 'Paper '.($i + 1), 'ref_no' => $docRefs[$i] ?? ''];
+        for ($i = 0; $i < $papers; $i++) {
+            $docs[] = ['type' => 'Activity Proposal', 'title' => 'Paper '.($i + 1)];
         }
         $this->actingAs($this->officer)->post('/officer/tickets', $this->form(['documents' => $docs]))->assertSessionHasNoErrors();
 
@@ -129,7 +113,7 @@ class RefNoReuseTest extends TestCase
         return array_merge([
             'ref_no' => '2026-11-001',
             'title' => 'DIGITS Week 2026',
-            'documents' => [['type' => 'Activity Proposal', 'title' => 'Proposal', 'ref_no' => '']],
+            'documents' => [['type' => 'Activity Proposal', 'title' => 'Proposal']],
         ], $overrides);
     }
 

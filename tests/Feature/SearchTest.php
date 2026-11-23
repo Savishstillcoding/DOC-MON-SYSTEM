@@ -63,7 +63,7 @@ class SearchTest extends TestCase
 
         $this->assertSame([$this->week->code], $found('digits week'));      // title, any case
         $this->assertSame([$this->week->code], $found('budget'));           // a paper's title
-        $this->assertSame([$this->seminar->code], $found('RES-77'));        // a paper's Ref No.
+        $this->assertSame([$this->seminar->code], $found('RES-77'));        // an older paper's own Ref No.
         $this->assertSame([$this->seminar->code], $found('11-002'));        // the ticket's Ref No.
         $this->assertSame([$this->seminar->code], $found($this->seminar->code));
         $this->assertSame([], $found('nothing like this'));
@@ -144,7 +144,9 @@ class SearchTest extends TestCase
         $ticket->save();
 
         foreach ($papers as [$paper, $ref]) {
-            $ticket->documents()->create(['type' => 'Resolution', 'title' => $paper, 'ref_no' => $ref]);
+            // forceFill: new papers have no Ref No. of their own; this one stands for a paper
+            // filed before that change, which still has one and can still be searched
+            $ticket->documents()->make(['type' => 'Resolution', 'title' => $paper])->forceFill(['ref_no' => $ref])->save();
         }
 
         return $ticket;

@@ -32,11 +32,13 @@ use Illuminate\Support\Facades\DB;
 // FILLABLE = the fields the New Ticket form may fill in for each paper.
 // How it works:
 //   1. The officer adds papers in the New Ticket form.
-//   2. Laravel copies ONLY type, title and ref_no into each paper.
+//   2. Laravel copies ONLY type and title into each paper.
 //   3. Anything else the form sends is thrown away.
 // status and current_step are left out on purpose: every new paper starts as pending
 // at step 1, and only a signatory's Approve / Return / Reject (applyAction) moves it.
-#[Fillable(['type', 'title', 'ref_no'])]
+// ref_no is left out too: the ticket's Ref No. is the one number. The column stays only
+// so papers filed before this change still show the number they were given.
+#[Fillable(['type', 'title'])]
 class Document extends Model
 {
     /**
