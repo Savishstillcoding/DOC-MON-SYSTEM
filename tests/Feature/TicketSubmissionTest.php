@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Document;
 use App\Models\Organization;
 use App\Models\Ticket;
 use App\Models\User;
@@ -123,25 +124,21 @@ class TicketSubmissionTest extends TestCase
             ->assertSessionHasErrors(['documents' => 'Add at least one document.']);
     }
 
-    public function test_a_document_ref_no_cannot_repeat_within_the_organization(): void
+    public function test_papers_have_no_ref_no_of_their_own(): void
     {
+        // The form only asks for the ticket's Ref No. (Resolution No.), not one per paper
+        $this->actingAs($this->officer)->get('/officer/tickets/new')
+            ->assertOk()
+            ->assertSee('Ref No. (Resolution No.)')
+            ->assertDontSee('Ref No. (if any)')
+            ->assertDontSee('documents[0][ref_no]', false);
+
+        // A paper Ref No. sent anyway (an old form, or a hand-made request) is ignored
         $this->actingAs($this->officer)->post('/officer/tickets', $this->form([
             'documents' => [['type' => 'Activity Proposal', 'title' => 'Proposal', 'ref_no' => 'AP-01']],
-        ]));
+        ]))->assertSessionHasNoErrors();
 
-        $this->actingAs($this->officer)
-            ->post('/officer/tickets', $this->form([
-                'ref_no' => '2026-09-009',
-                'documents' => [
-                    ['type' => 'Resolution', 'title' => 'Resolution', 'ref_no' => 'AP-01'],
-                    ['type' => 'Budgetary', 'title' => 'Budget', 'ref_no' => 'B-1'],
-                    ['type' => 'Budgetary', 'title' => 'Budget copy', 'ref_no' => 'B-1'],
-                ],
-            ]))
-            ->assertSessionHasErrors([
-                'documents.0.ref_no' => 'Document 1: your organization already has an open paper with this Ref No.',
-                'documents.2.ref_no' => 'Document 3: the same Ref No. is used twice in this ticket.',
-            ]);
+        $this->assertNull(Document::sole()->ref_no);
     }
 
     public function test_an_organization_without_signatories_cannot_receive_tickets(): void

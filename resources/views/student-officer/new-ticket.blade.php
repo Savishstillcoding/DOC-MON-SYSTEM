@@ -2,13 +2,14 @@
     DOC-MON · Student Officer · New Ticket
     Posts to TicketController@store. Fields:
       ref_no, title, date_needed, purpose,
-      documents[0][type], documents[0][title], documents[0][ref_no] (optional), documents[1][type], ...
+      documents[0][type], documents[0][title], documents[1][type], ...
+    Papers have no Ref No. of their own: the ticket's Ref No. above is the one number.
     The organization is shown but not sent: the server takes it from the logged-in officer.
     From the controller: $organization (with its signatories), $documentTypes
 --}}
 @php
     // Document rows: what was typed before a failed submit, or one empty row (Single)
-    $rows = old('documents', [['type' => $documentTypes[0], 'title' => '', 'ref_no' => '']]);
+    $rows = old('documents', [['type' => $documentTypes[0], 'title' => '']]);
 
     // Error messages about the document rows (documents, documents.0.title, ...)
     $documentErrors = collect($errors->get('documents'))->merge(collect($errors->get('documents.*'))->flatten());
@@ -84,7 +85,7 @@
                 </div>
 
                 <div class="nt-doc-labels">
-                    <span></span><span>Document Type</span><span>Document Title</span><span>Ref No. (if any)</span><span></span>
+                    <span></span><span>Document Type</span><span>Document Title</span><span></span>
                 </div>
 
                 @if ($documentErrors->isNotEmpty())
@@ -105,7 +106,6 @@
                                 @endforeach
                             </select>
                             <input type="text" name="documents[{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" maxlength="255" placeholder="e.g. Program Flow" aria-label="Document title" data-field="title" required>
-                            <input type="text" name="documents[{{ $i }}][ref_no]" value="{{ $row['ref_no'] ?? '' }}" maxlength="20" placeholder="Ref No. (optional)" aria-label="Document Ref No. (optional)" data-field="ref_no">
                             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
                         </div>
                     @endforeach
@@ -158,7 +158,6 @@
                 @endforeach
             </select>
             <input type="text" data-field="title" maxlength="255" placeholder="e.g. Program Flow" aria-label="Document title" required>
-            <input type="text" data-field="ref_no" maxlength="20" placeholder="Ref No. (optional)" aria-label="Document Ref No. (optional)">
             <button type="button" class="dm-icon-btn nt-remove" aria-label="Remove document"><x-docmon.icon name="x" size="18" /></button>
         </div>
     </template>
@@ -172,7 +171,7 @@
                 const all = rows.querySelectorAll('.nt-doc-row');
                 all.forEach((row, i) => {
                     row.querySelector('.nt-doc-num').textContent = i + 1;
-                    // every field says which one it is (data-field="type" / "title" / "ref_no")
+                    // every field says which one it is (data-field="type" / "title")
                     row.querySelectorAll('[data-field]').forEach((field) => {
                         field.name = `documents[${i}][${field.dataset.field}]`;
                     });

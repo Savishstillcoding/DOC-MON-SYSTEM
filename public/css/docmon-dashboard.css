@@ -556,7 +556,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .nt-doc-labels,
 .nt-doc-row {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) minmax(0, 1fr) 150px 40px;   /* #, type, title, ref no., remove */
+  grid-template-columns: 28px minmax(0, 1fr) minmax(0, 1fr) 40px;   /* #, type, title, remove */
   gap: 12px;
   align-items: center;
 }
@@ -576,17 +576,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .nt-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: -4px; }
 .nt-note { margin-top: 16px; font-size: 14px; line-height: 1.6; color: var(--dm-muted); }
 
-/* Phones: five columns don't fit, so each document becomes a small stacked block:
-   [#] [Type] [x] / Title / Ref No. The column headers no longer line up, so they're hidden
-   (each field still has its aria-label, and Ref No. says what it is in its placeholder). */
+/* Phones: four columns don't fit, so each document becomes a small stacked block:
+   [#] [Type] [x] / Title. The column headers no longer line up, so they're hidden
+   (each field still has its aria-label). */
 @media (max-width: 640px) {
   .nt-doc-labels { display: none; }
   .nt-doc-row {
     grid-template-columns: 28px minmax(0, 1fr) 40px;
     grid-template-areas:
       "num type  remove"
-      ".   title title"
-      ".   ref   ref";
+      ".   title title";
     gap: 8px 10px;
     margin-top: 16px;
     padding-bottom: 16px;
@@ -595,7 +594,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .nt-doc-row .nt-doc-num { grid-area: num; }
   .nt-doc-row [data-field="type"] { grid-area: type; }
   .nt-doc-row [data-field="title"] { grid-area: title; }
-  .nt-doc-row [data-field="ref_no"] { grid-area: ref; }
   .nt-doc-row .nt-remove { grid-area: remove; }
 }
 
